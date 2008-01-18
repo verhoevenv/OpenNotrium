@@ -45,21 +45,13 @@ game_engine::~game_engine()
 }
 
 void game_engine::Screenshot(string *screenshot_name){
-
-	if(windowed){
-		*screenshot_name="none";
-		//strcpy(screenshot_name,"Screenshots not available in windowed mode");
-	}
-	else{
-		string FileName;
-		GetScreenshotFileName(&FileName);
-		/*
-		strcpy(filename,FileName->data());
-		strcpy(screenshot_name,FileName->data());*/
-		*screenshot_name=FileName;
-		grim->System_SaveScreenshot(&FileName);
-	}
-
+    string FileName;
+    GetScreenshotFileName(&FileName);
+    /*
+    strcpy(filename,FileName->data());
+    strcpy(screenshot_name,FileName->data());*/
+    *screenshot_name=FileName;
+    grim->System_SaveScreenshot(FileName);
 }
 
 void game_engine::GetScreenshotFileName(string *FileName)
@@ -207,7 +199,6 @@ bool game_engine::Frame(void)
 	//mouse
 	mousestate2=mousestate;
 	mousestate = grim->getMouseState();
-	//TODO: mousestate2 null?
 
 	if(!input_override){
 		mousex= mousex + (mousestate.lX+mousestate2.lX)*mouse_speed;
@@ -449,7 +440,7 @@ bool game_engine::Frame(void)
 
 
 	//print screen to file
-	if (grim->Key_Click(KEY_SYSRQ )){ //TODO: this key or SDLK_PRINT?
+	if (grim->Key_Click(KEY_PRINT )){ //TODO: this key or SDLK_PRINT?
 		Screenshot(&screenshot_name);
 		if(screenshot_name=="none"){
 			tempstring="Screenshots not available in windowed mode";
@@ -508,7 +499,6 @@ bool focusgained()
 {
 
 	engine->debug.debug_output("Focus Gained", 3,0);
-	//TODO: check mousey stuff
 //	if (engine->g_pMouse)
 //		{
 //		engine->g_pMouse->Acquire();
@@ -605,7 +595,6 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT)
 	_CrtSetDbgFlag (_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	#endif
 
-    //TODO: find shutdown for this, delete instance
 	//grim = Grim::Interface_Get("grim.dll");
 	grim = new Engine();
 

@@ -30,6 +30,7 @@ public:
     GLuint opengl_id;
     int width,height;
     bool draw_flipped; //needed to account for the difference in origin location
+    bool deleted;
 };
 
 class Engine
@@ -58,9 +59,9 @@ class Engine
     int render_target;
     int activetexture;
 
-    //TODO: make this more flexible
     static const int maxtextures = 200;
     EngineTexture textures[maxtextures];
+    bool freeSlotInList;
     int currtexture;
     int mainTarget; //texture for the screen rendertarget
 
@@ -71,7 +72,7 @@ class Engine
     void setup_opengl();
     void setglColor(int index);
     void Draw4V(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
-    GLuint createNewTexture();
+    int createNewTexture(std::string name, int width, int height);
     void startFrame();
 public:
     Engine();
@@ -80,7 +81,7 @@ public:
     * Save a screenshot in BMP format, under the given filename.
     * I think it's supposed to be a relative pathname
     */
-    void System_SaveScreenshot(std::string *filename);
+    void System_SaveScreenshot(std::string filename);
 
     /**
     * Copies relevant stuff into the state. We need to make a copy anyway, so just return the object.
@@ -151,8 +152,7 @@ public:
 
     /**
     * Loads a texture either from a "normal file" from work directory. False is returned if file wasn't found or it was wrong format or corrupted.
-    * Supported image formats are ...
-    * //TODO: use SDL_Image stuff, prolly
+    * Supported image formats are PNG, BMP, JPG, a lot more (not TIFF though)
     */
     bool Texture_Load(std::string id, char *filename);
 

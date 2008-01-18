@@ -10,6 +10,7 @@ Engine::Engine() {
     bpp = 32;
     fullscreen = false;
 
+    freeSlotInList = false;
     //perhaps this stuff should go into startframe?
     currtexture = 0;
     clear_a = clear_r = clear_g = clear_b = 0;
@@ -135,7 +136,6 @@ void Engine::setup_opengl()
 {
     //float aspect = (float)width / (float) height;
 
-    //TODO: is this right?
     glViewport(0, 0, width, height);
 
     glMatrixMode(GL_PROJECTION);
@@ -160,9 +160,53 @@ void Engine::setup_opengl()
         mainTarget = Texture_Get("EngineMainTarget");
 }
 
-void Engine::System_SaveScreenshot(std::string *filename){
-    //TODO: implement this
-    // http://osdl.sourceforge.net/main/documentation/rendering/SDL-openGL.html#OpenGL2SDL
+void Engine::System_SaveScreenshot(std::string filename){
+    //the main problem here is that textures are stored upside-down
+    //to get a proper screenshot, we have to flip the image
+    //we can do this ourselves in memory, but why not let opengl work for us...
+
+    //we create a temporary texture that will hold the inverted screenshot
+    if(!Texture_Create("EngineScreenshotTempSurface",width,height))
+        return;
+
+    //we render our screen to the temporary texture
+    int temptext = Texture_Get("EngineScreenshotTempSurface");
+    System_SetRenderTarget(temptext);
+    Quads_SetSubset(0,1,1,0); //this needs to change
+    Texture_Set(mainTarget);
+    Quads_Begin();
+    Quads_Draw(0,0,width,height);
+    Quads_End();
+
+    //we render the temporary target to the screen - inverted
+    System_SetRenderTarget(-1);
+    Quads_SetSubset(0,0,1,1);
+    Texture_Set(temptext);
+    Quads_Begin();
+    Quads_Draw(0,0,width,height);
+    Quads_End();
+
+    //we store the (now inverted) framebuffer
+    SDL_Surface *shot = SDL_CreateRGBSurface (SDL_SWSURFACE, width, height, 24,
+#if SDL_BYTEORDER == SDL_LIL_ENDIAN
+            0x00FF0000, 0x0000FF00, 0x000000FF, 0);
+#else
+            0x000000FF, 0x0000FF00, 0x00FF0000, 0);
+#endif
+    glReadPixels (0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE,
+            shot->pixels);
+    SDL_SaveBMP ( shot, filename.c_str());
+    SDL_FreeSurface (shot);
+
+    //we render the first state of the screen to the screen again
+    Quads_SetSubset(0,1,1,0);
+    Texture_Set(temptext);
+    Quads_Begin();
+    Quads_Draw(0,0,width,height);
+    Quads_End();
+
+    //and we delete our temporary texture
+    Texture_Delete(temptext);
 }
 
 MouseState Engine::getMouseState(){
@@ -278,7 +322,9 @@ void Engine::Texture_Set(int tex_slot){
 
 
 void Engine::Texture_Delete(int tex_slot){
-    printf("Trying to delete texture %d",tex_slot);
+    textures[tex_slot].deleted = true;
+    glDeleteTextures(1,&(textures[tex_slot].opengl_id));
+    freeSlotInList = true;
 }
 
 
@@ -291,11 +337,7 @@ int Engine::Texture_Get(std::string id){
 }
 
 bool Engine::Texture_Create(std::string id, int width, int height){
-    textures[currtexture].name = id;
-    textures[currtexture].opengl_id = createNewTexture();
-    textures[currtexture].width = width;
-    textures[currtexture].height = height;
-    textures[currtexture].draw_flipped = false;
+    createNewTexture(id,width,height);
 
     unsigned int* data;						// Stored Data
 
@@ -310,7 +352,6 @@ bool Engine::Texture_Create(std::string id, int width, int height){
 
 	delete [] data;
 
-    currtexture++;
     return true;
 }
 
@@ -340,31 +381,57 @@ bool Engine::Texture_Load(std::string id, char *filename){
             //image in strange format
             return false;
     }
-    textures[currtexture].name = id;
-    textures[currtexture].opengl_id = createNewTexture();
-    textures[currtexture].width = surface->w;
-    textures[currtexture].height = surface->h;
-    textures[currtexture].draw_flipped = false;
+
+    createNewTexture(id,surface->w, surface->h);
 
 	glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, surface->w, surface->h, 0,
                       texture_format, GL_UNSIGNED_BYTE, surface->pixels );
 
-    currtexture++;
     return true;
 }
 
-GLuint Engine::createNewTexture(){
+int Engine::createNewTexture(std::string name, int width, int height){
     GLuint id;
     glGenTextures( 1, &id );
 
 	// Bind the texture object
 	glBindTexture( GL_TEXTURE_2D, id );
 
-    //TODO: is this okay?
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
 
-    return id;
+    int newtext;
+    if(freeSlotInList) {
+        bool found = false;
+        int i = 0;
+        while(!found && i < currtexture){
+            if(textures[i].deleted){
+                found = true;
+                newtext = i;
+            }
+            i++;
+        }
+        if(!found){
+            newtext = currtexture;
+            currtexture++;
+            freeSlotInList = false;
+        }
+    } else {
+        newtext = currtexture;
+        currtexture++;
+    }
+
+    if(newtext >= maxtextures)
+        return -1;
+
+    textures[newtext].name = name;
+    textures[newtext].opengl_id = id;
+    textures[newtext].width = width;
+    textures[newtext].height = height;
+    textures[newtext].draw_flipped = false;
+    textures[newtext].deleted = false;
+
+    return newtext;
 }
 
 void Engine::Quads_SetRotation(float angle){
