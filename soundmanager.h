@@ -28,7 +28,7 @@ class SoundManager
     int samplefreq;
     int bytespersample;
 
-    static const int numchannels = 16;
+    static const int numchannels = 64;
     Mix_Music *currentmusic;
 public:
     bool Create( SoundSample** dest, char *filename );

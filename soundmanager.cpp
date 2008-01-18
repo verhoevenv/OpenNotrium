@@ -15,6 +15,9 @@ bool SoundManager::Initialize(int freq, int channels)
 		return false;
 	}
     //TODO: change parameters?
+    //TODO: close audio
+    //check http://www.koders.com/cpp/fidCCF9C0D295448E549DBADA9E72FF9A974D8ACBCD.aspx
+    //for examples
     if ( Mix_OpenAudio(freq, AUDIO_S16SYS, channels, 1024) < 0 ) {
         return false;
     }
@@ -55,8 +58,10 @@ float SoundSample::GetSoundLength() {
 void SoundSample::Play(float volume, float pan){
     Mix_VolumeChunk(chunk,volume*MIX_MAX_VOLUME);
     int channel = Mix_PlayChannel(-1, chunk,0);
-    if(channel != -1){
-        Mix_SetPanning(channel, 127 - (pan * 127) , 127 + (pan * 127));
+    if(channel == -1){
+        Mix_AllocateChannels(8 + Mix_AllocateChannels(-1));
+        channel = Mix_PlayChannel(-1, chunk,0);
     }
-
+    if(channel != -1)
+        Mix_SetPanning(channel, 127 - (pan * 127) , 127 + (pan * 127));
 }

@@ -440,7 +440,7 @@ bool game_engine::Frame(void)
 
 
 	//print screen to file
-	if (grim->Key_Click(KEY_PRINT )){ //TODO: this key or SDLK_PRINT?
+	if (grim->Key_Click(KEY_PRINT )){
 		Screenshot(&screenshot_name);
 		if(screenshot_name=="none"){
 			tempstring="Screenshots not available in windowed mode";
@@ -17434,7 +17434,6 @@ vector <point2d> game_engine::line_collision_detection(float x1, float y1, float
 	vector <point2d> hits;
 
 //	if(mod.general_objects[object->type].collision_type==-1)return false;
-    //TODO: check this
     if(mod.general_objects[object->type].collision_type==-1)
         return hits;
 

@@ -69,10 +69,10 @@ void Engine::System_Start(){
                     mousestate.btn_middle = true;
                     break;
                 case SDL_BUTTON_WHEELDOWN:
-                    mousestate.lZ = 1;
+                    mousestate.lZ += -1;
                     break;
                 case SDL_BUTTON_WHEELUP:
-                    mousestate.lZ = -1;
+                    mousestate.lZ += 1;
                     break;
                 }
                 break;
