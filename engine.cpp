@@ -1,0 +1,453 @@
+#include "engine.h"
+#include "SDL_opengl.h"
+#include "SDL_image.h"
+
+Engine::Engine() {
+    ignoreMouseMotion = 2; //blergh
+
+    width = 640;
+    height = 480;
+    bpp = 32;
+    fullscreen = false;
+
+    //perhaps this stuff should go into startframe?
+    currtexture = 0;
+    clear_a = clear_r = clear_g = clear_b = 0;
+    blend_src = grBLEND_SRCALPHA;
+    blend_dst = grBLEND_INVSRCALPHA;
+    for(int i=0;i<4;i++){
+        vertex_r[i] = 1;
+        vertex_g[i] = 1;
+        vertex_b[i] = 1;
+        vertex_a[i] = 1;
+    }
+}
+
+void Engine::startFrame(){
+    glClear(GL_COLOR_BUFFER_BIT);
+    glBindTexture(GL_TEXTURE_2D,0);
+    render_target = mainTarget;
+    rotate_angle = 0;
+    Quads_SetSubset(0,0,1,1);
+}
+
+void Engine::System_Start(){
+    SDL_Event event;
+    bool running = true;
+    while(running) {
+        startFrame();
+        running = (*framefunc)();
+        SDL_GL_SwapBuffers();
+
+        //mousewheel is a bit weird
+        mousestate.lZ = 0;
+        mousestate.lX = 0;
+        mousestate.lY = 0;
+
+        //erase the clicked keys
+        keys_clicked.clear();
+
+        while( SDL_PollEvent( &event ) ) {
+            switch( event.type ) {
+            case SDL_QUIT:
+                running = false;
+            case SDL_KEYDOWN:
+                Key key = event.key.keysym.sym;
+                keys_clicked.insert(key);
+                break;
+
+            case SDL_MOUSEBUTTONDOWN:
+                switch(event.button.button){
+                case SDL_BUTTON_LEFT:
+                    mousestate.btn_left = true;
+                    break;
+                case SDL_BUTTON_RIGHT:
+                    mousestate.btn_right = true;
+                    break;
+                case SDL_BUTTON_MIDDLE:
+                    mousestate.btn_middle = true;
+                    break;
+                case SDL_BUTTON_WHEELDOWN:
+                    mousestate.lZ = 1;
+                    break;
+                case SDL_BUTTON_WHEELUP:
+                    mousestate.lZ = -1;
+                    break;
+                }
+                break;
+            case SDL_MOUSEBUTTONUP:
+                switch(event.button.button){
+                case SDL_BUTTON_LEFT:
+                    mousestate.btn_left = false;
+                    break;
+                case SDL_BUTTON_RIGHT:
+                    mousestate.btn_right = false;
+                    break;
+                case SDL_BUTTON_MIDDLE:
+                    mousestate.btn_middle = false;
+                    break;
+                }
+                break;
+            case SDL_MOUSEMOTION:
+                if(ignoreMouseMotion > 0){
+                    ignoreMouseMotion--;
+                } else {
+                    mousestate.lX = event.motion.xrel;
+                    mousestate.lY = event.motion.yrel;
+                }
+                break;
+            //TODO: case focus gain/lost? Also setup open gl there!
+            }
+        }
+    }
+}
+
+void Engine::System_Initiate(){
+    if ( SDL_Init(SDL_INIT_VIDEO) < 0 ) {
+        exit(1);
+    }
+    System_SetState_Title(title);
+
+    /* Set the minimum requirements for the OpenGL window */
+    SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5 );
+    SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 5 );
+    SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 5 );
+    SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16 );
+    SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
+
+    Uint32 flags = SDL_OPENGL;
+    if(fullscreen)
+        flags |= SDL_FULLSCREEN;
+
+    if( SDL_SetVideoMode( width, height, bpp, flags ) == 0 ) {
+        exit(1);
+    }
+
+    SDL_WM_GrabInput(SDL_GRAB_ON);
+    SDL_WarpMouse(width/2,height/2);
+    SDL_GetRelativeMouseState(NULL,NULL);
+
+    setup_opengl();
+    startFrame();
+}
+
+void Engine::setup_opengl()
+{
+    //float aspect = (float)width / (float) height;
+
+    //TODO: is this right?
+    glViewport(0, 0, width, height);
+
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+
+    glOrtho(0, width, height, 0, -2, 2);
+
+    glMatrixMode(GL_MODELVIEW);
+    glLoadIdentity();
+
+    glShadeModel(GL_SMOOTH);
+    glClearColor(clear_r,clear_g,clear_b,clear_a);
+    glDisable(GL_DEPTH_TEST); //since we do Z sorting ourselves, it seems
+    glEnable(GL_CULL_FACE);
+    //glDisable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_2D);
+
+    //TODO: probably need to recreate textures here and do other context recreation stuff
+
+
+    if(Texture_Create("EngineMainTarget",width,height))
+        mainTarget = Texture_Get("EngineMainTarget");
+}
+
+void Engine::System_SaveScreenshot(std::string *filename){
+    //TODO: implement this
+    // http://osdl.sourceforge.net/main/documentation/rendering/SDL-openGL.html#OpenGL2SDL
+}
+
+MouseState Engine::getMouseState(){
+    return MouseState(mousestate);
+}
+
+bool Engine::Key_Down(Key key){
+    Uint8* keys = SDL_GetKeyState(NULL);
+    return keys[key];
+}
+bool Engine::Key_Click(Key key){
+    std::set<Key>::iterator it = keys_clicked.find(key);
+    return it != keys_clicked.end();
+}
+
+void Engine::System_SetState_Blending(bool state){
+    if(state){
+        glEnable(GL_BLEND);
+        glBlendFunc(blend_src, blend_dst);
+    } else {
+        glDisable(GL_BLEND);
+    }
+}
+
+void Engine::System_SetState_BlendSrc(BlendState state){
+    blend_src = state;
+    glBlendFunc(blend_src, blend_dst);
+}
+void Engine::System_SetState_BlendDst(BlendState state){
+    blend_dst = state;
+    glBlendFunc(blend_src, blend_dst);
+}
+
+void Engine::System_SetState_FrameFunc(bool (*func)()){
+    framefunc = func;
+}
+
+void Engine::System_SetState_FocusLostFunc(bool (*func)()){
+    focuslostfunc = func;
+}
+
+void Engine::System_SetState_FocusGainFunc(bool (*func)()){
+    focusgainedfunc = func;
+}
+
+void Engine::System_SetState_Windowed(bool state){
+    fullscreen = !state;
+}
+
+void Engine::System_SetState_ScreenWidth(int w){
+    width = w;
+}
+
+void Engine::System_SetState_ScreenHeight(int h){
+    height = h;
+}
+
+void Engine::System_SetState_ScreenBPP(int bits){
+    bpp = bits;
+}
+
+void Engine::System_SetState_Title(char* newtitle){
+    title = newtitle;
+    SDL_WM_SetCaption(title, NULL);
+}
+
+void Engine::System_Shutdown(){
+    SDL_Quit();
+}
+
+bool Engine::System_SetRenderTarget(int tex_id){
+    if(tex_id == -1)
+        tex_id = mainTarget;
+
+    //copy the current buffer to the previous render target
+    EngineTexture* tex = &textures[render_target];
+    glBindTexture( GL_TEXTURE_2D, tex->opengl_id );
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, tex->width, tex->height, 0);
+    tex->draw_flipped = true;
+
+    //set up the correct stuff for rendering to the new target
+    tex = &textures[tex_id];
+    glViewport(0,0,tex->width,tex->height);
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glOrtho(0, tex->width, tex->height, 0, -2, 2);
+    glMatrixMode(GL_MODELVIEW);
+
+    //restore state?
+    Texture_Set(tex_id);
+    Quads_SetColor(1,1,1,1);
+    Quads_Begin();
+    Quads_Draw(0,0,tex->width,tex->height);
+    Quads_End();
+
+    render_target = tex_id;
+    return true;
+}
+
+void Engine::System_ClearScreen(float r, float g, float b, float a){
+    clear_r = r;
+    clear_g = g;
+    clear_b = b;
+    clear_a = a;
+    glClearColor(clear_r,clear_g,clear_b,clear_a);
+    glClear(GL_COLOR_BUFFER_BIT);
+}
+
+void Engine::Texture_Set(int tex_slot){
+    activetexture = tex_slot;
+    glBindTexture( GL_TEXTURE_2D, textures[tex_slot].opengl_id );
+}
+
+
+void Engine::Texture_Delete(int tex_slot){
+    printf("Trying to delete texture %d",tex_slot);
+}
+
+
+int Engine::Texture_Get(std::string id){
+    for(int i=0;i<maxtextures;i++){
+        if(textures[i].name == id)
+            return i;
+    }
+    return -1;
+}
+
+bool Engine::Texture_Create(std::string id, int width, int height){
+    textures[currtexture].name = id;
+    textures[currtexture].opengl_id = createNewTexture();
+    textures[currtexture].width = width;
+    textures[currtexture].height = height;
+    textures[currtexture].draw_flipped = false;
+
+    unsigned int* data;						// Stored Data
+
+	data = (unsigned int*)new GLuint[((width * height)* 4 * sizeof(unsigned int))];
+
+	ZeroMemory(data,((128 * 128)* 4 * sizeof(unsigned int)));
+
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
+		GL_RGBA, GL_UNSIGNED_BYTE, data);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+
+	delete [] data;
+
+    currtexture++;
+    return true;
+}
+
+
+bool Engine::Texture_Load(std::string id, char *filename){
+    SDL_Surface *surface;
+    GLenum texture_format;
+
+    surface = IMG_Load(filename);
+    if(!surface)
+        return false;
+
+    Uint8 nOfColors = surface->format->BytesPerPixel;
+    if (nOfColors == 4)     // contains an alpha channel
+    {
+            if (surface->format->Rmask == 0x000000ff)
+                    texture_format = GL_RGBA;
+            else
+                    texture_format = GL_BGRA;
+    } else if (nOfColors == 3)     // no alpha channel
+    {
+            if (surface->format->Rmask == 0x000000ff)
+                    texture_format = GL_RGB;
+            else
+                    texture_format = GL_BGR;
+    } else {
+            //image in strange format
+            return false;
+    }
+    textures[currtexture].name = id;
+    textures[currtexture].opengl_id = createNewTexture();
+    textures[currtexture].width = surface->w;
+    textures[currtexture].height = surface->h;
+    textures[currtexture].draw_flipped = false;
+
+	glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, surface->w, surface->h, 0,
+                      texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+
+    currtexture++;
+    return true;
+}
+
+GLuint Engine::createNewTexture(){
+    GLuint id;
+    glGenTextures( 1, &id );
+
+	// Bind the texture object
+	glBindTexture( GL_TEXTURE_2D, id );
+
+    //TODO: is this okay?
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
+    glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
+
+    return id;
+}
+
+void Engine::Quads_SetRotation(float angle){
+    //glRotate needs to be called after glTranslate to define local rotation, so store it for now.
+    rotate_angle = angle * 180 / 3.14159265358979323846f;
+}
+
+void Engine::Quads_SetColor(float r, float g, float b, float a){
+    for(int i=0;i<4;i++)
+        Quads_SetColorVertex(i,r,g,b,a);
+}
+
+void Engine::Quads_SetSubset(float tl_u, float tl_v, float br_u, float br_v){
+    texcoor_tl_u = tl_u;
+    texcoor_tl_v = tl_v;
+    texcoor_br_u = br_u;
+    texcoor_br_v = br_v;
+}
+
+void Engine::Quads_Begin(){
+    //nothing? Perhaps reinit of stuff or something?
+}
+void Engine::Quads_End(){
+    glFlush();
+}
+
+void Engine::Quads_Draw(float x, float y, float width, float height){
+    glLoadIdentity();
+    glTranslatef(x+width/2.0,y+width/2.0,0);
+    glRotatef(rotate_angle,0,0,1);
+    glTranslatef(-width/2.0,-width/2.0,0);
+    Draw4V(0,0,width,0,width,height,0,height);
+}
+
+void Engine::Quads_SetColorVertex(int vertex, float r, float g, float b, float a){
+    vertex_r[vertex] = r;
+    vertex_g[vertex] = g;
+    vertex_b[vertex] = b;
+    vertex_a[vertex] = a;
+}
+
+void Engine::Quads_Draw4V(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
+    glLoadIdentity();
+    Draw4V(x0, y0, x1, y1, x2, y2, x3, y3);
+}
+
+void Engine::Draw4V(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
+    EngineTexture *tex = &textures[activetexture];
+
+    glBegin(GL_QUADS);
+    setglColor(0);
+    if(tex->draw_flipped)
+        glTexCoord2f(texcoor_tl_u, 1 - texcoor_tl_v);
+    else
+        glTexCoord2f(texcoor_tl_u, texcoor_tl_v);
+    glVertex3f(x0, y0, -1);
+
+    setglColor(3);
+    if(tex->draw_flipped)
+        glTexCoord2f(texcoor_tl_u, 1 - texcoor_br_v);
+    else
+        glTexCoord2f(texcoor_tl_u, texcoor_br_v);
+    glVertex3f(x3, y3, -1);
+
+    setglColor(2);
+    if(tex->draw_flipped)
+        glTexCoord2f(texcoor_br_u, 1 - texcoor_br_v);
+    else
+        glTexCoord2f(texcoor_br_u, texcoor_br_v);
+    glVertex3f(x2, y2, -1);
+
+    setglColor(1);
+    if(tex->draw_flipped)
+        glTexCoord2f(texcoor_br_u, 1 - texcoor_tl_v);
+    else
+        glTexCoord2f(texcoor_br_u, texcoor_tl_v);
+    glVertex3f(x1, y1, -1);
+    glEnd();
+}
+
+void Engine::setglColor(int index){
+    if(vertex_a[index] >= 0)
+        glColor4f(vertex_r[index],vertex_g[index],vertex_b[index],vertex_a[index]);
+    else
+        glColor4f(1,1,1,1);
+}

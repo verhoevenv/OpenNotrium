@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Release" />
+	<File name="WinMain.cpp" open="1" top="1" tabpos="2">
+		<Cursor position="37599" topLine="17650" />
+	</File>
+	<File name="blendstate.h" open="0" top="0" tabpos="0">
+		<Cursor position="16" topLine="0" />
+	</File>
+	<File name="editor.cpp" open="0" top="0" tabpos="4">
+		<Cursor position="29587" topLine="53" />
+	</File>
+	<File name="editor.h" open="0" top="0" tabpos="2">
+		<Cursor position="435" topLine="25" />
+	</File>
+	<File name="engine.cpp" open="1" top="0" tabpos="1">
+		<Cursor position="12675" topLine="418" />
+	</File>
+	<File name="engine.h" open="0" top="0" tabpos="11">
+		<Cursor position="0" topLine="146" />
+	</File>
+	<File name="entities.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="694" topLine="2" />
+	</File>
+	<File name="entities.h" open="0" top="0" tabpos="12">
+		<Cursor position="1386" topLine="73" />
+	</File>
+	<File name="func.cpp" open="0" top="0" tabpos="7">
+		<Cursor position="10640" topLine="363" />
+	</File>
+	<File name="func.h" open="0" top="0" tabpos="11">
+		<Cursor position="243" topLine="3" />
+	</File>
+	<File name="keys.h" open="0" top="0" tabpos="5">
+		<Cursor position="1841" topLine="0" />
+	</File>
+	<File name="main.h" open="0" top="0" tabpos="1">
+		<Cursor position="10572" topLine="407" />
+	</File>
+	<File name="mod_loader.cpp" open="0" top="0" tabpos="17">
+		<Cursor position="11693" topLine="116" />
+	</File>
+	<File name="mod_loader.h" open="0" top="0" tabpos="6">
+		<Cursor position="7535" topLine="321" />
+	</File>
+	<File name="puzzle.h" open="0" top="0" tabpos="0">
+		<Cursor position="670" topLine="0" />
+	</File>
+	<File name="resource_handler.cpp" open="0" top="0" tabpos="9">
+		<Cursor position="4565" topLine="184" />
+	</File>
+	<File name="resource_handler.h" open="0" top="0" tabpos="10">
+		<Cursor position="1169" topLine="28" />
+	</File>
+	<File name="sinecosine.h" open="0" top="0" tabpos="0">
+		<Cursor position="435" topLine="0" />
+	</File>
+	<File name="soundmanager.cpp" open="0" top="0" tabpos="8">
+		<Cursor position="644" topLine="8" />
+	</File>
+	<File name="soundmanager.h" open="0" top="0" tabpos="7">
+		<Cursor position="322" topLine="13" />
+	</File>
+	<File name="text_output.cpp" open="0" top="0" tabpos="6">
+		<Cursor position="8977" topLine="282" />
+	</File>
+	<File name="text_output.h" open="0" top="0" tabpos="4">
+		<Cursor position="325" topLine="2" />
+	</File>
+</CodeBlocks_layout_file>

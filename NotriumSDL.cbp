@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="NotriumSDL" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="..\Notrium\NotriumSDL" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="..\Notrium" />
+				<Option object_output="obj\Debug\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="..\Notrium\NotriumSDL" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="..\Notrium" />
+				<Option object_output="obj\Release\" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+		</Compiler>
+		<Unit filename="WinMain.cpp" />
+		<Unit filename="blendstate.h" />
+		<Unit filename="editor.cpp" />
+		<Unit filename="editor.h" />
+		<Unit filename="engine.cpp" />
+		<Unit filename="engine.h" />
+		<Unit filename="entities.cpp" />
+		<Unit filename="entities.h" />
+		<Unit filename="func.cpp" />
+		<Unit filename="func.h" />
+		<Unit filename="keys.h" />
+		<Unit filename="main.h" />
+		<Unit filename="memleaks.cpp" />
+		<Unit filename="memleaks.h" />
+		<Unit filename="mod_loader.cpp" />
+		<Unit filename="mod_loader.h" />
+		<Unit filename="puzzle.cpp" />
+		<Unit filename="puzzle.h" />
+		<Unit filename="resource.h" />
+		<Unit filename="resource_handler.cpp" />
+		<Unit filename="resource_handler.h" />
+		<Unit filename="sinecosine.cpp" />
+		<Unit filename="sinecosine.h" />
+		<Unit filename="soundmanager.cpp" />
+		<Unit filename="soundmanager.h" />
+		<Unit filename="text_output.cpp" />
+		<Unit filename="text_output.h" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
