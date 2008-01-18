@@ -97,7 +97,18 @@ void Engine::System_Start(){
                     mousestate.lY = event.motion.yrel;
                 }
                 break;
-            //TODO: case focus gain/lost? Also setup open gl there!
+            case SDL_ACTIVEEVENT:
+                if(event.active.state & SDL_APPINPUTFOCUS){
+                    //might need to recreate opengl context here?
+                    if(event.active.gain){
+                        if(focusgainedfunc)
+                            (*focusgainedfunc)();
+                    } else {
+                        if(focuslostfunc)
+                            (*focuslostfunc)();
+                    }
+                }
+                break;
             }
         }
     }
