@@ -2526,7 +2526,7 @@ void game_engine::AI_act_behavior_model(int creature,int behavior, float paramet
 			break;
 		//2=follow friend, if distance to enemy is smaller than parameter0, attack
 		case 2:
-			if((enemy_index>=0)){
+			if((enemy_index>=0 && friend_index>=0)){
 				float enemy_distance_from_friend=sqr(friend_x-enemy_x)+sqr(friend_y-enemy_y);
 				if(enemy_distance_from_friend<sqr(parameter0)){
 					goto attack;
@@ -16674,16 +16674,18 @@ void game_engine::set_bar(creature_base *creature, int bar, float value){
 	creature->bars[bar].value=value;
 
 	//bar types, some bars may affect the values they show
-	switch(mod.general_bars[bar].bar_type){
-		case 1:
-			body_temperature=creature->bars[bar].value*0.01f;
-			break;
-		case 4:
-			armor=(int)creature->bars[bar].value;
-			break;
-		case 6:
-			time_from_beginning=(int)creature->bars[bar].value;
-			break;
+	if(bar<mod.general_bars.size()){
+		switch(mod.general_bars[bar].bar_type){
+			case 1:
+				body_temperature=creature->bars[bar].value*0.01f;
+				break;
+			case 4:
+				armor=(int)creature->bars[bar].value;
+				break;
+			case 6:
+				time_from_beginning=(int)creature->bars[bar].value;
+				break;
+		}
 	}
 }
 
@@ -17296,6 +17298,7 @@ vector <point2d> game_engine::line_will_collide(float x1, float y1, float x2, fl
 			if(check_plot_objects)
 			for(c=0;c<map_main->grid[a].grid[b].items.size();c++){
 				if(map_main->items[map_main->grid[a].grid[b].items[c]].dead)continue;
+				if(map_main->items[map_main->grid[a].grid[b].items[c]].type >= mod.general_objects.size())continue;
 				if(only_ones_that_hinder_visibility)
 					if(!mod.general_objects[map_main->items[map_main->grid[a].grid[b].items[c]].type].blocks_vision)continue;
 				if(only_ones_that_stop_bullets)
