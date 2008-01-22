@@ -12841,14 +12841,14 @@ void game_engine::play_music_file(int song_number, int *do_not_play)
 	strcat(temprivi,mod.mod_name.c_str());
 	strcat(temprivi,"/");
 	strcat(temprivi,play_file.c_str());
-	if(FileExist(temprivi)){
+	if(grim->File_Exists(temprivi)){
 		SwapSourceFilter(temprivi);
 	}
 
 	//no song there, try the default directory
 	strcpy(temprivi,"music/");
 	strcat(temprivi,play_file.c_str());
-	if(FileExist(temprivi)){
+	if(grim->File_Exists(temprivi)){
 		SwapSourceFilter(temprivi);
 	}
 

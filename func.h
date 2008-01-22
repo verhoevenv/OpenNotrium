@@ -3,7 +3,7 @@
 #define FUNCTIONS_LIBRARY
 
 #include <stdio.h>
-#include <windows.h>
+//#include <windows.h>
 #include <math.h>
 #include <string>
 #include <vector>
@@ -28,7 +28,7 @@ using namespace std;
 
 	int randInt( int low, int high );
 	float randDouble( float low, float high );
-	bool intersect(RECT eka,RECT toka);
+	//bool intersect(RECT eka,RECT toka);
 	char *stripped_fgets(char *s, int n, FILE *f);
 	bool strtobool(char *rivi);
 	void random_name(char *creature_name);//give the given monk a random name
@@ -98,11 +98,5 @@ using namespace std;
 		bool mouse_middle,mouse_middle2;
 		float mouse_wheel;
 	};
-
-	bool FileExist (char * fileName);
-
-
-
-
 
 #endif

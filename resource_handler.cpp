@@ -34,14 +34,14 @@ int resource_handler::load_texture(char *name, string mod_name){//loads the text
 	strcat(temprivi,mod_name.c_str());
 	strcat(temprivi,"/");
 	strcat(temprivi,name);
-	int OK=FileExist(temprivi);
+	bool OK=grim->File_Exists(temprivi);
 
 	//try default directory
 	if(!OK){
 		strcpy(temprivi,"textures/");
 		strcat(temprivi,name);
 
-		OK=FileExist(temprivi);
+		OK=grim->File_Exists(temprivi);
 	}
 	if(!OK){
 		debug->debug_output("Loading Texture!",2,0);

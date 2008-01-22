@@ -35,27 +35,27 @@ float randDouble( float low, float high )
     return( num + low );
 }
 
-bool intersect(RECT eka,RECT toka)
-{
-	int tempx1,tempx2,tempy1,tempy2;
-
-	tempx1=eka.right-toka.left;
-	tempx2=toka.right-eka.left;
-	if (((tempx1>0)&&(tempx2>0)) ||
-	((tempx1<0)&&(tempx2<0)) )
-	
-	{
-	tempy1=eka.top-toka.bottom;
-	tempy2=toka.top-eka.bottom;
-	if (((tempy1>0)&&(tempy2>0)) ||
-	((tempy1<0)&&(tempy2<0)))
-	return true;
-	}
-
-
-	return false;
-
-}
+//bool intersect(RECT eka,RECT toka)
+//{
+//	int tempx1,tempx2,tempy1,tempy2;
+//
+//	tempx1=eka.right-toka.left;
+//	tempx2=toka.right-eka.left;
+//	if (((tempx1>0)&&(tempx2>0)) ||
+//	((tempx1<0)&&(tempx2<0)) )
+//	
+//	{
+//	tempy1=eka.top-toka.bottom;
+//	tempy2=toka.top-eka.bottom;
+//	if (((tempy1>0)&&(tempy2>0)) ||
+//	((tempy1<0)&&(tempy2<0)))
+//	return true;
+//	}
+//
+//
+//	return false;
+//
+//}
 // Identical to fgets except the string is trucated at the first ';',
 // carriage return or line feed.
 char *stripped_fgets(char *s, int n, FILE *f)
@@ -485,19 +485,4 @@ debugger::debugger(){
 	debug_state[1]=0;
 	debug_level[0]=0;
 	debug_level[1]=0;
-}
-
-bool FileExist (char * fileName)
-{
-   FILE * infile;
-   int ret = (0);
-   infile = fopen (fileName, "r");
-   if (infile == NULL)   {
-      return false;
-   }
-   else   {
-	fclose (infile);
-      return true;
-   }
-   return false;
 }
