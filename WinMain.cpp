@@ -6156,7 +6156,7 @@ void game_engine::draw_particles(int layer){//draws particles
 		grim->Quads_Begin();
 
 		//for(b=0;b<3;b++){
-			for(it=particles[a].particles_list[layer].begin(); it!=particles[a].particles_list[layer].end(); it++){
+			for(it=particles[a].particles_list[layer].begin(); it!=particles[a].particles_list[layer].end();){
 
 				particle_x=(*it).x;
 				particle_y=(*it).y;
@@ -6178,7 +6178,7 @@ void game_engine::draw_particles(int layer){//draws particles
 
 					if(size>particle_type_size)size=particle_type_size;
 				}
-				if(size<1){continue;}
+				if(size<1){it++;continue;}
 
 				if(unique_rotate){
 					grim->Quads_SetRotation((*it).rotate);
@@ -6186,6 +6186,7 @@ void game_engine::draw_particles(int layer){//draws particles
 
 				//draw
 				grim->Quads_Draw(-camera_x+particle_x-size*0.5f, -camera_y+particle_y-size*0.5f, size, size);
+				it++;
 			}
 
 		grim->Quads_End();
