@@ -2,7 +2,7 @@
 #ifndef ENTITIES_HEADER
 #define ENTITIES_HEADER
 
-#include <windows.h>
+//#include <windows.h>
 #include <vector>
 #include <list>
 using namespace std;

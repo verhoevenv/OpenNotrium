@@ -349,7 +349,7 @@ void map::generate_map(float amount_multiplier, vector <int> terrain_types, vect
 				creature_base temp_creature;
 				creature.push_back(temp_creature);
 
-				ZeroMemory(&creature[i], sizeof(creature[i]));
+				memset(&creature[i], 0, sizeof(creature[i]));
 				creature[i].dead=false;
 				creature[i].rotation=randDouble(0,2*pi);
 				creature[i].rotation_head=creature[i].rotation;
@@ -391,7 +391,7 @@ void map::generate_map(float amount_multiplier, vector <int> terrain_types, vect
 
 	//player
 	i=0;
-	ZeroMemory(&creature[i], sizeof(creature[i]));
+	memset(&creature[i], 0, sizeof(creature[i]));
 	creature[i].dead=false;
 	creature[i].rotation=randDouble(0,2*pi);
 	creature[i].rotation_head=creature[i].rotation;
@@ -552,7 +552,7 @@ int map::create_light(float x, float y, int type, float size, float r, float g, 
 
 
 	light temp_light;
-	ZeroMemory(&temp_light, sizeof(temp_light));
+	memset(&temp_light, 0, sizeof(temp_light));
 
 	temp_light.dead=false;
 	temp_light.time=time;

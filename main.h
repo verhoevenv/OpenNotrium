@@ -7,9 +7,9 @@
 #pragma warning(disable: 4244)
 #pragma warning(disable: 4018)
 
-#include <windows.h>
+//#include <windows.h>
 #include <malloc.h>
-#include <mmsystem.h>
+//#include <mmsystem.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
