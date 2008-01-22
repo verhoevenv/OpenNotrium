@@ -11,7 +11,7 @@ using namespace std;
 
 Engine *grim = 0;
 game_engine *engine;
-HHOOK hkb;
+//HHOOK hkb;
 int bug1=0,bug2=0,bug3=0;//debugging variables
 bool debugging=false;//debugging control
 
@@ -5241,7 +5241,7 @@ void game_engine::calculate_bullets(void){
 			continue;
 		}
 
-			
+
 
 		if((*it).dead_on_next){
 			(*it).dead=true;
@@ -12641,14 +12641,7 @@ void game_engine::calculate_body_temperature(void)
 
 
 void game_engine::sound_init(void){
-
-
-
-		// Create a static IDirectSound in the CSound class.
-		HRESULT hr;
 		sound_initialized=true;
-
-		HWND hwnd = GetFocus();
 
 		//if( FAILED( hr = g_pSoundManager->Initialize( hWnd, DSSCL_PRIORITY, 2, 44100, 16 ) ) )
 		if( ! g_pSoundManager->Initialize( 44100, 2 ) )
@@ -12659,17 +12652,11 @@ void game_engine::sound_init(void){
 		//initialize sound loader
 		resources.initialize_resource_handler(grim,&debug,g_pSoundManager,play_sound, sound_initialized);
 
-
-
-
-
-
 		//load extra samples
 		UI_menu_click[0]=resources.load_sample("click0.wav",2,mod.mod_name);
 		UI_menu_click[1]=resources.load_sample("click1.wav",2,mod.mod_name);
 		UI_menu_click[2]=resources.load_sample("click2.wav",2,mod.mod_name);
 		intro_sound=resources.load_sample("intro.wav",2,mod.mod_name);
-
 }
 
 
@@ -14251,12 +14238,12 @@ void game_engine::calculate_mouse_on_creatures(void){
 }
 
 
-void game_engine::load_mod_names(string &StartingPath)
+void game_engine::load_mod_names(string StartingPath)
 {
 	//load mod names
 	mods=0;
 	selected_mod=0;
-	
+
 	vector<string> v = grim->File_ListDirectory(StartingPath);
 
 	for (int i=0; i<v.size(); i++) {

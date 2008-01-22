@@ -27,6 +27,7 @@ Engine::Engine() {
 }
 
 void Engine::startFrame(){
+    //printf("%d\n",SDL_GetTicks());
     glClear(GL_COLOR_BUFFER_BIT);
     glBindTexture(GL_TEXTURE_2D,0);
     render_target = mainTarget;
@@ -117,7 +118,7 @@ void Engine::System_Start(){
 }
 
 void Engine::System_Initiate(const char *argv0){
-    if ( SDL_Init(SDL_INIT_VIDEO) < 0 ) {
+    if ( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) < 0 ) {
         exit(1);
     }
     System_SetState_Title(title);

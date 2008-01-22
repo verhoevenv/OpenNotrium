@@ -462,7 +462,7 @@ protected:
 	//void deinit_mouse(void);
 	//void calculate_endings(void);
 	void calculate_weather(void);
-	void load_mod_names(string &StartingPath);
+	void load_mod_names(string StartingPath);
 	void spawn_creature(int side, int tactic, int tactic2, float x, float y, float angle, int type, map *map);
 	void set_edges(void);
 	static int arrange_item_list_callback(const void *c, const void *d);
