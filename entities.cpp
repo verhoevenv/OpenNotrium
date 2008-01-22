@@ -262,7 +262,7 @@ void map::generate_map(float amount_multiplier, vector <int> terrain_types, vect
 
 		for (i=start_x; i<end_x; i++){
 			for (j=start_y; j<end_y; j++){
-				if(sqrt(sqr(i-target_x)+sqr(j-target_y))<size){
+				if(sqrt((float)(sqr(i-target_x)+sqr(j-target_y)))<size){
 					//do not place this type on edges
 					if(do_not_place_on_map_edges[ground_type]){
 						if((i<2)||(j<2)||(i>sizex-4)||(j>sizey-4))

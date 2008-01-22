@@ -56,39 +56,20 @@ void game_engine::Screenshot(string *screenshot_name){
 
 void game_engine::GetScreenshotFileName(string *FileName)
 {
-    // retrieve the filename of the EXE file
-    string ModuleFileName;
-    ModuleFileName.reserve(MAX_PATH);
-    GetModuleFileName(
-        NULL, const_cast<char*>(ModuleFileName.data()), MAX_PATH);
-    // extract the path info from the filename
-    *FileName = ModuleFileName.substr(0, ModuleFileName.find_last_of(":\\"));
-    // append the sub-folder path
-  //  FileName += SCREENSHOT_REL_PATH;
-
     // search for first unused filename
-    char Buf[MAX_PATH];
-    WIN32_FIND_DATA ffd;
-    HANDLE h;
+    string buffer;
     for (int i = 0; i < 1000; i++)
     {
-        // prepare search mask for FindFirstFile
-		string filename_real=*FileName;
-		filename_real+="shot%03i.bmp";
+		ostringstream os;
+		os << "shot" << i << ".bmp";
+		buffer = os.str();
 
-        wsprintf(Buf, filename_real.c_str(), i);
-        // check whether this file already exists
-        h = FindFirstFile(Buf, &ffd);
-        // if the file exists, close the search handle and continue
-        if (h != INVALID_HANDLE_VALUE)
-        {   FindClose(h); }
-        // if the file does not exist, exit from the loop
-        else
+		if (!grim->File_Exists(buffer))
         {   break; }
     }
 
     // set FileName to the first unused filename
-    *FileName = Buf;
+    *FileName = buffer;
 }
 
 /*
@@ -586,7 +567,8 @@ void game_engine::cfg_load(void){
 //}
 
 
-INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT)
+//INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT)
+int main(int argc, char* argv[])
 {
 
 	#ifdef _DEBUG
@@ -599,7 +581,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT)
 	grim = new Engine();
 
 	engine=new game_engine();
-	engine->hInst=hInst;
+	//engine->hInst=hInst;
 	grim->System_SetState_FrameFunc(FrameFunc);
 	grim->System_SetState_FocusLostFunc(focuslost);
 	grim->System_SetState_FocusGainFunc(focusgained);
@@ -629,7 +611,7 @@ INT WINAPI WinMain(HINSTANCE hInst, HINSTANCE, LPSTR, INT)
 	engine->focus=true;
 
 	//initiate graphics engine
-	grim->System_Initiate();
+	grim->System_Initiate(argv[0]);
 
 
 
@@ -5134,7 +5116,6 @@ bullet game_engine::shoot(int from_creature, int side,int type, float startx,flo
 		bullet temp_bullet;
 		temp_bullet.dead=true;
 
-
 		float shooter_move_x=(map_main->creature[from_creature].x-map_main->creature[from_creature].x2)/(elapsed*game_speed);
 		float shooter_move_y=(map_main->creature[from_creature].y-map_main->creature[from_creature].y2)/(elapsed*game_speed);
 
@@ -5252,8 +5233,7 @@ void game_engine::calculate_bullets(void){
 	list<bullet>::iterator it;
 
 	if(elapsed*game_speed>0)
-	for(it=map_main->bullets.begin(); it!=map_main->bullets.end(); it++){
-
+	for(it=map_main->bullets.begin(); it!=map_main->bullets.end();){
 
 		if((*it).dead){
 			//remove from list
@@ -5261,7 +5241,7 @@ void game_engine::calculate_bullets(void){
 			continue;
 		}
 
-
+			
 
 		if((*it).dead_on_next){
 			(*it).dead=true;
@@ -5506,8 +5486,7 @@ void game_engine::calculate_bullets(void){
 			}
 			}
 
-
-
+			it++;
 	}
 }
 
@@ -6083,8 +6062,12 @@ void game_engine::calculate_particles(void){
 	for(a=0;a<particles.size();a++){
 		if(particles[a].dead)continue;
 		for(b=0;b<3;b++){
-			for(it=particles[a].particles_list[b].begin(); it!=particles[a].particles_list[b].end(); it++){
-				//if(map_main->particles[i].dead)continue;
+			for(it=particles[a].particles_list[b].begin(); it!=particles[a].particles_list[b].end();){
+
+				(*it).time-=elapsed*game_speed;
+				(*it).x+=(*it).move_x*elapsed*game_speed;
+				(*it).y+=(*it).move_y*elapsed*game_speed;
+
 				if((*it).time<0){
 					//blood stays on the floor for a while
 					if(particles[a].stop_when_hit_ground>=0){
@@ -6103,11 +6086,9 @@ void game_engine::calculate_particles(void){
 						it=particles[a].particles_list[b].erase(it);
 						continue;
 					}
+				} else {
+					it++;
 				}
-
-				(*it).time-=elapsed*game_speed;
-				(*it).x+=(*it).move_x*elapsed*game_speed;
-				(*it).y+=(*it).move_y*elapsed*game_speed;
 			}
 		}
 	}
@@ -7729,7 +7710,6 @@ bool game_engine::run_effect(Mod::effect effect, creature_base *creature, int cr
 		case 4:
 			//4=increase creature's bar parameter3 with parameter1 (if parameter2=1, don't increase over maximum or decrease below minimum)
 			if(!undo){
-
 				return_value=false;
 
 				if(creature->bars[(int)effect.parameter3].active){
@@ -12705,7 +12685,7 @@ void game_engine::playsound(int sample_number,float volume,float sound_x,float s
 		return;
 
 
-	float fLog = (float)log(1+volume*9)/log(10);
+	float fLog = log(1+volume*9)/log(10.0f);
 
 	float distance=sqrtf(sqrtf(sqr(sound_x-listener_x)+sqr(sound_y-listener_y)))*13;
 	float end_volume=((600.0f-distance)/600.0f)*1.6f*randDouble(0.95f,1.05f)*(float)volume_slider[0]*fLog;
@@ -12890,6 +12870,7 @@ void game_engine::play_music_file(int song_number, int *do_not_play)
 bool game_engine::SwapSourceFilter(char* file)
 {
     g_pSoundManager->playMusic(file);
+	return true;
 }
 
 //This seems to change the current music track
@@ -13015,6 +12996,7 @@ bool game_engine::SwapSourceFilter(char* file)
 
 bool game_engine::set_volume(float volume){
     g_pSoundManager->setMusicVolume(volume);
+	return true;
 }
 
 //HRESULT game_engine::set_volume(float volume)
@@ -14269,33 +14251,23 @@ void game_engine::calculate_mouse_on_creatures(void){
 }
 
 
-void game_engine::load_mod_names(const string &StartingPath)
+void game_engine::load_mod_names(string &StartingPath)
 {
 	//load mod names
 	mods=0;
 	selected_mod=0;
-	const string Dot = ".";
-	const string DotDot = "..";
-	const string StartingPathAndWild = StartingPath + "/*.*";
-	WIN32_FIND_DATA MyWIN32_FIND_DATA_dir;
-	HANDLE fff_subdir = FindFirstFile(StartingPathAndWild.c_str(), &MyWIN32_FIND_DATA_dir);
-	if (fff_subdir && fff_subdir != INVALID_HANDLE_VALUE)
-	{
-	  while((FindNextFile(fff_subdir,&MyWIN32_FIND_DATA_dir)) != FALSE)
-	  {
-		   if (Dot == MyWIN32_FIND_DATA_dir.cFileName || DotDot == MyWIN32_FIND_DATA_dir.cFileName) continue;
-		   //a directory was found
-		   if (MyWIN32_FIND_DATA_dir.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) {
-				mod_names[mods]=MyWIN32_FIND_DATA_dir.cFileName;
-				//select default mod as default
-				if(mod_names[mods]=="Default")
-					selected_mod=mods;
-				mods++;
-		   }
-	  }
+	
+	vector<string> v = grim->File_ListDirectory(StartingPath);
+
+	for (int i=0; i<v.size(); i++) {
+		if (grim->File_IsDirectory(StartingPath + '/' + v[i])) {
+			mod_names[mods]=v[i];
+			//select default mod as default
+			if(mod_names[mods]=="Default")
+				selected_mod=mods;
+			mods++;
+	   }
 	}
-	else return;
-	FindClose(fff_subdir);
 
 	//load race names
 	player_race=0;
@@ -16319,7 +16291,7 @@ void game_engine::draw_bars(void){
 
 
 	for(a=0;a<maximum_bars;a++){
-		if(a>mod.general_bars.size())continue;
+		if(a>=mod.general_bars.size())continue;
 		if(mod.general_bars[a].dead)continue;
 
 		if(!map_main->creature[0].bars[a].active)continue;
@@ -16479,7 +16451,7 @@ void game_engine::count_bars(void){
 
 	for(a=0;a<maximum_bars;a++){
 
-		if(a>mod.general_bars.size())continue;
+		if(a>=mod.general_bars.size())continue;
 		if(mod.general_bars[a].dead)continue;
 		if(!map_main->creature[0].bars[a].active)continue;
 

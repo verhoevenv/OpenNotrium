@@ -18,7 +18,7 @@ public:
     int lY;
     int lZ; //mousewheel
 
-    //are the buttons down down?
+    //are the buttons down?
     bool btn_left;
     bool btn_right;
     bool btn_middle;
@@ -105,8 +105,9 @@ public:
 
 	/**
 	* Initialises the system with the given states, starts engine, etc. Does not enter the main loop yet.
+	* The argv[0] is required on some systems to know the path to the current directory.
 	*/
-	void System_Initiate();
+	void System_Initiate(const char *argv0);
 
     /**
 	* Enters main loop. Return false from the frame function to exit this loop.
@@ -176,6 +177,12 @@ public:
     void Quads_SetColorVertex(int vertex, float r, float g, float b, float a);
     void Quads_Draw4V(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
     //void Quads_RenderText(float x, float y, char *text);
+
+	//TODO: other file stuff (reading, writing, ...)
+	//bool File_Exists_ReadDir(std::string filename);
+	bool File_Exists(std::string filename);
+	bool File_IsDirectory(std::string filename);
+	std::vector<std::string> File_ListDirectory(std::string dir);
 };
 
 #endif

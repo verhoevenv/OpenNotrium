@@ -2,6 +2,8 @@
 #include "SDL_opengl.h"
 #include "SDL_image.h"
 
+#include "physfs.h"
+
 Engine::Engine() {
     ignoreMouseMotion = 2; //blergh
 
@@ -53,8 +55,8 @@ void Engine::System_Start(){
             case SDL_QUIT:
                 running = false;
             case SDL_KEYDOWN:
-                Key key = event.key.keysym.sym;
-                keys_clicked.insert(key);
+                //key = event.key.keysym.sym;
+                keys_clicked.insert(event.key.keysym.sym);
                 break;
 
             case SDL_MOUSEBUTTONDOWN:
@@ -114,7 +116,7 @@ void Engine::System_Start(){
     }
 }
 
-void Engine::System_Initiate(){
+void Engine::System_Initiate(const char *argv0){
     if ( SDL_Init(SDL_INIT_VIDEO) < 0 ) {
         exit(1);
     }
@@ -138,6 +140,9 @@ void Engine::System_Initiate(){
     SDL_WM_GrabInput(SDL_GRAB_ON);
     SDL_WarpMouse(width/2,height/2);
     SDL_GetRelativeMouseState(NULL,NULL);
+
+	PHYSFS_init(argv0);
+	PHYSFS_setSaneConfig("monkkonen","notrium",NULL,0,0); //Perhaps we should allow packages here. Not now.
 
     setup_opengl();
     startFrame();
@@ -528,4 +533,27 @@ void Engine::setglColor(int index){
         glColor4f(vertex_r[index],vertex_g[index],vertex_b[index],vertex_a[index]);
     else
         glColor4f(1,1,1,1);
+}
+
+bool Engine::File_Exists(std::string filename){
+	return (PHYSFS_exists(filename.c_str()) != 0);
+}
+
+bool Engine::File_IsDirectory(std::string filename){
+	return (PHYSFS_isDirectory(filename.c_str()) != 0);
+}
+
+std::vector<std::string> Engine::File_ListDirectory(std::string dir){
+	char **rc = PHYSFS_enumerateFiles(dir.c_str());
+	char **i;
+
+	std::vector<std::string> vec;
+
+	for (i = rc; *i != NULL; i++){
+		vec.push_back(*i);
+	}
+
+	PHYSFS_freeList(rc);
+
+	return vec;
 }

@@ -10,28 +10,25 @@
 #include <windows.h>
 #include <malloc.h>
 #include <mmsystem.h>
-//#include <dsound.h>
-//#include <dshow.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "entities.h"
-#include "puzzle.h"
-#include "func.h"
+#include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 #include <list>
-//#include "DSUtil.h"
-//#include "DXUtil.h"
+#include <algorithm>
+
+#include "resource_handler.h"
+#include "entities.h"
+#include "puzzle.h"
 #include "soundmanager.h"
 #include "sinecosine.h"
 #include "mod_loader.h"
-#include <algorithm>
-#include "resource_handler.h"
-//#include "CGenAlg.h"
-//#include <dinput.h>
 #include "editor.h"
 #include "text_output.h"
 #include "keys.h"
+#include "func.h"
 
 
 
@@ -48,12 +45,12 @@
 
 
 
-#pragma comment(lib,"Strmiids.lib")
-#pragma comment(lib,"dsound.lib")
-#pragma comment(lib,"dxguid")
-#pragma comment(lib,"winmm")
-#pragma comment(lib,"dxerr8.lib")
-#pragma comment(lib,"dinput8.lib")
+//#pragma comment(lib,"Strmiids.lib")
+//#pragma comment(lib,"dsound.lib")
+//#pragma comment(lib,"dxguid")
+//#pragma comment(lib,"winmm")
+//#pragma comment(lib,"dxerr8.lib")
+//#pragma comment(lib,"dinput8.lib")
 
 
 class game_engine;
@@ -465,7 +462,7 @@ protected:
 	//void deinit_mouse(void);
 	//void calculate_endings(void);
 	void calculate_weather(void);
-	void load_mod_names(const string &StartingPath);
+	void load_mod_names(string &StartingPath);
 	void spawn_creature(int side, int tactic, int tactic2, float x, float y, float angle, int type, map *map);
 	void set_edges(void);
 	static int arrange_item_list_callback(const void *c, const void *d);
@@ -525,7 +522,7 @@ public:
 	bool arrange_alphabetically;
 	bool ask_continue_game;//pause after loading
 	//LPDIRECTINPUTDEVICE8	  g_pMouse;
-	HINSTANCE hInst;
+	//HINSTANCE hInst;
 
 	struct inventory_base{
 		vector <item_list_object> player_items;

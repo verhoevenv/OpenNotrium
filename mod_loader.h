@@ -5,9 +5,8 @@
 
 #include <string>
 #include <vector>
-#include "func.h"
 #include "resource_handler.h"
-
+#include "func.h"
 
 using namespace std;
 

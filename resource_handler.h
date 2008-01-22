@@ -3,9 +3,9 @@
 
 #pragma warning(disable: 4786)//disable warnings about long symbols
 
+#include "engine.h"
 #include "func.h"
 //#include "..\grim_api\grim.h"
-#include "engine.h"
 #include <string>
 #include <vector>
 //#include "DSUtil.h"
