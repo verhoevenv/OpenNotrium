@@ -10680,9 +10680,9 @@ void game_engine::save_game(int slot){
 // 		//itoa((int)(current_time.wMinute),temprivi,10);strcat(rivi,temprivi);
 // 		sprintf(temprivi,"%d",current_time.wMinute);strcat(rivi,temprivi);
 
-		time_t *ltime;
-		time(ltime);
-		strftime(rivi,sizeof(rivi)-1,"%d.%m.%y %H:%M",localtime(ltime));
+		time_t ltime;
+		time(&ltime);
+		strftime(rivi,sizeof(rivi)-1,"%d.%m.%y %H:%M",localtime(&ltime));
 		fprintf(fil, "%s\n",rivi);
 
 		//save game name
