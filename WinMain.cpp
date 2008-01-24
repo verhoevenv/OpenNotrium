@@ -127,14 +127,11 @@ bool game_engine::Frame(void)
 	}
 	elapsed=elapsed2/30;*/
 
-	LONGLONG cur_time;        // current timer value
+	long cur_time;        // current timer value
 	//double time_span;         // time elapsed since last frame
 
 	// read appropriate counter
-	if (perf_flag)
-	   QueryPerformanceCounter((LARGE_INTEGER *) &cur_time);
-	else
-	   cur_time=GetTickCount();
+	cur_time = grim->Time_GetTicks();
 
 	// scale time value and save
 	//elapsed=((cur_time-last_time)*time_factor*1000);
@@ -281,23 +278,12 @@ bool game_engine::Frame(void)
 
 			//initialize timer
 			{
-				// is there a performance counter available?
-				LONGLONG perf_cnt;
-				if (QueryPerformanceFrequency((LARGE_INTEGER *) &perf_cnt)) {
-					// yes, timer choice flag
-					perf_flag=TRUE;
-					// set scaling factor
-					time_factor=1.0/perf_cnt;
-					// read initial time
-					QueryPerformanceCounter((LARGE_INTEGER *) &last_time);
-				} else {
-					// no performance counter, read in using timeGetTime
-					last_time=GetTickCount();
-					// clear timer selection flag
-					perf_flag=FALSE;
-					// set timer scaling factor
-					time_factor=0.001;
-				}
+				// no performance counter, read in using timeGetTime
+				last_time=grim->Time_GetTicks();
+				// clear timer selection flag
+				perf_flag=false;
+				// set timer scaling factor
+				time_factor=0.001;
 			}
 
 			for (int i=0; i<30; i++){
@@ -749,8 +735,8 @@ void game_engine::initialize_game(void){//initialize game variables
 
 
 	//engine->g_pMouse=NULL;
-	ShowCursor(false);
-	SetCursor(NULL);
+	grim->ShowCursor(false);
+	//SetCursor(NULL);
 
 
 
@@ -863,7 +849,8 @@ void game_engine::render_map(void){//renders game map
 
 	//slowdown
 	if(debugging){
-		LONGLONG cur_time;        // current timer value
+		//TODO: crossplatformify
+/*		LONGLONG cur_time;        // current timer value
 		float slow_factor=4*0.001f*20;
 		QueryPerformanceCounter((LARGE_INTEGER *) &cur_time);
 		if(cur_time-last_time<slow_factor/time_factor){
@@ -871,7 +858,7 @@ void game_engine::render_map(void){//renders game map
 			while(cur_time-last_time<slow_factor/time_factor){
 				QueryPerformanceCounter((LARGE_INTEGER *) &cur_time);
 			}
-		}
+		}*/
 	}
 
 //	playsound(footstep[randInt(0,3)],1,player_middle_x+mousex-screen_width/2,player_middle_y+mousey-screen_height/2,player_middle_x,player_middle_y);
@@ -1102,7 +1089,7 @@ void game_engine::render_map(void){//renders game map
 	if(!paused)
 	if(fabs(time_from_beginning-creatures_checked_on)>check_time)
 	{
-		map_main->check_creatures();//tätä voi tehdä vähän harvemmin jos haluaa
+		map_main->check_creatures();//tï¿½tï¿½ voi tehdï¿½ vï¿½hï¿½n harvemmin jos haluaa
 		creatures_checked_on=time_from_beginning+randDouble(0,check_time*0.25f);
 
 	}
@@ -5170,7 +5157,7 @@ bullet game_engine::shoot(int from_creature, int side,int type, float startx,flo
 
 
 
-			ZeroMemory(&temp_bullet, sizeof(temp_bullet));
+			memset(&temp_bullet, 0, sizeof(temp_bullet));
 
 			temp_bullet.dead=false;
 			temp_bullet.dead_on_next=false;
@@ -6225,7 +6212,7 @@ void game_engine::create_plot_object(map* map_to_edit, int general_item_class, f
 	int a=general_item_class;
 	item temp_item;
 
-	ZeroMemory(&temp_item, sizeof(temp_item));
+	memset(&temp_item, 0, sizeof(temp_item));
 	temp_item.dead=false;
 	temp_item.event_used=false;
 	temp_item.visible=true;
@@ -6443,7 +6430,7 @@ void game_engine::create_item(map* map_to_edit, int item_type, int amount, float
 	//no such item found, create new
 	item temp_item;
 
-	ZeroMemory(&temp_item, sizeof(temp_item));
+	memset(&temp_item, 0, sizeof(temp_item));
 	temp_item.dead=false;
 	temp_item.event_used=false;
 	temp_item.visible=true;
@@ -6542,7 +6529,7 @@ void game_engine::draw_pop_up(void){
 	pop_up_y=(768-256)*y_multiplier;
 
 	bool accept_mouse_input=true;//for disabling the right button when the mode changes
-	int mahtuu=6;//montako riviä mahtuu
+	int mahtuu=6;//montako riviï¿½ mahtuu
 
 	//additional info box
 	bool additional_info=false;
@@ -6994,7 +6981,8 @@ void game_engine::draw_pop_up(void){
 				}
 
 				if(inventory_slot>=0){
-					itoa(inventory[active_inventory].player_items[inventory_slot].amount,temprivi,10);
+					//itoa(inventory[active_inventory].player_items[inventory_slot].amount,temprivi,10);
+					sprintf(temprivi,"%d",inventory[active_inventory].player_items[inventory_slot].amount);
 
 					tempstring="Ammo:";
 					tempstring+=temprivi;
@@ -7247,7 +7235,9 @@ void game_engine::calculate_items(void){
 								tempstring=mod.general_items[map_main->items[item].type].name;
 								if(map_main->items[item].amount>1){
 									tempstring+=" (";
-									tempstring+=itoa(map_main->items[item].amount,temprivi,10);
+									//tempstring+=itoa(map_main->items[item].amount,temprivi,10);
+									sprintf(temprivi,"%d",map_main->items[item].amount);
+									tempstring+=temprivi;
 									tempstring+=")";
 								}
 
@@ -9422,7 +9412,7 @@ void game_engine::draw_item_view(void){
 
 
 
-	int mahtuu=13;//montako riviä mahtuu listaan
+	int mahtuu=13;//montako riviï¿½ mahtuu listaan
 
 
 
@@ -9436,7 +9426,7 @@ void game_engine::draw_item_view(void){
 
 			int rivi=0;
 			int ohirivit=0;
-			int total_items=0;//montako yhteensä
+			int total_items=0;//montako yhteensï¿½
 
 			grim->System_SetState_Blending(true);
 			grim->System_SetState_BlendSrc(grBLEND_SRCALPHA);
@@ -9488,7 +9478,8 @@ void game_engine::draw_item_view(void){
 					tempstring+="..";
 				}
 				if(inventory[active_inventory].player_items[a].amount>1){
-					itoa(inventory[active_inventory].player_items[a].amount,temprivi2,10);
+					//itoa(inventory[active_inventory].player_items[a].amount,temprivi2,10);
+					sprintf(temprivi2,"%d",inventory[active_inventory].player_items[a].amount);
 					tempstring+=" (";
 					tempstring+=temprivi2;
 					tempstring+=")";
@@ -9497,7 +9488,8 @@ void game_engine::draw_item_view(void){
 				int text_right_x=text_manager.write_line(font,item_dialog_x+item_list_x+34,item_dialog_y+item_list_y+rivi*rivi_korkeus, tempstring,1);
 
 				//weight
-				itoa(mod.general_items[inventory[active_inventory].player_items[a].item].weight*inventory[active_inventory].player_items[a].amount,temprivi,10);
+				//itoa(mod.general_items[inventory[active_inventory].player_items[a].item].weight*inventory[active_inventory].player_items[a].amount,temprivi,10);
+				sprintf(temprivi,"%d",(int)(mod.general_items[inventory[active_inventory].player_items[a].item].weight*inventory[active_inventory].player_items[a].amount));
 				text_manager.write_line(font,item_dialog_x+item_list_x,item_dialog_y+item_list_y+rivi*rivi_korkeus,temprivi,1);
 
 
@@ -10111,7 +10103,8 @@ void game_engine::draw_text_view(void){
 
 	//log entry number
 	text_manager.write_line(font,item_dialog_x+129, item_dialog_y+17,"Log Entry ",1);
-	itoa(current_showing_entry+1,temprivi,10);
+	//itoa(current_showing_entry+1,temprivi,10);
+	sprintf(temprivi,"%d",current_showing_entry+1);
 	text_manager.write_line(font,item_dialog_x+218, item_dialog_y+17,temprivi,1);
 
 
@@ -10188,7 +10181,8 @@ bool game_engine::show_journal(int day, int race){
 		int date_type=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 		//stardate date
 		if(date_type==0){
-			itoa(day+start_date,temprivi,10);
+			//itoa(day+start_date,temprivi,10);
+			sprintf(temprivi,"%d",day+start_date);
 			log_text+=temprivi;
 		}
 		//calendar date
@@ -10206,15 +10200,21 @@ bool game_engine::show_journal(int day, int race){
 			int Month = j + 2 - ( 12 * l );
 			int Year = 100 * ( n - 49 ) + i + l;
 
-			itoa(Day,temprivi,10);log_text+=temprivi;
+			//itoa(Day,temprivi,10);
+			sprintf(temprivi,"%d",Day);
+			log_text+=temprivi;
 			log_text+="/";
-			itoa(Month,temprivi,10);log_text+=temprivi;
+			//itoa(Month,temprivi,10);
+			sprintf(temprivi,"%d",Month);
+			log_text+=temprivi;
 			log_text+="/";
-			itoa(Year,temprivi,10);log_text+=temprivi;
-
+			//itoa(Year,temprivi,10);
+			sprintf(temprivi,"%d",Year);
+			log_text+=temprivi;
 		}
 		log_text+=" (Day ";
-		itoa(day+1,temprivi,10);
+		//itoa(day+1,temprivi,10);
+		sprintf(temprivi,"%d",day+1);
 		log_text+=temprivi;
 		log_text+=") \\ ";//linefeed
 
@@ -10606,7 +10606,7 @@ void game_engine::render_credits(void){
 	grim->Quads_SetColor(1,1,1,1);
 	text_manager.write_line(font,147/1024.0f*screen_width,68/768.0f*screen_height,"Notrium "+game_version,3/1024.0f*screen_width);
 
-	string credits("Developed by: Ville Mönkkönen \\ In association with: Michael Quigley aka Quanrian \\ Music by: Kush Diarra  \\ Based on design by: Mikko Tikkanen \\ Using Grim 2D graphics engine \\ \\ Beta crew: \\ Robbie BT aka ZeXLR8er!! \\ Sergio Enriquez aka Torment aka Casanova \\ Nick Atherley aka Eternal \\ Carl S. aka Click \\ \\ \\ Press enter to continue");
+	string credits("Developed by: Ville Mï¿½nkkï¿½nen \\ In association with: Michael Quigley aka Quanrian \\ Music by: Kush Diarra  \\ Based on design by: Mikko Tikkanen \\ Using Grim 2D graphics engine \\ \\ Beta crew: \\ Robbie BT aka ZeXLR8er!! \\ Sergio Enriquez aka Torment aka Casanova \\ Nick Atherley aka Eternal \\ Carl S. aka Click \\ \\ \\ Press enter to continue");
 
 
 
@@ -10645,15 +10645,16 @@ void game_engine::save_game(int slot){
 
 	last_saved_game=slot;
 
-	SYSTEMTIME current_time;
-	GetLocalTime(&current_time);
+// 	SYSTEMTIME current_time;
+// 	GetLocalTime(&current_time);
 
 
 		FILE *fil;
 		char tallennusrivi[300];
 		char rivi[300];
 
-		itoa(slot,temprivi,10);
+		//itoa(slot,temprivi,10);
+		sprintf(temprivi,"%d",slot);
 		strcpy(tallennusrivi,"save/s");
 		strcat(tallennusrivi,temprivi);
 		strcat(tallennusrivi,".sav");
@@ -10661,18 +10662,27 @@ void game_engine::save_game(int slot){
 		fil = fopen(tallennusrivi,"wb");
 		if(!fil)return;
 
-		//name
-		itoa((int)(current_time.wDay),rivi,10);
-		strcat(rivi,".");
-		itoa((int)(current_time.wMonth),temprivi,10);strcat(rivi,temprivi);
-		strcat(rivi,".");
-		itoa((int)(current_time.wYear),temprivi,10);strcat(rivi,temprivi);
-		strcat(rivi," ");
-		if(current_time.wHour<10)strcat(rivi,"0");
-		itoa((int)(current_time.wHour),temprivi,10);strcat(rivi,temprivi);
-		strcat(rivi,":");
-		if(current_time.wMinute<10)strcat(rivi,"0");
-		itoa((int)(current_time.wMinute),temprivi,10);strcat(rivi,temprivi);
+// 		//name
+// 		//itoa((int)(current_time.wDay),rivi,10);
+// 		sprintf(rivi,"%d",(int)(current_time.wDay));
+// 		strcat(rivi,".");
+// 		//itoa((int)(current_time.wMonth),temprivi,10);strcat(rivi,temprivi);
+// 		sprintf(temprivi,"%d",current_time.wMonth);strcat(rivi,temprivi);
+// 		strcat(rivi,".");
+// 		//itoa((int)(current_time.wYear),temprivi,10);strcat(rivi,temprivi);
+// 		sprintf(temprivi,"%d",current_time.wYear);strcat(rivi,temprivi);
+// 		strcat(rivi," ");
+// 		if(current_time.wHour<10)strcat(rivi,"0");
+// 		//itoa((int)(current_time.wHour),temprivi,10);strcat(rivi,temprivi);
+// 		sprintf(temprivi,"%d",current_time.wHour);strcat(rivi,temprivi);
+// 		strcat(rivi,":");
+// 		if(current_time.wMinute<10)strcat(rivi,"0");
+// 		//itoa((int)(current_time.wMinute),temprivi,10);strcat(rivi,temprivi);
+// 		sprintf(temprivi,"%d",current_time.wMinute);strcat(rivi,temprivi);
+
+		time_t *ltime;
+		time(ltime);
+		strftime(rivi,sizeof(rivi)-1,"%d.%m.%y %H:%M",localtime(ltime));
 		fprintf(fil, "%s\n",rivi);
 
 		//save game name
@@ -10915,7 +10925,8 @@ void game_engine::load_game(int slot){
 		FILE *fil;
 		char tallennusrivi[300];
 
-		itoa(slot,temprivi,10);
+		//itoa(slot,temprivi,10);
+		sprintf(temprivi,"%d",slot);
 		strcpy(tallennusrivi,"save/s");
 		strcat(tallennusrivi,temprivi);
 		strcat(tallennusrivi,".sav");
@@ -11717,7 +11728,7 @@ void game_engine::render_menu(void){
 	//version
 	grim->System_SetState_Blending(true);
 	grim->Quads_SetColor(1,1,1,1);
-	text_manager.write_line(font,2/1024.0f*screen_width,747/768.0f*screen_height,"Copyright 2005 Ville Mönkkönen    Version "+game_version,1/1024.0f*screen_width);
+	text_manager.write_line(font,2/1024.0f*screen_width,747/768.0f*screen_height,"Copyright 2005 Ville Mï¿½nkkï¿½nen    Version "+game_version,1/1024.0f*screen_width);
 
 	//text_manager.write_line(font,13/1024.0f*screen_width,600/768.0f*screen_height,"TEST VERSION - DO NOT DISTRIBUTE",3/1024.0f*screen_width);
 	//text_manager.write_line(font,13/1024.0f*screen_width,650/768.0f*screen_height,"Remember to take screenshots!",3/1024.0f*screen_width);
@@ -14023,7 +14034,8 @@ void game_engine::create_minimap(map *map_to_edit, int d){
 	map_size_y=256;
 
 	tempstring="map_texture ";
-	itoa(d,temprivi,10);
+	//itoa(d,temprivi,10);
+	sprintf(temprivi,"%d",d);
 	tempstring+=temprivi;
 	//texture one
 	strcpy(temprivi,tempstring.c_str());
@@ -14290,7 +14302,7 @@ void game_engine::load_mod_names(string StartingPath)
 void game_engine::spawn_creature(int side, int tactic, int tactic2, float x, float y, float angle, int type, map *map){
 
 	creature_base temp_creature;
-	ZeroMemory(&temp_creature, sizeof(temp_creature));
+	memset(&temp_creature, 0, sizeof(temp_creature));
 
 	temp_creature.dead=false;
 	//temp_creature.weapon_selected=0;
@@ -14823,9 +14835,11 @@ void game_engine::draw_slider(void){
 
 	//numbers
 	grim->Quads_SetColor(1,1,1,1);
-	itoa(slider_point,temprivi,10);
+	//itoa(slider_point,temprivi,10);
+	sprintf(temprivi,"%d",slider_point);
 	text_manager.write_line(font,slider_x+slider_bar_x-66,slider_y+slider_bar_y+1,temprivi,2);
-	itoa(slider_maximum,temprivi,10);
+	//itoa(slider_maximum,temprivi,10);
+	sprintf(temprivi,"%d",slider_maximum);
 	text_manager.write_line(font,slider_x+slider_bar_x+slider_length+2,slider_y+slider_bar_y+1,temprivi,2);
 
 
@@ -16414,8 +16428,11 @@ void game_engine::draw_bars(void){
 		grim->Quads_End();
 
 		//draw number
-		if(mod.general_bars[a].show_number)
-			text_manager.write(font,itoa(map_main->creature[0].bars[a].value,temprivi,10),1.0f*x_multiplier,left_side, y ,0,0,false,1.0f,1.0f,1.0f,1);
+		if(mod.general_bars[a].show_number){
+			//itoa(map_main->creature[0].bars[a].value,temprivi,10)
+			sprintf(temprivi,"%d",(int)(map_main->creature[0].bars[a].value));
+			text_manager.write(font,temprivi,1.0f*x_multiplier,left_side, y ,0,0,false,1.0f,1.0f,1.0f,1);
+		}
 
 		//mouse on, show name
 		if((mousex>left_side-7)&&(mousex<right_side+7)&&(mousey>y)&&(mousey<y+16*mod.general_bars[a].height*y_multiplier)){

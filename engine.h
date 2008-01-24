@@ -87,6 +87,7 @@ public:
     * Copies relevant stuff into the state. We need to make a copy anyway, so just return the object.
     */
     MouseState getMouseState();
+	void ShowCursor(bool state);
 
     bool Key_Down(Key key);
     bool Key_Click(Key key);
@@ -183,6 +184,11 @@ public:
 	bool File_Exists(std::string filename);
 	bool File_IsDirectory(std::string filename);
 	std::vector<std::string> File_ListDirectory(std::string dir);
+
+	/**
+	* Returns the amount of milliseconds the program has been running. Might wrap around after ~ 50 or 25 days.
+	*/
+	long Time_GetTicks();
 };
 
 #endif

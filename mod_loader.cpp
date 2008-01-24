@@ -1253,7 +1253,9 @@ void Mod::load_climate_info(string filename){//loads climate info from file
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){
 			temp_climate.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			string tempstring="Load climate number";
-			tempstring+=itoa(temp_climate.identifier,temprivi,10);
+			//tempstring+=itoa(temp_climate.identifier,temprivi,10);
+			sprintf(temprivi,"%d",temp_climate.identifier);
+			tempstring += temprivi;
 			debug->debug_output(tempstring,1,0);
 
 			temp_climate.can_be_random=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
@@ -1364,7 +1366,9 @@ void Mod::load_climate_info(string filename){//loads climate info from file
 			general_climates[temp_climate.identifier]=temp_climate;
 
 			tempstring="Load climate number";
-			tempstring+=itoa(temp_climate.identifier,temprivi,10);
+			//tempstring+=itoa(temp_climate.identifier,temprivi,10);
+			sprintf(temprivi,"%d",temp_climate.identifier);
+			tempstring+=temprivi;
 			debug->debug_output(tempstring,0,0);
 		}
 	}

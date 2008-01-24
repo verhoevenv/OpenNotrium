@@ -230,6 +230,13 @@ MouseState Engine::getMouseState(){
     return MouseState(mousestate);
 }
 
+void Engine::ShowCursor(bool state){
+	if(state)
+		SDL_ShowCursor(SDL_ENABLE);
+	else
+		SDL_ShowCursor(SDL_DISABLE);
+}
+
 bool Engine::Key_Down(Key key){
     Uint8* keys = SDL_GetKeyState(NULL);
     return keys[key];
@@ -360,7 +367,7 @@ bool Engine::Texture_Create(std::string id, int width, int height){
 
 	data = (unsigned int*)new GLuint[((width * height)* 4 * sizeof(unsigned int))];
 
-	ZeroMemory(data,((128 * 128)* 4 * sizeof(unsigned int)));
+	memset(data,0,((128 * 128)* 4 * sizeof(unsigned int)));
 
     glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
 		GL_RGBA, GL_UNSIGNED_BYTE, data);
@@ -557,4 +564,25 @@ std::vector<std::string> Engine::File_ListDirectory(std::string dir){
 	PHYSFS_freeList(rc);
 
 	return vec;
+}
+
+long Engine::Time_GetTicks(){
+	//TODO: add performancetimer if possible
+// 	if (perf_flag)
+// 	   QueryPerformanceCounter((LARGE_INTEGER *) &cur_time);
+// 	else
+// 	   cur_time=GetTickCount();
+//
+// 				// is there a performance counter available?
+// 				LONGLONG perf_cnt;
+// 				if (QueryPerformanceFrequency((LARGE_INTEGER *) &perf_cnt)) {
+// 					// yes, timer choice flag
+// 					perf_flag=true;
+// 					// set scaling factor
+// 					time_factor=1.0/perf_cnt;
+// 					// read initial time
+// 					QueryPerformanceCounter((LARGE_INTEGER *) &last_time);
+// 				} else {
+
+	return SDL_GetTicks();
 }

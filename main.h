@@ -135,9 +135,9 @@ protected:
 
 
 	float elapsed,elapsed2,elapsed3[30];//timer for fps
-	BOOL perf_flag;        // Timer Selection Flag
+	bool perf_flag;        // Timer Selection Flag
 	double time_factor;    // Time Scaling Factor
-	LONGLONG last_time;    // Previous timer value
+	long last_time;    // Previous timer value
 	float game_speed,temp_speed;
 	char temprivi[2000];//temporary char table
 	string tempstring;

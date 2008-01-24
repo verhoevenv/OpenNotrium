@@ -88,7 +88,7 @@ using namespace std;
 		public:
 			int debug_state[2];
 			void debug_output(string rivi, int level, int type);
-			debugger::debugger();
+			debugger();
 	};
 
 	struct mouse_control_base{

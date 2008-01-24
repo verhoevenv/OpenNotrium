@@ -41,10 +41,12 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 			}
 			string name=mod_to_edit->terrain_maps[edited_area].name;
 			name+=" (";
-			itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size(),temprivi,10);
+			//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size(),temprivi,10);
+			sprintf(temprivi,"%d",(int)(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size()));
 			name+=temprivi;
 			name+="x";
-			itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid.size(),temprivi,10);
+			//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid.size(),temprivi,10);
+			sprintf(temprivi,"%d",(int)(mod_to_edit->terrain_maps[edited_area].terrain_grid.size()));
 			name+=temprivi;
 			name+=")";
 			text_manager->message(3000,3000,name);
@@ -60,10 +62,12 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 			if(edited_area<mod_to_edit->terrain_maps.size()){
 				string name=mod_to_edit->terrain_maps[edited_area].name;
 				name+=" (";
-				itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size(),temprivi,10);
+				//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size(),temprivi,10);
+				sprintf(temprivi,"%d",(int)(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size()));
 				name+=temprivi;
 				name+="x";
-				itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid.size(),temprivi,10);
+				//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid.size(),temprivi,10);
+				sprintf(temprivi,"%d",mod_to_edit->terrain_maps[edited_area].terrain_grid.size());
 				name+=temprivi;
 				name+=")";
 				text_manager->message(3000,3000,name);
@@ -124,10 +128,12 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 
 			grim->Quads_SetRotation(0);
 			string coordinates="x=";
-			itoa((int)(mouse_controls.mousex+camera_x)/grid_size_zoom,temprivi,10);
+			//itoa((int)(mouse_controls.mousex+camera_x)/grid_size_zoom,temprivi,10);
+			sprintf(temprivi,"%d",(int)(mouse_controls.mousex+camera_x)/grid_size_zoom);
 			coordinates+=temprivi;
 			coordinates+=" y=";
-			itoa((int)(mouse_controls.mousey+camera_y)/grid_size_zoom,temprivi,10);
+			//itoa((int)(mouse_controls.mousey+camera_y)/grid_size_zoom,temprivi,10);
+			sprintf(temprivi,"%d",(int)(mouse_controls.mousey+camera_y)/grid_size_zoom);
 			coordinates+=temprivi;
 			text_manager->write(-1,coordinates,1,20,screen_height-100+60,screen_width,screen_height,false,1,1,1,1);
 
@@ -138,7 +144,8 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 				temp_map.dead=false;
 				temp_map.identifier=mod_to_edit->terrain_maps.size();
 				temp_map.name="map ";
-				itoa(temp_map.identifier,temprivi,10);
+				//itoa(temp_map.identifier,temprivi,10);
+				sprintf(temprivi,"%d",temp_map.identifier);
 				temp_map.name+=temprivi;
 				camera_x=0;
 				camera_y=0;
@@ -546,10 +553,12 @@ void Editor::draw_map_grid(float elapsed, mouse_control_base mouse_controls){//r
 
 	if(show_new_size){
 		string new_size="New size: ";
-		itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size(),temprivi,10);
+		//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size(),temprivi,10);
+		sprintf(temprivi,"%d",(int)(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size()));
 		new_size+=temprivi;
 		new_size+="x";
-		itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid.size(),temprivi,10);
+		//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid.size(),temprivi,10);
+		sprintf(temprivi,"%d",(int)(mod_to_edit->terrain_maps[edited_area].terrain_grid.size()));
 		new_size+=temprivi;
 		text_manager->message(500,500,new_size);
 
@@ -688,7 +697,8 @@ void Editor::create_new_terrain_map(void){
 	temp_map.dead=false;
 	temp_map.identifier=mod_to_edit->terrain_maps.size();
 	temp_map.name="map ";
-	itoa(temp_map.identifier,temprivi,10);
+	//itoa(temp_map.identifier,temprivi,10);
+	sprintf(temprivi,"%d",temp_map.identifier);
 	temp_map.name+=temprivi;
 	camera_x=0;
 	camera_y=0;
@@ -930,7 +940,8 @@ void Editor::object_draw(Mod::terrain_map_base::editor_object_base *object, floa
 		case 2:
 			if(text_info){
 				info="Amount: ";
-				itoa(object->amount,temprivi,10);
+				//itoa(object->amount,temprivi,10);
+				sprintf(temprivi,"%d",object->amount);
 				info+=temprivi;
 				if(!key_w&&key_w2)
 					object->amount+=1;
