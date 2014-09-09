@@ -4,7 +4,7 @@
 #include "func.h"
 #define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
-
+#include <cstring>
 
 float square( float f ) { return (f*f) ;};
 
@@ -60,6 +60,7 @@ float randDouble( float low, float high )
 // carriage return or line feed.
 char *stripped_fgets(char *s, int n, FILE *f)
 {
+	using namespace std;
 
 	if (fgets(s,n,f)==NULL)
 	return(NULL);
