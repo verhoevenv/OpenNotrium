@@ -2,6 +2,8 @@
 //#include "..\grim_api\grim.h"
 #include "main.h"
 
+#include <iostream>
+
 #define RELEASE(x) {if (x) {(x)->Release(); (x)=NULL;}}
 #define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
 #define WM_GRAPHNOTIFY  WM_APP + 1
@@ -476,12 +478,16 @@ bool focusgained()
 	return true;
 }
 
-void game_engine::cfg_load(void){
+bool game_engine::cfg_load(void){
 		FILE *fil;
 
 		char temprivi[200];
 
 		fil = fopen("cfg.cfg","rt");
+
+		if (!fil) {
+            return false;
+		}
 
 		fgets(temprivi,sizeof(temprivi),fil);screen_width=atoi(temprivi);
 		fgets(temprivi,sizeof(temprivi),fil);screen_height=atoi(temprivi);
@@ -491,7 +497,7 @@ void game_engine::cfg_load(void){
 		fgets(temprivi,sizeof(temprivi),fil);play_music=strtobool(temprivi);
 
 		fclose(fil);
-
+        return true;
 }
 
 //bool game_engine::init_mouse(void){
@@ -572,7 +578,12 @@ int main(int argc, char* argv[])
 	grim->System_SetState_FocusLostFunc(focuslost);
 	grim->System_SetState_FocusGainFunc(focusgained);
 
-	engine->cfg_load();
+	if (!engine->cfg_load()) {
+        cerr << "Config file not found." << endl;
+        delete engine;
+        delete grim;
+        return -1;
+	}
 	if(engine->windowed==0) {
         grim->System_SetState_Windowed(false);
     } else {

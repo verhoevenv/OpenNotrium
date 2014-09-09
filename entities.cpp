@@ -2,11 +2,9 @@
 
 #include "entities.h"
 #include "func.h"
-
+#include <cstring>
 
 //#include "dxutil.h"
-
-
 
 
 
