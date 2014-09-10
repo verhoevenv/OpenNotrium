@@ -1,6 +1,2 @@
-run.sh
 *.o
 notrium
-.deps
-autom4te.cache/
-MakefileÂ
