@@ -3486,9 +3486,9 @@ void game_engine::creature_actions_loop(void){
 
 }
 
-bool game_engine::creature_actions(int creature, bool visible){//calculates the creature actions and animation
+bool game_engine::creature_actions(const int creature, const bool visible){//calculates the creature actions and animation
 
-    //FIXME: it's strange that a creature righgt now can be in (NaN,NaN)
+    //FIXME: it's strange that a creature right now can be in (NaN,NaN)
 
 	/*
 	float alien_speed_difficulty_modifier=0.0005f;
