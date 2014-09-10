@@ -1,6 +1,7 @@
 #include "SDL_opengl.h"
 
-typedef enum BlendState
+//typedef
+enum BlendState
 {
 	//grBLEND_DISABLE				= 0,
 	grBLEND_ZERO				= GL_ZERO,

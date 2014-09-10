@@ -13,15 +13,25 @@
 #include <assert.h>
 
 
-#define SAFE_DELETE(p) { if(p) { delete(p);   (p)=NULL; } }
-#define sqr(p) ((p)*(p))
+//#define SAFE_DELETE(p) { if(p) { delete(p);   (p)=NULL; } }
+template <typename T>
+inline void SAFE_DELETE(T*& p) {
+    if (p) {
+        delete p;
+        p = NULL;
+    }
+}
+
+//#define sqr(p) ((p)*(p))
+template <typename T>
+inline T sqr(const T& p) { return p*p; }
 
 using namespace std;
 
 
 	class debugger;
 
-	#define pi (float)3.1415926535897932384626433832795f
+	const float pi = 3.1415926535897932384626433832795f;
 
 
 	int lines_intersect(float x1,float y1,float x2,float y2,float x3,float y3,float x4,float y4,float *x,float *y,float rounding);
@@ -30,8 +40,8 @@ using namespace std;
 	float randDouble( float low, float high );
 	//bool intersect(RECT eka,RECT toka);
 	char *stripped_fgets(char *s, int n, FILE *f);
-	bool strtobool(char *rivi);
-	void random_name(char *creature_name);//give the given monk a random name
+	bool strtobool(const char* rivi);
+	void random_name(const char* creature_name);//give the given monk a random name
 	void find_texture_coordinates(int slot,float *x0,float *y0,float *x1,float *y1,int slots_per_texture);
 	string FloatToText(float n, int nNumberOfDecimalPlaces);
 	bool isvowel(char character);
@@ -41,7 +51,7 @@ using namespace std;
 	//string tokenizer
 	template <typename Container>
 	void
-	stringtok (Container &container, string const &in,
+	stringtok (Container &container, const string& in,
 			   const char * const delimiters = " \t\n")
 	{
 		const string::size_type len = in.length();
@@ -87,7 +97,7 @@ using namespace std;
 			int debug_level[2];
 		public:
 			int debug_state[2];
-			void debug_output(string rivi, int level, int type);
+			void debug_output(const string& rivi, int level, int type);
 			debugger();
 	};
 

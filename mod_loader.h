@@ -16,8 +16,6 @@ protected:
 
 	char temprivi[5000];//temporary char table
 
-
-
 public:
 
 	struct effect{
@@ -630,29 +628,29 @@ public:
 	resource_handler *resources;
 
 	void print_effect_numbers(FILE *fil);
-	void load_animation_info(string filename);//loads item info from file
-	void load_light_info(string filename);//loads light info from file
-	void load_plot_object_info(string filename);//loads plot object info from file
-	void load_area_info(string filename);//loads area info from file
-	void load_climate_info(string filename);//loads climate info from file
-	void load_creature_info(string filename);//loads creature info from file
-	void load_item_info(string filename);//loads object info from file
-	void load_object_info(string filename);//loads object info from file
-	void load_weapon_info(string filename);//loads weapon info from file
-	void load_race_info(string filename);//loads race info from file
-	void load_polygons(string filename);
+	void load_animation_info(const string& filename);//loads item info from file
+	void load_light_info(const string& filename);//loads light info from file
+	void load_plot_object_info(const string& filename);//loads plot object info from file
+	void load_area_info(const string& filename);//loads area info from file
+	void load_climate_info(const string& filename);//loads climate info from file
+	void load_creature_info(const string& filename);//loads creature info from file
+	void load_item_info(const string& filename);//loads object info from file
+	void load_object_info(const string& filename);//loads object info from file
+	void load_weapon_info(const string& filename);//loads weapon info from file
+	void load_race_info(const string& filename);//loads race info from file
+	void load_polygons(const string& filename);
 	void grow_polygon(polygon_base *temp_polygon);
-	void load_scripts(string filename);
-	void load_AI_info(string filename);//loads AI info from file
-	void load_AI_side(string filename);
-	void load_bars(string filename);
-	void load_terrain_types(string filename);
-	void load_terrain_maps(string filename);
+	void load_scripts(const string& filename);
+	void load_AI_info(const string& filename);//loads AI info from file
+	void load_AI_side(const string& filename);
+	void load_bars(const string& filename);
+	void load_terrain_types(const string& filename);
+	void load_terrain_maps(const string& filename);
 	void save_terrain_maps(string filename);
-	void load_dialogs(string filename);
-	void load_music(string filename);
+	void load_dialogs(const string& filename);
+	void load_music(const string& filename);
 
-	void load_mod(string mod, debugger *debugger, resource_handler *resources);
+	void load_mod(const string& mod, debugger *debugger, resource_handler *resources);
 
     //editor();//constructor
     //~light();//destructor

@@ -1,14 +1,11 @@
 #include "resource_handler.h"
 
 
-
-int resource_handler::load_texture(char *name, string mod_name){//loads the texture if it's unique
+int resource_handler::load_texture(const string& name, const string& mod_name){//loads the texture if it's unique
 
 	int i;
 
-
-
-	if((string)name=="none")
+	if(name=="none")
 		return -1;
 
 	//find if we're already recorded this texture name
@@ -33,13 +30,13 @@ int resource_handler::load_texture(char *name, string mod_name){//loads the text
 	strcpy(temprivi,"textures/");
 	strcat(temprivi,mod_name.c_str());
 	strcat(temprivi,"/");
-	strcat(temprivi,name);
+	strcat(temprivi,name.c_str());
 	bool OK=grim->File_Exists(temprivi);
 
 	//try default directory
 	if(!OK){
 		strcpy(temprivi,"textures/");
-		strcat(temprivi,name);
+		strcat(temprivi,name.c_str());
 
 		OK=grim->File_Exists(temprivi);
 	}
@@ -60,7 +57,7 @@ int resource_handler::load_texture(char *name, string mod_name){//loads the text
 }
 
 
-int resource_handler::load_sample(string name, int samples, string mod_name){//loads the sample if it's unique
+int resource_handler::load_sample(const string& name, int samples, const string& mod_name){//loads the sample if it's unique
     //TODO: use samples parameter if it is important
 
 	if(name=="none.wav")return -1;
@@ -167,7 +164,7 @@ void resource_handler::Texture_Set(int number){
 	grim->Texture_Set(textures[number].texture_handle_in_grim);
 }
 
-int resource_handler::load_texture_in_grim(char *name, string mod_name){
+int resource_handler::load_texture_in_grim(const char *name, const string& mod_name){
 	bool OK;
 
 	textures_count++;
@@ -206,10 +203,7 @@ int resource_handler::load_texture_in_grim(char *name, string mod_name){
 }
 
 void resource_handler::unload_unneeded_textures(bool unload_all){
-	int a;
-
-
-	for(a=0;a<textures.size();a++){
+	for(unsigned int a=0;a<textures.size();a++){
 		texture_handling_primitive_base temp=textures[a];
 		if(textures[a].texture_handle_in_grim>=0)
 		if((system_time-textures[a].last_used>300)||(unload_all)){

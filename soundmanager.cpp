@@ -1,6 +1,6 @@
 #include "soundmanager.h"
 
-bool SoundManager::Create(SoundSample** dest, char *filename)
+bool SoundManager::Create(SoundSample** dest, const char *filename)
 {
     *dest = new SoundSample(filename, samplefreq, bytespersample);
     if(!(*dest)->initOkay()){
@@ -31,7 +31,7 @@ bool SoundManager::Initialize(int freq, int channels)
     return true;
 }
 
-void SoundManager::playMusic(char* filename){
+void SoundManager::playMusic(const char* filename){
     currentmusic = Mix_LoadMUS(filename);
     Mix_PlayMusic(currentmusic, -1);
 }
@@ -40,18 +40,18 @@ void SoundManager::setMusicVolume(float volume){
     Mix_VolumeMusic(volume*MIX_MAX_VOLUME);
 }
 
-SoundSample::SoundSample(char *filename,int freq,int bytes){
+SoundSample::SoundSample(const char *filename,int freq,int bytes){
     //TODO: the delay seems solvable by using VC++ compiler/libs and DirectSound
     chunk = Mix_LoadWAV(filename);
     samplefreq = freq;
     bytespersample = bytes;
 }
 
-bool SoundSample::initOkay(){
+bool SoundSample::initOkay(void){
     return chunk;
 }
 
-float SoundSample::GetSoundLength() {
+float SoundSample::GetSoundLength(void) {
     return (float)(chunk->alen) / bytespersample / samplefreq * 1000;
 }
 
