@@ -24,9 +24,6 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 	key_f2=key_f;
 	key_f=grim->Key_Down(KEY_F);
 
-
-
-
 	if(selector_active>0){
 		draw_selector(elapsed,mouse_controls);
 	}
@@ -42,11 +39,11 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 			string name=mod_to_edit->terrain_maps[edited_area].name;
 			name+=" (";
 			//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size(),temprivi,10);
-			sprintf(temprivi,"%d",(int)(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size()));
+			sprintf(temprivi,"%u",mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size());
 			name+=temprivi;
 			name+="x";
 			//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid.size(),temprivi,10);
-			sprintf(temprivi,"%d",(int)(mod_to_edit->terrain_maps[edited_area].terrain_grid.size()));
+			sprintf(temprivi,"%u",mod_to_edit->terrain_maps[edited_area].terrain_grid.size());
 			name+=temprivi;
 			name+=")";
 			text_manager->message(3000,3000,name);
@@ -63,11 +60,11 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 				string name=mod_to_edit->terrain_maps[edited_area].name;
 				name+=" (";
 				//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size(),temprivi,10);
-				sprintf(temprivi,"%d",(int)(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size()));
+				sprintf(temprivi,"%u",mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size());
 				name+=temprivi;
 				name+="x";
 				//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid.size(),temprivi,10);
-				sprintf(temprivi,"%d",mod_to_edit->terrain_maps[edited_area].terrain_grid.size());
+				sprintf(temprivi,"%u",mod_to_edit->terrain_maps[edited_area].terrain_grid.size());
 				name+=temprivi;
 				name+=")";
 				text_manager->message(3000,3000,name);
@@ -124,16 +121,14 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 			if(grim->Key_Down(KEY_RIGHT)||(mouse_controls.mousex>screen_width-1))
 				camera_x+=elapsed;
 
-
-
 			grim->Quads_SetRotation(0);
 			string coordinates="x=";
 			//itoa((int)(mouse_controls.mousex+camera_x)/grid_size_zoom,temprivi,10);
-			sprintf(temprivi,"%d",(int)(mouse_controls.mousex+camera_x)/grid_size_zoom);
+			sprintf(temprivi,"%d",static_cast<int>((mouse_controls.mousex+camera_x)/grid_size_zoom));
 			coordinates+=temprivi;
 			coordinates+=" y=";
 			//itoa((int)(mouse_controls.mousey+camera_y)/grid_size_zoom,temprivi,10);
-			sprintf(temprivi,"%d",(int)(mouse_controls.mousey+camera_y)/grid_size_zoom);
+			sprintf(temprivi,"%d",static_cast<int>((mouse_controls.mousey+camera_y)/grid_size_zoom));
 			coordinates+=temprivi;
 			text_manager->write(-1,coordinates,1,20,screen_height-100+60,screen_width,screen_height,false,1,1,1,1);
 
@@ -201,15 +196,8 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 				//camera_y=(camera_y+(middle_y*zoom-screen_height/2))/2;
 			}
 			grid_size_zoom=zoom*128;
-
-
 		}
 	}
-
-
-
-
-
 
 	if(grim->Key_Click(KEY_F2)){
 		show_selector(1);
@@ -244,8 +232,6 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 		show_help=!show_help;
 	}
 
-
-
 	//save
 	if(grim->Key_Click(KEY_F12)){
 		mod_to_edit->save_terrain_maps("");
@@ -272,8 +258,6 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 	else if(show_help){
 		text_manager->write(-1,"F1=help \\ F2=show terrain palette \\ F3=show item palette \\ F4=show plot_object palette \\ F5=show creature palette \\ F6=show light palette \\ F7=show props palette \\ F8=clone map \\ F9=clear map \\ F11=new map \\ F12=save changes \\ Z,X=change edited map \\ A,D=rotate object (slow turn=left shift, fast turn=left control) \\ W,S=change object's parameter \\ HOME/END=change map size \\ DELETE/PAGEDOWN=change map size / delete selected objects \\ Right mouse button=pick up object \\ Left mouse button=drop object / select multiple \\ F=flood fill terrain / bring object to front",1,20,20,screen_width,screen_height,false,1,1,1,1);
 	}
-
-
 
 	if(quit_editor) return false;
 	return true;
@@ -317,13 +301,12 @@ void Editor::start_editor(Engine *grim, Mod *mod_to_edit, text_output *text_mana
 
 
 Editor::Editor(){
-
 }
 
 
 void Editor::draw_map_grid(float elapsed, mouse_control_base mouse_controls){//renders map grid
 
-	int i,j,k;
+	int i,j;
 	int texture;
 
 	grim->Quads_SetRotation(0);
@@ -334,7 +317,7 @@ void Editor::draw_map_grid(float elapsed, mouse_control_base mouse_controls){//r
 
 	//grid
 	grim->System_SetState_Blending(false);
-	for(k=0;k<mod_to_edit->terrain_types.size();k++){
+	for(unsigned int k=0;k<mod_to_edit->terrain_types.size();k++){
 		texture=mod_to_edit->terrain_types[k].terrain_frames[0].texture;
 		resources->Texture_Set(texture);
 		grim->Quads_Begin();
@@ -368,7 +351,7 @@ void Editor::draw_map_grid(float elapsed, mouse_control_base mouse_controls){//r
 	int closest=-1;
 	float closest_distance=0;
 	grim->System_SetState_Blending(true);
-	for(k=0;k<mod_to_edit->terrain_maps[edited_area].map_objects.size();k++){
+	for(unsigned int k=0;k<mod_to_edit->terrain_maps[edited_area].map_objects.size();k++){
 		Mod::terrain_map_base::editor_object_base temp_object=mod_to_edit->terrain_maps[edited_area].map_objects[k];
 
 		float size=grid_size_zoom;
@@ -435,7 +418,7 @@ void Editor::draw_map_grid(float elapsed, mouse_control_base mouse_controls){//r
 
 			//list all the selected objects
 			selected_objects.clear();
-			for(k=0;k<mod_to_edit->terrain_maps[edited_area].map_objects.size();k++){
+			for(unsigned int k=0;k<mod_to_edit->terrain_maps[edited_area].map_objects.size();k++){
 				if((mod_to_edit->terrain_maps[edited_area].map_objects[k].x>select_start_x)
 				&&(mod_to_edit->terrain_maps[edited_area].map_objects[k].x<select_end_x)
 				&&(mod_to_edit->terrain_maps[edited_area].map_objects[k].y>select_start_y)
@@ -459,7 +442,7 @@ void Editor::draw_map_grid(float elapsed, mouse_control_base mouse_controls){//r
 		select_end_y=(mouse_controls.mousey+camera_y)/zoom;
 		float moved_x=select_end_x-select_start_x;
 		float moved_y=select_end_y-select_start_y;
-		for(k=0;k<selected_objects.size();k++){
+		for(unsigned int k=0;k<selected_objects.size();k++){
 			mod_to_edit->terrain_maps[edited_area].map_objects[selected_objects[k]].x+=moved_x;
 			mod_to_edit->terrain_maps[edited_area].map_objects[selected_objects[k]].y+=moved_y;
 		}
@@ -468,7 +451,7 @@ void Editor::draw_map_grid(float elapsed, mouse_control_base mouse_controls){//r
 
 		//delete selected objects
 		if(grim->Key_Click(KEY_DELETE)){
-			for(k=0;k<selected_objects.size();k++){
+			for(unsigned int k=0;k<selected_objects.size();k++){
 				mod_to_edit->terrain_maps[edited_area].map_objects.erase(mod_to_edit->terrain_maps[edited_area].map_objects.begin()+selected_objects[k]);
 				for(int a=k+1;a<selected_objects.size();a++){
 					if(selected_objects[a]>selected_objects[k])
@@ -485,7 +468,6 @@ void Editor::draw_map_grid(float elapsed, mouse_control_base mouse_controls){//r
 
 	}
 
-
 	//deselect brush
 	if(select_type==0){
 		if(paint_tool_object.type!=0){
@@ -498,7 +480,6 @@ void Editor::draw_map_grid(float elapsed, mouse_control_base mouse_controls){//r
 		//highlight selected object
 		if((paint_tool_object.type==0)&&(closest>=0)){
 			Mod::terrain_map_base::editor_object_base *temp_object=&mod_to_edit->terrain_maps[edited_area].map_objects[closest];
-
 
 			//info
 			grim->Quads_SetColor(1,1,1,1);
@@ -525,7 +506,6 @@ void Editor::draw_map_grid(float elapsed, mouse_control_base mouse_controls){//r
 
 				//add to map
 				mod_to_edit->terrain_maps[edited_area].map_objects.push_back(temp_object2);
-
 
 			}
 
@@ -554,14 +534,13 @@ void Editor::draw_map_grid(float elapsed, mouse_control_base mouse_controls){//r
 	if(show_new_size){
 		string new_size="New size: ";
 		//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size(),temprivi,10);
-		sprintf(temprivi,"%d",(int)(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size()));
+		sprintf(temprivi,"%u",mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size());
 		new_size+=temprivi;
 		new_size+="x";
 		//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid.size(),temprivi,10);
-		sprintf(temprivi,"%d",(int)(mod_to_edit->terrain_maps[edited_area].terrain_grid.size()));
+		sprintf(temprivi,"%u",mod_to_edit->terrain_maps[edited_area].terrain_grid.size());
 		new_size+=temprivi;
 		text_manager->message(500,500,new_size);
-
 	}
 
 	//map limits
@@ -579,16 +558,12 @@ void Editor::draw_map_grid(float elapsed, mouse_control_base mouse_controls){//r
 	text_manager->draw_line(x2-camera_x,y2-camera_y,x1-camera_x,y2-camera_y,2,1,1,1,1,1);
 	text_manager->draw_line(x1-camera_x,y2-camera_y,x1-camera_x,y1-camera_y,2,1,1,1,1,1);
 
-
-
-
 }
 
 
 
 void Editor::draw_selector(float elapsed, mouse_control_base mouse_controls){//renders map grid
 
-	int a;
 	int texture;
 	string name;
 
@@ -631,12 +606,11 @@ void Editor::draw_selector(float elapsed, mouse_control_base mouse_controls){//r
 
 	int slot=0;
 	string name_info="";
-	for(a=0;a<items_amount;a++){
+	for(int a=0;a<items_amount;a++){
 		float size=0;
 		bool dead;
 		find_object_type(selector_active,a,&dead,&name,&texture,&size);
 		if(dead)continue;
-
 
 		int x=slot%fit_width;
 		int y=slot/fit_width;
@@ -664,7 +638,6 @@ void Editor::draw_selector(float elapsed, mouse_control_base mouse_controls){//r
 		grim->Quads_End();
 
 		slot++;
-
 	}
 
 	if(name_info!=""){
@@ -746,9 +719,6 @@ void Editor::draw_brush(mouse_control_base mouse_controls, float elapsed){
 	bool dead;
 	string name;
 
-
-
-
 	find_object_type(paint_tool_object.type,paint_tool_object.number,&dead,&name,&texture,&size);
 	switch(paint_tool_object.type){
 		//terrain
@@ -792,7 +762,6 @@ void Editor::draw_brush(mouse_control_base mouse_controls, float elapsed){
 				grim->Quads_Begin();
 				grim->Quads_Draw(paint_tool_object.x-camera_x, paint_tool_object.y-camera_y, grid_size_zoom, grid_size_zoom);
 				grim->Quads_End();
-
 			}
 			break;
 		//items
@@ -815,10 +784,7 @@ void Editor::draw_brush(mouse_control_base mouse_controls, float elapsed){
 				object_draw(&paint_tool_object,elapsed,true);
 			}
 			break;
-
-
 	}
-
 
 	/*if(texture>=0){
 		grim->Quads_SetRotation(0);
@@ -920,14 +886,12 @@ void Editor::object_draw(Mod::terrain_map_base::editor_object_base *object, floa
 	grim->Quads_SetRotation(object->rotation);
 	//grim->Quads_SetColor(1,1,1,1);
 
-
 	//spot picture for invisible objects
 	resources->Texture_Set(spot_texture);
 	grim->Quads_SetSubset(0,0,1,1);
 	grim->Quads_Begin();
 	grim->Quads_Draw((object->x-16)*zoom-camera_x, (object->y-16)*zoom-camera_y, 32*zoom, 32*zoom);
 	grim->Quads_End();
-
 
 	//info
 	resources->Texture_Set(texture);
@@ -1004,9 +968,6 @@ void Editor::object_draw(Mod::terrain_map_base::editor_object_base *object, floa
 				//itoa(object->side,temprivi,10);
 				//info+=temprivi;
 
-
-
-
 			}
 			break;
 		//lights
@@ -1063,11 +1024,10 @@ void Editor::object_draw(Mod::terrain_map_base::editor_object_base *object, floa
 		float object_y=object->y*zoom;
 
 		//all the lines
-		int a;
 		if(mod_to_edit->polygons[polygon].points.size()>1){
 			float sin=sincos.table_sin(object->rotation);
 			float cos=sincos.table_cos(object->rotation);
-			for(a=0;a<mod_to_edit->polygons[polygon].points.size()-1;a++){
+			for(unsigned int a=0;a<mod_to_edit->polygons[polygon].points.size()-1;a++){
 
 				float xx1=mod_to_edit->polygons[polygon].points[a].x*object_size*collision_size;
 				float yy1=mod_to_edit->polygons[polygon].points[a].y*object_size*collision_size;
@@ -1081,7 +1041,6 @@ void Editor::object_draw(Mod::terrain_map_base::editor_object_base *object, floa
 
 				text_manager->draw_line(x1-camera_x,y1-camera_y,x2-camera_x,y2-camera_y,2,1,1,1,1,1);
 
-
 				/*xx1=mod_to_edit->polygons[polygon].grown_points[a].x*object_size*collision_size;
 				yy1=mod_to_edit->polygons[polygon].grown_points[a].y*object_size*collision_size;
 				xx2=mod_to_edit->polygons[polygon].grown_points[a+1].x*object_size*collision_size;
@@ -1094,7 +1053,6 @@ void Editor::object_draw(Mod::terrain_map_base::editor_object_base *object, floa
 			}
 		}
 	}
-
 
 	//info text
 	if(text_info){
@@ -1114,7 +1072,7 @@ void Editor::object_draw(Mod::terrain_map_base::editor_object_base *object, floa
 					object->rotation-=pi*2;
 				if(object->rotation<0)
 					object->rotation+=pi*2;
-				object->rotation=((int)(object->rotation/(pi*0.25f)+pi/8.0f))*(pi*0.25f);
+				object->rotation=(static_cast<int>(object->rotation/(pi*0.25f)+pi/8.0f))*(pi*0.25f);
 			}
 			if(grim->Key_Click(KEY_A)){
 				object->rotation-=pi/4.0f;
@@ -1122,10 +1080,9 @@ void Editor::object_draw(Mod::terrain_map_base::editor_object_base *object, floa
 					object->rotation-=pi*2;
 				if(object->rotation<0)
 					object->rotation+=pi*2;
-				object->rotation=((int)(object->rotation/(pi*0.25f)+pi/8.0f))*(pi*0.25f);
+				object->rotation=(static_cast<int>(object->rotation/(pi*0.25f)+pi/8.0f))*(pi*0.25f);
 			}
-		}
-		else{
+		} else {
 			if(grim->Key_Down(KEY_D)){
 				object->rotation+=elapsed*turn_speed;
 			}
@@ -1146,9 +1103,7 @@ void Editor::paint(int x_grid, int y_grid, int terrain_type, int flood_fill){
 	if(flood_fill==terrain_type)
 		return;
 
-
 	if((y_grid<mod_to_edit->terrain_maps[edited_area].terrain_grid.size())&&(y_grid>=0)&&(x_grid<mod_to_edit->terrain_maps[edited_area].terrain_grid[y_grid].terrain_blocks.size())&&(x_grid>=0)){
-
 
 		//asked for flood fill
 		if(flood_fill==-2){
@@ -1205,8 +1160,6 @@ void Editor::paint(int x_grid, int y_grid, int terrain_type, int flood_fill){
 }
 
 void Editor::center_map(void){
-
 	camera_x=(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size()*128*0.5f*zoom-screen_width/2);
 	camera_y=(mod_to_edit->terrain_maps[edited_area].terrain_grid.size()*128*0.5f*zoom-screen_height/2);
-
 }
