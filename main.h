@@ -542,7 +542,7 @@ public:
 	void load_particles(string filename);
 	void load_sounds(string filename);
 
-	void cfg_load(void);
+	bool cfg_load(void);
 	void initialize_game(void);//initialize game variables
 	bool Frame(void);
 	void uninitialize_game(void);//uninitialize game
