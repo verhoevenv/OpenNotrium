@@ -30,8 +30,6 @@
 #include "keys.h"
 #include "func.h"
 
-
-
 #ifdef _DEBUG
 
 	#include "memleaks.h"
@@ -45,8 +43,6 @@
 
 #endif
 
-
-
 //#pragma comment(lib,"Strmiids.lib")
 //#pragma comment(lib,"dsound.lib")
 //#pragma comment(lib,"dxguid")
@@ -54,9 +50,7 @@
 //#pragma comment(lib,"dxerr8.lib")
 //#pragma comment(lib,"dinput8.lib")
 
-
 class game_engine;
-
 
 class game_engine
 {
@@ -70,7 +64,6 @@ protected:
 		int amount;//how many of these the player has
 		bool wielded;
 	};
-
 
 	//collision_base
 	struct collision_base{
@@ -96,7 +89,6 @@ protected:
 		int blend_type;
 
 		list <particle> particles_list[3];
-
 	};
 
 	//collision_base
@@ -105,8 +97,6 @@ protected:
 		float timer;
 		bool dead;
 	};
-
-
 
 	//object bases
 	vector <script_info_base> script_info;//at which time the scripts were last calculated
@@ -232,7 +222,6 @@ protected:
 	int animation_playing_number;
 	int game_state_after_animation;
 	void play_animated_sequence(int number, int game_state_after);
-
 
 
 	//text viewing
@@ -364,7 +353,6 @@ protected:
 	int slider_item,slider_item2;
 	int slider_minimum,slider_maximum;
 
-
 	//sound
 	SoundManager* g_pSoundManager;
 	bool sound_initialized;
@@ -406,9 +394,6 @@ protected:
 //	IBaseFilter   *g_pSourceNext;
 //	TCHAR          g_szCurrentFile[128];
 //	IMediaEventEx  *pEvent;
-
-
-
 
 	void render_map(void);//renders game map
 	//void render_puzzle(void);
@@ -480,7 +465,7 @@ protected:
 	bool run_effect(Mod::effect effect, creature_base *creature, int creature_number, float x, float y, float angle, bool undo);
 	Key translate_key_KEY(char key);
 	int translate_key_int(char key);
-	bool check_condition(Mod::condition condition, creature_base *creature, int creature_number, float x, float y, bool show_message);
+	bool check_condition(const Mod::condition& condition, const creature_base *creature, int creature_number, float x, float y, bool show_message);
 	void draw_bars(void);
 	void count_bars(void);
 	//void debug_output(string rivi, int level);
@@ -490,13 +475,13 @@ protected:
 	void carry_light(map *edit_map, creature_base *creature, int light);
 	void delete_light(map *edit_map, int light);
 	bool run_plot_object(int item);
-	bool creature_collision_detection(creature_base *creature,map_object *object, bool correct_place);
+	bool creature_collision_detection(creature_base *creature, const map_object *object, bool correct_place);
 	bool point_will_collide(map *new_map, float x, float y, bool only_ones_that_stop_bullets);
 	vector <point2d> line_will_collide(float x1, float y1, float x2, float y2, bool return_on_first, bool avoid_terrain, bool only_ones_that_hinder_visibility, bool only_ones_that_stop_bullets, int check_area, bool check_props, bool check_plot_objects);
 	vector <point2d> line_hazardous_terrain(float x1, float y1, float x2, float y2);
 	vector <point2d> line_collision_detection(float x1, float y1, float x2, float y2,map_object *object,bool return_on_first);
-	bool creature_in_object(creature_base *creature,map_object *object);
-	bool point_in_object(float x, float y,map_object *object);
+	bool creature_in_object(const creature_base *creature, const map_object *object);
+	bool point_in_object(float x, float y, const map_object *object);
 	void start_map_editor(void);
 	void initialize_creature_specialties(creature_base *creature, map *map_to_edit, bool reset_bars);
 	void initialize_animation_frames(map *map_to_edit);
@@ -570,8 +555,6 @@ public:
 	//void kirjain(char kirjain, int *nume, int *kirjainleveys);
 	//int tekstaa(float x, float y, string text,float size);
 	bool give_item(int item_number, int amount, float time, bool arrange);
-
-
 
 };
 

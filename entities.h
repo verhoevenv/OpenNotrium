@@ -26,9 +26,6 @@ const float grid_size = 128.0f; //how many pixels is each grid square
 const float minimum_distance_from_edge = 0.4f;//how far must items be from map edges
 
 
-
-
-
 //bullets
 class bullet
 {
@@ -198,8 +195,6 @@ public:
 	int touched_enemy;//if it has touched an enemy, should fire on the next opportunity
 	//int target;
 
-
-
 	float move_to_x,move_to_y;
 	//target_data closest_friend;
 	//target_data closest_enemy;
@@ -236,7 +231,8 @@ public:
 
 
 	void die(void);
-    //creature_base();//constructor
+
+    creature_base();//constructor
     ~creature_base();//destructor
 
 };

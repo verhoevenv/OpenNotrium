@@ -604,6 +604,15 @@ map_object::map_object(){
 map_object::~map_object(){
 }
 
+creature_base::creature_base(void)
+: left(0)
+, right(0)
+, up(0)
+, down(0)
+, fire(false)
+, backward_forward_speed(0)
+, turn_speed(0)
+{}
 
 creature_base::~creature_base(){
 }

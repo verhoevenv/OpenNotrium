@@ -28,7 +28,6 @@ inline void SAFE_DELETE_ARRAY(T*& p) {
 
 #define WM_GRAPHNOTIFY  WM_APP + 1
 
-
 using namespace std;
 
 Engine *grim = NULL;
@@ -36,7 +35,6 @@ game_engine *engine;
 //HHOOK hkb;
 int bug1=0,bug2=0,bug3=0;//debugging variables
 bool debugging=false;//debugging control
-
 
 float turn_speed=0.009f*2;
 float movement_speed=0.35f;
@@ -50,20 +48,11 @@ string game_version="1.3.4.1";
 int climate_override=-1;
 int active_distance=15;
 
-
-
-
-
-game_engine::game_engine()
-{
-
+game_engine::game_engine() {
 	sound_initialized=false;
-
 }
 
-game_engine::~game_engine()
-{
-
+game_engine::~game_engine() {
 }
 
 void game_engine::Screenshot(string& screenshot_name){
@@ -125,7 +114,6 @@ bool game_engine::Frame(void)
 {
 	if(!focus)return true;
 
-
 	bool draw_messages=true;
 
 	if(debug.debug_state[1]==1){
@@ -135,8 +123,6 @@ bool game_engine::Frame(void)
 			fclose(fil);
 		}
 	}
-
-
 
 	debug.debug_output("Frame",1,1);
 
@@ -180,13 +166,8 @@ bool game_engine::Frame(void)
 		elapsed=250;
 	}
 
-
-
-
-
 	// save new time reading for next pass through the loop
 	last_time=cur_time;
-
 
 	//elapsed=1000/grim->Timer_GetFPS();
 	//if(elapsed<3)elapsed=3;
@@ -739,11 +720,9 @@ void game_engine::initialize_game(void){//initialize game variables
 		music_initialized=GraphInit();
 	}
 
-
-
+    // FIXME this has a fixed aspect ratio
 	x_multiplier=screen_width/1024.0f;
 	y_multiplier=screen_height/768.0f;
-
 
 	//new random seed
 	random_seed++;
@@ -2480,15 +2459,9 @@ void game_engine::AI_find_behavior_model(int creature, int *behavior, float *beh
 			*can_shoot=mod.AI_tactics[tactic].levels[a].can_shoot;
 			*can_eat=mod.AI_tactics[tactic].levels[a].can_eat;
 			*behavior=mod.AI_tactics[tactic].levels[a].action;
-
 			return;
 		}
-
 	}
-
-
-
-
 
 }
 
@@ -2617,7 +2590,6 @@ void game_engine::AI_act_behavior_model(int creature,int behavior, float paramet
 		//5=guard place, parameter0=distance to attack enemies
 		case 5:
 			{
-
 				//check if the guarded place is within the borders
 				if(map_main->creature[creature].behavior_parameter0[behavior]>map_main->sizex*grid_size)
 					map_main->creature[creature].behavior_parameter0[behavior]=randDouble(grid_size,(map_main->sizex-2)*grid_size);
@@ -2710,13 +2682,11 @@ void game_engine::AI_initiate_behavior_parameters(creature_base* creature){
 
 bool game_engine::AI_eat_behavior(int creature){
 
-
 	//find if an eat item is close by, and head there if it is
 	if(mod.general_creatures[map_main->creature[creature].type].eat_item>=0){
 		int a,b,c;
 		float creature_x=map_main->creature[creature].x+mod.general_creatures[map_main->creature[creature].type].size*map_main->creature[creature].size*general_creature_size*0.5f;
 		float creature_y=map_main->creature[creature].y+mod.general_creatures[map_main->creature[creature].type].size*map_main->creature[creature].size*general_creature_size*0.5f;
-
 
 		int start_x=(int)(map_main->creature[creature].x/grid_size)-3;
 		int start_y=(int)(map_main->creature[creature].y/grid_size)-3;
@@ -2796,14 +2766,11 @@ bool game_engine::AI_eat_behavior(int creature){
 
 void game_engine::AI_fire_weapon(int creature, int enemy_index, float enemy_distance, float enemy_angle){
 
-
-
 	//if target is within firing range and in right angle, fire
 	if(mod.general_creatures[map_main->creature[creature].type].weapon>0)
 	if(enemy_index!=-1){
 
 		/*
-
 		float creature_x=map_main->creature[creature].x+mod.general_creatures[map_main->creature[creature].type].size*map_main->creature[creature].size*general_creature_size*0.5f;
 		float creature_y=map_main->creature[creature].y+mod.general_creatures[map_main->creature[creature].type].size*map_main->creature[creature].size*general_creature_size*0.5f;
 		float enemy_x=map_main->creature[enemy_index].x+mod.general_creatures[map_main->creature[enemy_index].type].size*map_main->creature[enemy_index].size*general_creature_size*0.5f;
@@ -2811,8 +2778,6 @@ void game_engine::AI_fire_weapon(int creature, int enemy_index, float enemy_dist
 
 		float distance_to_waypoint=sqr(creature_x-enemy_x)+sqr(creature_y-enemy_y);
 		*/
-
-
 
 		//close combat creature
 		if(mod.general_creatures[map_main->creature[creature].type].close_combat){
@@ -2858,7 +2823,6 @@ void game_engine::AI_move(int creature){
 
 	float creature_x=map_main->creature[creature].x+mod.general_creatures[map_main->creature[creature].type].size*map_main->creature[creature].size*general_creature_size*0.5f;
 	float creature_y=map_main->creature[creature].y+mod.general_creatures[map_main->creature[creature].type].size*map_main->creature[creature].size*general_creature_size*0.5f;
-
 
 	//creatures that can move
 	if(mod.general_creatures[map_main->creature[creature].type].movement_speed>0){
@@ -3046,8 +3010,6 @@ float game_engine::AI_pathfinding(int creature){
 				free_length[a]=distance;
 		}
 
-
-
 		//see distance to target
 		float target_distance=sqr(end_x-target_x)+sqr(end_y-target_y);
 		target_length[a]=target_distance;
@@ -3088,15 +3050,12 @@ float game_engine::AI_pathfinding(int creature){
 
 void game_engine::creature_AI(void){
 
-
 	int i;
 	int b;
 	int creature,enemy_index,friend_index;
 	float enemy_distance,friend_distance;
 	float creature_x,creature_y;
 	//int creatures_hunting_player=0;
-
-
 
 	//find 5 closest enemies, add them to list
 	//find all own side creatures (except player), add them to list
@@ -3178,7 +3137,6 @@ void game_engine::creature_AI(void){
 		bool can_shoot,can_eat;
 		AI_find_behavior_model(creature,&behavior,&behavior_parameter0,&can_shoot,&can_eat);
 
-
 		//eat
 		bool will_eat=false;
 		if(can_eat)
@@ -3192,11 +3150,8 @@ void game_engine::creature_AI(void){
 		if(can_shoot)
 			AI_fire_weapon(creature, enemy_index, enemy_distance,enemy_angle);
 
-
-
 		//move towards target
 		AI_move(creature);
-
 
 		//anger level
 		if(!alien_attack){
@@ -3312,17 +3267,10 @@ void game_engine::creature_AI(void){
 		}
 
 
-
-
 		//head
 		map_main->creature[creature].rotation_head=map_main->creature[creature].rotation_legs;
 
 	}
-
-
-
-
-
 
 }
 
@@ -3332,8 +3280,6 @@ void game_engine::creature_actions_loop(void){
 	int i;
 
 	//int active_distance=15;
-
-
 
 	/*int alku_x=(int)(camera_x/grid_size)-active_distance;
 	int alku_y=(int)(camera_y/grid_size)-active_distance;
@@ -3355,10 +3301,8 @@ void game_engine::creature_actions_loop(void){
 		//weapon effects
 		for(int a=0;a<map_main->creature[creature].weapon_effects_amount;a++){
 
-
 			//count time
 			map_main->creature[creature].weapon_effects[a].time-=elapsed*game_speed;
-
 
 			//effects on creature
 			switch(map_main->creature[creature].weapon_effects[a].effect_type){
@@ -3423,16 +3367,7 @@ void game_engine::creature_actions_loop(void){
 						AI_initiate_behavior_parameters(&map_main->creature[creature]);
 					}
 					break;
-
 			}
-
-
-
-
-
-
-
-
 
 			//time elapsed, destroy effect
 			if(map_main->creature[creature].weapon_effects[a].time<=0){
@@ -3485,8 +3420,6 @@ void game_engine::creature_actions_loop(void){
 			creature=i;
 			creature_actions(creature,true);
 		}*/
-
-
 
 }
 
@@ -3629,13 +3562,11 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 					float place_x=thiscreature.x+size*0.5f-size_dropped*0.5f;
 					float place_y=thiscreature.y+size*0.5f-size_dropped*0.5f;
 
-
 					map_main->creature[thiscreature.carried_creature].x=place_x;
 					map_main->creature[thiscreature.carried_creature].y=place_y;
 					map_main->creature[thiscreature.carried_creature].rotation=thiscreature.rotation;
 					map_main->creature[thiscreature.carried_creature].rotation_head=thiscreature.rotation;
 					map_main->creature[thiscreature.carried_creature].rotation_legs=thiscreature.rotation;
-
 
 					thiscreature.carried_creature=-1;
 
@@ -3694,8 +3625,6 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 			if(time_from_beginning-thiscreature.dialog_timer>mod.dialogs[thiscreature.dialog].duration*0.001f){
 				thiscreature.dialog_timer=time_from_beginning;
 				thiscreature.dialog=mod.dialogs[thiscreature.dialog].next_line;
-
-
 			}
 		}
 
@@ -3775,19 +3704,28 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 		}
 
 		//map limits, end game creatures cannot hide out of sight
-		bool can_change_area = !mod.general_creatures[thiscreature.type].can_change_area;
-		const float left_map_limit= can_change_area ? 1 : grid_size+4;
+		const bool can_change_area = mod.general_creatures[thiscreature.type].can_change_area;
+		const float left_map_limit= can_change_area ? 1 : (grid_size+4 );
+		const float top_map_limit= can_change_area ? 1 : (grid_size+4);
+		const float right_map_limit= can_change_area ? ((map_main->sizex-1)*(grid_size)-1) : (map_main->sizex*grid_size-grid_size*2-4);
+		const float bottom_map_limit= can_change_area ? ((map_main->sizey-1)*(grid_size)-1) : (map_main->sizey*grid_size-grid_size*2-4);
+//        float left_map_limit=1;
+//		float top_map_limit=1;
+//		float right_map_limit=(map_main->sizex-1)*(grid_size)-1;
+//		float bottom_map_limit=(map_main->sizey-1)*(grid_size)-1;
+//		if(!can_change_area){
+//			left_map_limit=grid_size+4;
+//			top_map_limit=grid_size+4;
+//			right_map_limit=map_main->sizex*grid_size-grid_size*2-4;
+//			bottom_map_limit=map_main->sizey*grid_size-grid_size*2-4;
+//		}
 
-		float top_map_limit=1;
-		float right_map_limit=(map_main->sizex-1)*(grid_size)-1;
-		float bottom_map_limit=(map_main->sizey-1)*(grid_size)-1;
-		if(!can_change_area){
-			top_map_limit=grid_size+4;
-			right_map_limit=map_main->sizex*grid_size-grid_size*2-4;
-			bottom_map_limit=map_main->sizey*grid_size-grid_size*2-4;
-		}
-
-
+        assert(!isnan(left_map_limit));
+        assert(!isnan(top_map_limit));
+        assert(!isnan(right_map_limit));
+        assert(!isnan(bottom_map_limit));
+        assert(left_map_limit < right_map_limit);
+        assert(top_map_limit < bottom_map_limit);
 
 		//fire
 		if(!thiscreature.killed){
@@ -3814,9 +3752,6 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 						shoot_x=size*0.5f+mod.general_creatures[thiscreature.type].weapon_x*(size/general_creature_size)*sincos.table_cos(thiscreature.rotation)+mod.general_creatures[thiscreature.type].weapon_y*(size/general_creature_size)*sincos.table_cos(thiscreature.rotation-pi/2);
 						shoot_y=size*0.5f+mod.general_creatures[thiscreature.type].weapon_x*(size/general_creature_size)*sincos.table_sin(thiscreature.rotation)+mod.general_creatures[thiscreature.type].weapon_y*(size/general_creature_size)*sincos.table_sin(thiscreature.rotation-pi/2);
 					}
-
-
-
 
 					bullet bullet_shot=shoot(creature, thiscreature.side,mod.general_creatures[thiscreature.type].weapon,thiscreature.x+shoot_x,thiscreature.y+shoot_y,thiscreature.rotation);
 
@@ -3857,7 +3792,8 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 			if(thiscreature.y<top_map_limit)thiscreature.y=top_map_limit;
 			if(thiscreature.x>right_map_limit)thiscreature.x=right_map_limit;
 			if(thiscreature.y>bottom_map_limit)thiscreature.y=bottom_map_limit;
-
+            assert(!isnan(thiscreature.x));
+            assert(!isnan(thiscreature.y));
 
 			//calculate terrain effects
 			int terrain_type=map_main->grid[(int)((thiscreature.x+size*0.5f)/grid_size)].grid[(int)((thiscreature.y+size*0.5f)/grid_size)].terrain_type;
@@ -3890,7 +3826,6 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 				}
 			}
 
-
 			//Mod::effect temp_effect;
 			/*if(has_terrain_effect(map_main,terrain_type,2,&parameter0,&parameter1)){
 				sneak_multiplier=sneak_multiplier*parameter0;
@@ -3902,22 +3837,17 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 				//if(sneak_multiplier<0)sneak_multiplier=0;
 				//turn_speed=turn_speed*(mod.general_creatures[map_main->creature[creature].type].weight+mod.general_creatures[map_main->creature[map_main->creature[creature].carried_creature].type].weight)*0.25f;
 
-
 				//move carried creature
 				map_main->creature[thiscreature.carried_creature].x=thiscreature.x;
 				map_main->creature[thiscreature.carried_creature].y=thiscreature.y;
 				map_main->creature[thiscreature.carried_creature].rotation=thiscreature.rotation;
 				map_main->creature[thiscreature.carried_creature].rotation_head=thiscreature.rotation_head;
 				map_main->creature[thiscreature.carried_creature].rotation_legs=thiscreature.rotation_legs;
-
 			}
-
 
 			//store location
 			thiscreature.x2=thiscreature.x;
 			thiscreature.y2=thiscreature.y;
-
-
 
 			//turn
 			//if(mod.general_creatures[map_main->creature[creature].type].movement_speed>0){
@@ -3936,8 +3866,6 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 			if(thiscreature.up>0){
 				thiscreature.backward_forward_speed+=movement_change_speed*elapsed*game_speed*sneak_multiplier;
 				if(thiscreature.backward_forward_speed>1)thiscreature.backward_forward_speed=1;
-
-
 			}
 			//down
 			if((thiscreature.down>0)||(thiscreature.up<0)){
@@ -3946,13 +3874,15 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 			}
 			//not up or down
 			if((thiscreature.up==0)&&(thiscreature.down==0)){
-				if(fabs(thiscreature.backward_forward_speed)<fabs(movement_change_speed*elapsed*game_speed))
+                // here's the bugger.
+				if(fabs(thiscreature.backward_forward_speed) <= fabs(movement_change_speed*elapsed*game_speed))
 					thiscreature.backward_forward_speed=0;
-				else
-				thiscreature.backward_forward_speed-=movement_change_speed*elapsed*game_speed*(float)fabs(thiscreature.backward_forward_speed)/thiscreature.backward_forward_speed;
+				else {
+                    thiscreature.backward_forward_speed -= movement_change_speed*elapsed*game_speed
+                            *fabs(thiscreature.backward_forward_speed)/thiscreature.backward_forward_speed;
+ 				}
 				//thiscreature.backward_forward_speed=0;
 			}
-
 
 			//keep rotation in 0>x<2pi
 			if(thiscreature.rotation_legs<0)thiscreature.rotation_legs+=pi*2;
@@ -3964,21 +3894,28 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 
 			//back and forward
 			if((thiscreature.backward_forward_speed!=0)||(mod.general_creatures[thiscreature.type].minimum_movement_speed>0)){
-
-				float summed_movement_speed=mod.general_creatures[thiscreature.type].movement_speed*thiscreature.backward_forward_speed*sneak_multiplier;
+                // !!!
+				float summed_movement_speed = mod.general_creatures[thiscreature.type].movement_speed
+                        * thiscreature.backward_forward_speed * sneak_multiplier;
 				if(mod.general_creatures[thiscreature.type].minimum_movement_speed>0){
-					if(summed_movement_speed<mod.general_creatures[thiscreature.type].minimum_movement_speed)
-						summed_movement_speed=mod.general_creatures[thiscreature.type].minimum_movement_speed;
+					if(summed_movement_speed < mod.general_creatures[thiscreature.type].minimum_movement_speed) {
+						summed_movement_speed = mod.general_creatures[thiscreature.type].minimum_movement_speed;
+                        assert(!isnan(summed_movement_speed));
+					}
 				}
-
+                // !!!
 				thiscreature.x+=sincos.table_cos(thiscreature.rotation_legs-pi/2)*elapsed*game_speed*summed_movement_speed*movement_speed;
 				thiscreature.y+=sincos.table_sin(thiscreature.rotation_legs-pi/2)*elapsed*game_speed*summed_movement_speed*movement_speed;
+                assert(!isnan(thiscreature.x));
+                assert(!isnan(thiscreature.y));
 			}
 
 			//pushing
 			if(mod.general_creatures[thiscreature.type].movement_speed>0){
 				thiscreature.x+=thiscreature.vx*elapsed*game_speed/mod.general_creatures[thiscreature.type].weight;
 				thiscreature.y+=thiscreature.vy*elapsed*game_speed/mod.general_creatures[thiscreature.type].weight;
+                assert(!isnan(thiscreature.x));
+                assert(!isnan(thiscreature.y));
 			}
 
 			if(thiscreature.vx>0){
@@ -4013,8 +3950,6 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 				thiscreature.vy=thiscreature.vy/kerroin*1;
 			}
 
-
-
 			//not too close to other creatures, they push each other
 			if((visible)&&(!thiscreature.killed)){
 				//make sure creature is on map again
@@ -4022,6 +3957,9 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 				if(thiscreature.y<top_map_limit)thiscreature.y=top_map_limit;
 				if(thiscreature.x>right_map_limit)thiscreature.x=right_map_limit;
 				if(thiscreature.y>bottom_map_limit)thiscreature.y=bottom_map_limit;
+
+                assert(!isnan(thiscreature.x));
+                assert(!isnan(thiscreature.y));
 
 				int start_x=(int)(thiscreature.x/grid_size)-2;
 				int start_y=(int)(thiscreature.y/grid_size)-2;
@@ -4072,7 +4010,6 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 							}
 							if(creature2_prevented)continue;
 
-
 							float creature_size2=(bound_circle2)*(map_main->creature[creature2].size*mod.general_creatures[map_main->creature[creature2].type].size);
 							float creature_weight=mod.general_creatures[thiscreature.type].weight;
 							float creature2_weight=mod.general_creatures[map_main->creature[creature2].type].weight;
@@ -4113,10 +4050,6 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 									thiscreature.touched_enemy=creature2;
 								}
 
-
-
-
-
 								//float kerroin=sqrtf(sqr((bound_circle2)*(mod.general_creatures[map_main->creature[creature].type].size+mod.general_creatures[map_main->creature[map_main->grid[a].grid[b].creatures[c]].type].size))/(sqr(map_main->creature[creature].x-map_main->creature[map_main->grid[a].grid[b].creatures[c]].x)+sqr(map_main->creature[creature].y-map_main->creature[map_main->grid[a].grid[b].creatures[c]].y)));
 								float kerroin=((creature_size*0.5f+creature_size2*0.5f)/sqrtf(sqr(creature_x-creature_x2)+sqr(creature_y-creature_y2)));
 								if(kerroin>2)kerroin=2;
@@ -4127,28 +4060,32 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 								float kerroin_1=kerroin*(creature_weight/(creature_weight+creature2_weight));
 								float kerroin_2=kerroin*(creature2_weight/(creature_weight+creature2_weight));
 
-
 								thiscreature.x+=move_x*kerroin_2;
 								thiscreature.y+=move_y*kerroin_2;
+								assert(!isnan(thiscreature.x));
+                                assert(!isnan(thiscreature.y));
 
 								map_main->creature[creature2].x-=move_x*kerroin_1;
 								map_main->creature[creature2].y-=move_y*kerroin_1;
+                                assert(!isnan(map_main->creature[creature2].x));
+                                assert(!isnan(map_main->creature[creature2].y));
 
 								//if the new position collides, we're back to the old one
 								if(creature_will_collide(map_main,&thiscreature)){
 									thiscreature.x=thiscreature.x2;
 									thiscreature.y=thiscreature.y2;
+                                    assert(!isnan(thiscreature.x));
+                                    assert(!isnan(thiscreature.y));
 								}
 								if(creature_will_collide(map_main,&map_main->creature[creature2])){
 									map_main->creature[creature2].x=map_main->creature[creature2].x2;
 									map_main->creature[creature2].y=map_main->creature[creature2].y2;
+                                    assert(!isnan(map_main->creature[creature2].x));
+                                    assert(!isnan(map_main->creature[creature2].y));
 								}
-
-
 							}
 						}
 					}
-
 				}
 			}
 
@@ -4162,6 +4099,9 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 				if(thiscreature.y<top_map_limit)thiscreature.y=top_map_limit;
 				if(thiscreature.x>right_map_limit)thiscreature.x=right_map_limit;
 				if(thiscreature.y>bottom_map_limit)thiscreature.y=bottom_map_limit;
+
+                assert(!isnan(thiscreature.x));
+                assert(!isnan(thiscreature.y));
 
 				//collisions prevented in creature specialties
 				bool prop_prevented=false;
@@ -4211,7 +4151,6 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 
 								if(creature_collision_detection(&thiscreature,&map_main->items[map_main->grid[a].grid[b].items[c]],true))
 									hits++;
-
 							}
 						}
 
@@ -4219,12 +4158,13 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 				}
 			}
 
-
 		//make sure creature is on map again
 		if(thiscreature.x<left_map_limit)thiscreature.x=left_map_limit;
 		if(thiscreature.y<top_map_limit)thiscreature.y=top_map_limit;
 		if(thiscreature.x>right_map_limit)thiscreature.x=right_map_limit;
 		if(thiscreature.y>bottom_map_limit)thiscreature.y=bottom_map_limit;
+        assert(!isnan(thiscreature.x));
+        assert(!isnan(thiscreature.y));
 
 		//AI pathfinding is not on, we need to block the creature from entering AI_avoid terrain
 		if(!visible){
@@ -4237,6 +4177,8 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
             if(mod.terrain_types[terrain_type].AI_avoid){
                 thiscreature.x=thiscreature.x2;
                 thiscreature.y=thiscreature.y2;
+                assert(!isnan(thiscreature.x));
+                assert(!isnan(thiscreature.y));
             }
 		}
 
@@ -10937,7 +10879,6 @@ void game_engine::load_game(int slot){
 		map_storage.clear();
 
 
-
 		//date
 		fgets(temprivi,sizeof(temprivi),fil);
 
@@ -10952,8 +10893,6 @@ void game_engine::load_game(int slot){
 		//load mod
 		load_mod(mod.mod_name);
 
-
-
 		//maps
 		/*fgets(temprivi,sizeof(temprivi),fil);
 		areas_x=atoi(temprivi);
@@ -10965,15 +10904,12 @@ void game_engine::load_game(int slot){
 		//load individual maps
 		for(area=0;area<areas_x*areas_y;area++){*/
 
-
-
 		//number of areas stored
 		fgets(temprivi,sizeof(temprivi),fil);
 		int areas=atoi(temprivi);
 
 
 		for(area=0;area<areas;area++){
-
 
 			//construction parameters
 			fgets(temprivi,sizeof(temprivi),fil);
@@ -10989,14 +10925,11 @@ void game_engine::load_game(int slot){
 			fgets(temprivi,sizeof(temprivi),fil);
 			int climate=atoi(temprivi);
 
-
 			//new map object
 			//SAFE_DELETE(map_storage[area]);
 			map *temp_map=NULL;
 			temp_map=new map(map_width,map_height, total_creatures, total_objects, total_items, climate);
 			//temp_map = new map(map_width,map_height, total_creatures, total_objects, total_items, climate);
-
-
 
 			//map specialties
 			fgets(temprivi,sizeof(temprivi),fil);
@@ -15255,7 +15188,7 @@ int game_engine::translate_key_int(char key){
 	return 0;
 }
 
-bool game_engine::check_condition(Mod::condition condition, creature_base *creature, int creature_number, float x, float y, bool show_message){
+bool game_engine::check_condition(const Mod::condition& condition, const creature_base *creature, int creature_number, float x, float y, bool show_message){
 
 	unsigned int a,b,c;
 
@@ -16783,7 +16716,7 @@ bool game_engine::run_plot_object(int item){
 }
 
 
-bool game_engine::creature_in_object(creature_base *creature,map_object *object){
+bool game_engine::creature_in_object(const creature_base *creature, const map_object *object){
 
 
 	float bound_circle=14;
@@ -16846,7 +16779,7 @@ bool game_engine::creature_in_object(creature_base *creature,map_object *object)
 	return false;
 }
 
-bool game_engine::point_in_object(float x, float y,map_object *object){
+bool game_engine::point_in_object(float x, float y, const map_object *object){
 
 	int test_type=mod.general_objects[object->type].collision_type;
 	float size=mod.general_objects[object->type].collision_parameter0;
@@ -16912,7 +16845,7 @@ bool game_engine::point_in_object(float x, float y,map_object *object){
 
 
 
-bool game_engine::creature_collision_detection(creature_base *creature,map_object *object, bool correct_place){
+bool game_engine::creature_collision_detection(creature_base *creature, const map_object *object, bool correct_place){
 
 	if(mod.general_objects[object->type].collision_type==-1)return false;
 
@@ -16940,6 +16873,8 @@ bool game_engine::creature_collision_detection(creature_base *creature,map_objec
 					float kerroin=sqrtf(sqr(creature_size*0.5f+object_size*0.5f*1.001f)/(sqr(creature_x-object_x)+sqr(creature_y-object_y)));
 					creature->x+=(creature_x-object_x)*kerroin-(creature_x-object_x);
 					creature->y+=(creature_y-object_y)*kerroin-(creature_y-object_y);
+                    assert(!isnan(creature->x));
+                    assert(!isnan(creature->y));
 
 					//see if we can use the new point
 					if(creature_will_collide(map_main,creature)){

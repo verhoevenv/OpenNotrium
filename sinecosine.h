@@ -1,9 +1,6 @@
 #ifndef __SINECOSINE_H__
 #define __SINECOSINE_H__
 
-#include <math.h>
-#include "func.h"
-
 #define degrees_in_lookup_table 360
 
 class sinecosine;
@@ -21,7 +18,6 @@ public:
 
     sinecosine();//constructor
     //~light();//destructor
-
 };
 
 
