@@ -16,7 +16,7 @@ void text_output::initialize_text_output(Engine *grim, resource_handler *resourc
 
 
 //renders text
-void text_output::write(int font, string text, float size, float x0,float y0, float x1, float y1, bool inverse_color, float r, float g, float b, float alpha){
+void text_output::write(int font, const string& text, float size, float x0,float y0, float x1, float y1, bool inverse_color, float r, float g, float b, float alpha){
 
 	float letter_width=16;
 	float letter_height=16;
@@ -199,7 +199,7 @@ void text_output::find_letter_width(char kirjain, int *nume, int *kirjainleveys)
 }
 
 //draws text
-int text_output::write_line(int font, float x, float y, string text, float size){
+int text_output::write_line(int font, float x, float y, const string& text, float size){
 
 	float letter_width=16;
 	float letter_height=16;
@@ -237,7 +237,7 @@ int text_output::write_line(int font, float x, float y, string text, float size)
 }
 
 
-void text_output::message(float timer, float fade_time, string message){
+void text_output::message(float timer, float fade_time, const string& message){
 
 	int a;
 

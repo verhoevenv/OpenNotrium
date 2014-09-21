@@ -14,8 +14,7 @@ class light;
 class bullet;
 class particle;
 class item;
-
-#define grid_size 128.0f//how many pixels is each grid square
+const float grid_size = 128.0f; //how many pixels is each grid square
 //#define maximum_lights 100//how many simultaneous lights available
 //#define maximum_bullets 100//how many simultaneous bullets available
 //#define maximum_particles 100//how many simultaneous particles available
@@ -24,10 +23,7 @@ class item;
 #define maximum_bars 100
 #define MAXIMUM_WEAPON_EFFECTS 30
 
-#define minimum_distance_from_edge 0.4f//how far must items be from map edges
-
-
-
+const float minimum_distance_from_edge = 0.4f;//how far must items be from map edges
 
 
 //bullets
@@ -105,7 +101,9 @@ public:
 	float time1;
 	float time2;
 
-	void generate_map(float amount_multiplier, vector <int> terrain_types, vector <bool> no_random_terrain_types, vector <bool> do_not_place_on_map_edges, vector <bool> terrain_is_hazardous, vector<int> prop_amounts, vector<int> prop_objects, vector <int> alien_types, vector <int> alien_amounts, vector <int> alien_sides);//generates the map
+	void generate_map(float amount_multiplier, const vector<int>& terrain_types, const vector<bool>& no_random_terrain_types,
+                   const vector<bool>& do_not_place_on_map_edges, const vector<bool>& terrain_is_hazardous, const vector<int>& prop_amounts,
+                   const vector<int>& prop_objects, const vector<int>& alien_types, const vector<int>& alien_amounts, const vector<int>& alien_sides);//generates the map
 	void check_creatures(void);//checks on which squares the creatures are on
 	int create_light(float x, float y, int type, float size, float r, float g, float b, float a, float time);//sets in a light
 	void initialize_items(void);//initializes the map
@@ -197,8 +195,6 @@ public:
 	int touched_enemy;//if it has touched an enemy, should fire on the next opportunity
 	//int target;
 
-
-
 	float move_to_x,move_to_y;
 	//target_data closest_friend;
 	//target_data closest_enemy;
@@ -235,7 +231,8 @@ public:
 
 
 	void die(void);
-    //creature_base();//constructor
+
+    creature_base();//constructor
     ~creature_base();//destructor
 
 };

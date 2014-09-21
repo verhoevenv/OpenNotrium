@@ -2,11 +2,9 @@
 
 #include "entities.h"
 #include "func.h"
-
+#include <cstring>
 
 //#include "dxutil.h"
-
-
 
 
 
@@ -189,7 +187,11 @@ void map::check_creatures(void){
 }
 
 
-void map::generate_map(float amount_multiplier, vector <int> terrain_types, vector <bool> no_random_terrain_types, vector <bool> do_not_place_on_map_edges, vector <bool> terrain_is_hazardous, vector<int> prop_amounts, vector<int> prop_objects, vector <int> alien_types, vector <int> alien_amounts, vector <int> alien_sides){
+void map::generate_map(float amount_multiplier, const vector<int>& terrain_types,
+                       const vector<bool>& no_random_terrain_types, const vector<bool>& do_not_place_on_map_edges,
+                       const vector<bool>& terrain_is_hazardous, const vector<int>& prop_amounts,
+                       const vector<int>& prop_objects, const vector<int>& alien_types,
+                       const vector<int>& alien_amounts, const vector<int>& alien_sides){
 	int i,j,k,a,b;
 
 	//special locations
@@ -306,18 +308,14 @@ void map::generate_map(float amount_multiplier, vector <int> terrain_types, vect
 		}
 	}
 
-
 	creature_base temp_creature;
 	creature.push_back(temp_creature);
 
-
 	//throw in the creatures
-	float diameter=sqrtf(sqr(sizex*grid_size)+sqr(sizey*grid_size));
+	//float diameter=sqrtf(sqr(sizex*grid_size)+sqr(sizey*grid_size));
 	//for (i=0; i<total_creatures; i++){
 
-
 	int creature_counter=1;//0=player
-
 
 	for (a=0; a<alien_amounts.size(); a++){
 		for (b=0; b<(int)(alien_amounts[a]); b++){
@@ -330,7 +328,7 @@ void map::generate_map(float amount_multiplier, vector <int> terrain_types, vect
 
 				int aaa=(int)(x)*sizey+(int)(y);
 
-				bool aa=terrain_is_hazardous[aaa];
+				//bool aa=terrain_is_hazardous[aaa];
 
 				if(terrain_is_hazardous[(int)(x)*sizey+(int)(y)])
 					continue;
@@ -344,7 +342,6 @@ void map::generate_map(float amount_multiplier, vector <int> terrain_types, vect
 
 				i=creature_counter;
 				creature_counter++;
-
 
 				creature_base temp_creature;
 				creature.push_back(temp_creature);
@@ -423,10 +420,8 @@ void map::generate_map(float amount_multiplier, vector <int> terrain_types, vect
 
 //initializes the map items
 void map::initialize_items(void){
-	int i,j,k;
-
-	for (i=0; i<sizex; i++){
-		for (j=0; j<sizey; j++){
+	for (int i=0; i<sizex; i++){
+		for (int j=0; j<sizey; j++){
 			grid[i].grid[j].items.clear();
 			//for (k=0; k<maximum_objects_on_grid; k++){
 			//	grid[i].grid[j].objects[k]=
@@ -434,10 +429,10 @@ void map::initialize_items(void){
 		}
 	}
 	int x,y;
-	for (k=0; k<items.size(); k++){
+	for (unsigned int k=0; k<items.size(); k++){
 		if(items[k].dead)continue;
-		x=(int)(items[k].x/grid_size);
-		y=(int)(items[k].y/grid_size);
+		x=static_cast<int>(items[k].x/grid_size);
+		y=static_cast<int>(items[k].y/grid_size);
 		//if(grid[x].grid[y].total_objects<maximum_objects_on_grid-1){
 			grid[x].grid[y].items.push_back(k);
 		//	grid[x].grid[y].total_objects++;
@@ -480,8 +475,6 @@ void map::initialize_items(void){
 
 //initializes the map objects
 void map::initialize_objects(void){
-	int i,j,k;
-
 	//find out on which map square is each object
 	/*int objects_here;
 	int objects[100];
@@ -513,9 +506,8 @@ void map::initialize_objects(void){
 		}
 	}*/
 
-
-	for (i=0; i<sizex; i++){
-		for (j=0; j<sizey; j++){
+	for (int i=0; i<sizex; i++){
+		for (int j=0; j<sizey; j++){
 			grid[i].grid[j].objects.clear();
 			//for (k=0; k<maximum_objects_on_grid; k++){
 			//	grid[i].grid[j].objects[k]=
@@ -523,10 +515,10 @@ void map::initialize_objects(void){
 		}
 	}
 	int x,y;
-	for (k=0; k<object.size(); k++){
+	for (unsigned int k=0; k<object.size(); k++){
 		if(object[k].dead)continue;
-		x=(int)(object[k].x/grid_size);
-		y=(int)(object[k].y/grid_size);
+		x=static_cast<int>(object[k].x/grid_size);
+		y=static_cast<int>(object[k].y/grid_size);
 		//if(grid[x].grid[y].total_objects<maximum_objects_on_grid-1){
 			grid[x].grid[y].objects.push_back(k);
 			//grid[x].grid[y].total_objects++;
@@ -602,6 +594,15 @@ map_object::map_object(){
 map_object::~map_object(){
 }
 
+creature_base::creature_base(void)
+: left(0)
+, right(0)
+, up(0)
+, down(0)
+, fire(false)
+, backward_forward_speed(0)
+, turn_speed(0)
+{}
 
 creature_base::~creature_base(){
 }

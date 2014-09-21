@@ -177,7 +177,7 @@ void Engine::setup_opengl()
         mainTarget = Texture_Get("EngineMainTarget");
 }
 
-void Engine::System_SaveScreenshot(std::string filename){
+void Engine::System_SaveScreenshot(const std::string& filename){
     //the main problem here is that textures are stored upside-down
     //to get a proper screenshot, we have to flip the image
     //we can do this ourselves in memory, but why not let opengl work for us...
@@ -292,7 +292,7 @@ void Engine::System_SetState_ScreenBPP(int bits){
     bpp = bits;
 }
 
-void Engine::System_SetState_Title(char* newtitle){
+void Engine::System_SetState_Title(const char* newtitle){
     title = newtitle;
     SDL_WM_SetCaption(title, NULL);
 }
@@ -352,7 +352,7 @@ void Engine::Texture_Delete(int tex_slot){
 }
 
 
-int Engine::Texture_Get(std::string id){
+int Engine::Texture_Get(const std::string& id){
     for(int i=0;i<maxtextures;i++){
         if(textures[i].name == id)
             return i;
@@ -360,7 +360,7 @@ int Engine::Texture_Get(std::string id){
     return -1;
 }
 
-bool Engine::Texture_Create(std::string id, int width, int height){
+bool Engine::Texture_Create(const std::string& id, int width, int height){
     createNewTexture(id,width,height);
 
     unsigned int* data;						// Stored Data
@@ -380,7 +380,7 @@ bool Engine::Texture_Create(std::string id, int width, int height){
 }
 
 
-bool Engine::Texture_Load(std::string id, char *filename){
+bool Engine::Texture_Load(const std::string& id, char *filename){
     SDL_Surface *surface;
     GLenum texture_format;
 
@@ -414,7 +414,7 @@ bool Engine::Texture_Load(std::string id, char *filename){
     return true;
 }
 
-int Engine::createNewTexture(std::string name, int width, int height){
+int Engine::createNewTexture(const std::string& name, int width, int height){
     GLuint id;
     glGenTextures( 1, &id );
 
@@ -543,15 +543,15 @@ void Engine::setglColor(int index){
         glColor4f(1,1,1,1);
 }
 
-bool Engine::File_Exists(std::string filename){
+bool Engine::File_Exists(const std::string& filename){
 	return (PHYSFS_exists(filename.c_str()) != 0);
 }
 
-bool Engine::File_IsDirectory(std::string filename){
+bool Engine::File_IsDirectory(const std::string& filename){
 	return (PHYSFS_isDirectory(filename.c_str()) != 0);
 }
 
-std::vector<std::string> Engine::File_ListDirectory(std::string dir){
+std::vector<std::string> Engine::File_ListDirectory(const std::string& dir){
 	char **rc = PHYSFS_enumerateFiles(dir.c_str());
 	char **i;
 

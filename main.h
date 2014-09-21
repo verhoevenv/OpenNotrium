@@ -30,8 +30,6 @@
 #include "keys.h"
 #include "func.h"
 
-
-
 #ifdef _DEBUG
 
 	#include "memleaks.h"
@@ -41,9 +39,9 @@
 	#define new DEBUG_NEW
 	#undef THIS_FILE
 	static char THIS_FILE[] = __FILE__;
+	#define SDL_ASSERT_LEVEL 2
+
 #endif
-
-
 
 //#pragma comment(lib,"Strmiids.lib")
 //#pragma comment(lib,"dsound.lib")
@@ -52,18 +50,11 @@
 //#pragma comment(lib,"dxerr8.lib")
 //#pragma comment(lib,"dinput8.lib")
 
-
 class game_engine;
-
 
 class game_engine
 {
 protected:
-
-
-
-
-
 
 	//player's items
 	struct item_list_object{
@@ -73,7 +64,6 @@ protected:
 		int amount;//how many of these the player has
 		bool wielded;
 	};
-
 
 	//collision_base
 	struct collision_base{
@@ -99,7 +89,6 @@ protected:
 		int blend_type;
 
 		list <particle> particles_list[3];
-
 	};
 
 	//collision_base
@@ -108,8 +97,6 @@ protected:
 		float timer;
 		bool dead;
 	};
-
-
 
 	//object bases
 	vector <script_info_base> script_info;//at which time the scripts were last calculated
@@ -133,8 +120,7 @@ protected:
 	vector <timer_base> terrain_timers;
 	vector <timer_base> rain_effect_timers;
 
-
-	float elapsed,elapsed2,elapsed3[30];//timer for fps
+	float elapsed,elapsed2,elapsed3[31];//timer for fps
 	bool perf_flag;        // Timer Selection Flag
 	double time_factor;    // Time Scaling Factor
 	long last_time;    // Previous timer value
@@ -235,7 +221,6 @@ protected:
 	int animation_playing_number;
 	int game_state_after_animation;
 	void play_animated_sequence(int number, int game_state_after);
-
 
 
 	//text viewing
@@ -367,7 +352,6 @@ protected:
 	int slider_item,slider_item2;
 	int slider_minimum,slider_maximum;
 
-
 	//sound
 	SoundManager* g_pSoundManager;
 	bool sound_initialized;
@@ -396,7 +380,7 @@ protected:
 	bool music_initialized;
 	void play_music_file(int song_number, int *do_not_play);
 	int last_played_music;
-	bool SwapSourceFilter(char* file);
+	bool SwapSourceFilter(const char* file);
 	bool set_volume(float volume);
 	bool GraphInit(void);
 	bool HandleGraphEvent(void);
@@ -409,9 +393,6 @@ protected:
 //	IBaseFilter   *g_pSourceNext;
 //	TCHAR          g_szCurrentFile[128];
 //	IMediaEventEx  *pEvent;
-
-
-
 
 	void render_map(void);//renders game map
 	//void render_puzzle(void);
@@ -448,7 +429,7 @@ protected:
 	void AI_initiate_behavior_parameters(creature_base* creature);
 	void save_game(int slot);
 	void load_game(int slot);
-	void load_mod(string mod_name);
+	void load_mod(const string& mod_name);
 	void new_game(void);
 	void read_saves(void);
 	void calculate_body_temperature(void);
@@ -456,13 +437,13 @@ protected:
 	void handle_map_changed(void);
 	bool creature_will_collide(map *new_map, creature_base *creature);
 	void change_map(int move, float new_x, float new_y, bool move_enemies);
-	void combine_items(int a,int combine_item, vector <Mod::combines::combine_results_base> combine_results, bool discard_this, bool discard_that);
+	void combine_items(int a,int combine_item, const vector<Mod::combines::combine_results_base>& combine_results, bool discard_this, bool discard_that);
 	void create_maps(void);
 	//bool init_mouse(void);
 	//void deinit_mouse(void);
 	//void calculate_endings(void);
 	void calculate_weather(void);
-	void load_mod_names(string StartingPath);
+	void load_mod_names(const string& StartingPath);
 	void spawn_creature(int side, int tactic, int tactic2, float x, float y, float angle, int type, map *map);
 	void set_edges(void);
 	static int arrange_item_list_callback(const void *c, const void *d);
@@ -474,7 +455,7 @@ protected:
 	void disable_input_override(void);
 	bool race_specialty(int find_specialty, Mod::specialty *specialty);
 	vector <collision_base> list_collisions(float x1,float y1, float x2, float y2, bool only_visible_area);
-	void draw_line_map(int x1, int y1, int width, int height, map *map_draw);
+	void draw_line_map(int x1, int y1, int width, int height, const map* map_draw);
 	bool has_terrain_effect(map *map_to_edit, int terrain_type, int search_effect, Mod::effect *effect);
 	bool use_item(int general_item_number,int *item_number_in_list, Mod::effect_base effect, bool unuse, bool output, bool just_asking, bool check_slots);
 	bool item_has_effect(int item_type, int search_effect, Mod::effect *effect);
@@ -483,23 +464,23 @@ protected:
 	bool run_effect(Mod::effect effect, creature_base *creature, int creature_number, float x, float y, float angle, bool undo);
 	Key translate_key_KEY(char key);
 	int translate_key_int(char key);
-	bool check_condition(Mod::condition condition, creature_base *creature, int creature_number, float x, float y, bool show_message);
+	bool check_condition(const Mod::condition& condition, const creature_base *creature, int creature_number, float x, float y, bool show_message);
 	void draw_bars(void);
 	void count_bars(void);
 	//void debug_output(string rivi, int level);
 	void calculate_scripts(void);
 	void run_script(int script_number, bool check_conditions, bool check_time);
-	void set_bar(creature_base *creature, int bar, float value);
+	void set_bar(creature_base *creature, unsigned int bar, float value);
 	void carry_light(map *edit_map, creature_base *creature, int light);
 	void delete_light(map *edit_map, int light);
 	bool run_plot_object(int item);
-	bool creature_collision_detection(creature_base *creature,map_object *object, bool correct_place);
+	bool creature_collision_detection(creature_base *creature, const map_object *object, bool correct_place);
 	bool point_will_collide(map *new_map, float x, float y, bool only_ones_that_stop_bullets);
 	vector <point2d> line_will_collide(float x1, float y1, float x2, float y2, bool return_on_first, bool avoid_terrain, bool only_ones_that_hinder_visibility, bool only_ones_that_stop_bullets, int check_area, bool check_props, bool check_plot_objects);
 	vector <point2d> line_hazardous_terrain(float x1, float y1, float x2, float y2);
 	vector <point2d> line_collision_detection(float x1, float y1, float x2, float y2,map_object *object,bool return_on_first);
-	bool creature_in_object(creature_base *creature,map_object *object);
-	bool point_in_object(float x, float y,map_object *object);
+	bool creature_in_object(const creature_base *creature, const map_object *object);
+	bool point_in_object(float x, float y, const map_object *object);
 	void start_map_editor(void);
 	void initialize_creature_specialties(creature_base *creature, map *map_to_edit, bool reset_bars);
 	void initialize_animation_frames(map *map_to_edit);
@@ -539,10 +520,10 @@ public:
 	//void print_effect_numbers(FILE *fil);
 	//void load_item_info(string filename);//loads item info from file
 
-	void load_particles(string filename);
-	void load_sounds(string filename);
+	void load_particles(const string& filename);
+	void load_sounds(const string& filename);
 
-	void cfg_load(void);
+	bool cfg_load(void);
 	void initialize_game(void);//initialize game variables
 	bool Frame(void);
 	void uninitialize_game(void);//uninitialize game
@@ -556,8 +537,8 @@ public:
 	void player_controls(int control_type);//check and control the player input
 	void draw_lights(int layer);//draws light effects (flashlight, explosions
 	//void flash_light(void);//handles the flashlight
-	void load_setup(char *filename);
-	void save_setup(char *filename);
+	void load_setup(const char *filename);
+	void save_setup(const char *filename);
 	float calculate_flashlight(float c_x,float c_y,float rotation, float t_x, float t_y,float *distance,float *angle);//returns the light value using the flashlight
 	bullet shoot(int from_creature, int side,int type, float startx,float starty,float angle);//fire a bullet
 	void calculate_bullets(void);//calculates bullet flight
@@ -568,13 +549,11 @@ public:
 	void calculate_particles(void);
 	void draw_particles(int layer);//draws particles
 	void draw_mouse(int cursor, float hot_spot_x, float hot_spot_y, float r, float g, float b);//draws mouse
-	void Screenshot(string *screenshot_name);
-	void GetScreenshotFileName(string *FileName);
+	void Screenshot(string& screenshot_name);
+	void GetScreenshotFileName(string& FileName);
 	//void kirjain(char kirjain, int *nume, int *kirjainleveys);
 	//int tekstaa(float x, float y, string text,float size);
 	bool give_item(int item_number, int amount, float time, bool arrange);
-
-
 
 };
 
