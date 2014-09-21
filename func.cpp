@@ -2,14 +2,30 @@
 
 
 #include "func.h"
-#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
-#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
 #include <cstring>
 
-float square( float f ) { return (f*f) ;};
+//#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
+template <typename T>
+inline void SAFE_RELEASE(T*& p) {
+    if (p) {
+        p->Release();
+        p = NULL;
+    }
+}
+//#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
+template <typename T>
+inline void SAFE_DELETE_ARRAY(T*& p) {
+    if (p) {
+        delete[] p;
+        p = NULL;
+    }
+}
 
 
-/* 
+inline float square( float f ) { return (f*f) ;};
+
+
+/*
  * randInt
  *
  * returns a random integer in the specified range
@@ -43,7 +59,7 @@ float randDouble( float low, float high )
 //	tempx2=toka.right-eka.left;
 //	if (((tempx1>0)&&(tempx2>0)) ||
 //	((tempx1<0)&&(tempx2<0)) )
-//	
+//
 //	{
 //	tempy1=eka.top-toka.bottom;
 //	tempy2=toka.top-eka.bottom;
@@ -62,10 +78,9 @@ char *stripped_fgets(char *s, int n, FILE *f)
 {
 	using namespace std;
 
-	if (fgets(s,n,f)==NULL)
-	return(NULL);
+	if (!fgets(s,n,f))
+        return NULL;
 
-	
 
 	//start cut
 	int i=0;
@@ -81,7 +96,7 @@ char *stripped_fgets(char *s, int n, FILE *f)
 		}
 	}
 
-	
+
 	//end cut
 	i=0;
 	while (s[i]!=';' && s[i]!=13 && s[i]!=10 && s[i]!=0)
@@ -89,24 +104,18 @@ char *stripped_fgets(char *s, int n, FILE *f)
 	s[i]=0;
 
 
-
 	return(s);
 }
 
-
-
-
-bool strtobool(char *rivi){
+bool strtobool(const char *rivi){
 	int a=atoi(rivi);
 	if (a==0)return false;
 	else return true;
 }
 
 
-
-
 void random_name(char *creature_name){//give a random name
-	
+
 	char konsonantti[20];
 	char vokaali[6];
 	char iso_konsonantti[20];
@@ -204,7 +213,7 @@ void random_name(char *creature_name){//give a random name
 				creature_name[3]=vokaali[randInt(0,6)];
 				creature_name[4]=creature_name[3];
 				creature_name[5]=konsonantti[randInt(0,20)];
-				creature_name[6]=0;			
+				creature_name[6]=0;
 			}
 			if(randomi==4){
 				creature_name[0]=iso_konsonantti[randInt(0,20)];
@@ -212,14 +221,14 @@ void random_name(char *creature_name){//give a random name
 				creature_name[2]=creature_name[1];
 				creature_name[3]=konsonantti[randInt(0,20)];
 				creature_name[4]=vokaali[randInt(0,6)];
-				creature_name[5]=0;			
+				creature_name[5]=0;
 			}
 			if(randomi==5){
 				creature_name[0]=iso_vokaali[randInt(0,6)];
 				creature_name[1]=konsonantti[randInt(0,20)];
 				creature_name[2]=creature_name[1];
 				creature_name[3]=vokaali[randInt(0,6)];
-				creature_name[4]=0;			
+				creature_name[4]=0;
 			}
 
 }
@@ -294,7 +303,7 @@ std::vector <point2d> sphere_line_intersection (
 	// the number of intersection point, followed by coordinate pairs.
 
 
-	
+
 
 
 	//float x , y , z;
@@ -349,7 +358,7 @@ std::vector <point2d> sphere_line_intersection (
 	//find the one closer to start point
 	/*if(square(temp_point.x-x1)+square(temp_point.y-y1)>square(temp_point2.x-x1)+square(temp_point2.y-y1))
 		temp_point=temp_point2;*/
-		
+
 	//check if the intersect point is within the line
 	if((temp_point.x>=min(x1,x2))&&
 		(temp_point.y>=min(y1,y2))&&
@@ -365,7 +374,7 @@ std::vector <point2d> sphere_line_intersection (
 	return(intersections);
 	}
 
-	// no intersection	
+	// no intersection
 	return(intersections);
 }
 
@@ -412,27 +421,25 @@ bool isvowel(char character){
 }
 
 
-
-
-int lines_intersect(float x1,float y1,float x2,float y2,float x3,float y3,float x4,float y4,float *x,float *y,float rounding) 
+int lines_intersect(float x1,float y1,float x2,float y2,float x3,float y3,float x4,float y4,float *x,float *y,float rounding)
 {
 
 	double u,v,delta;
     double t1,t2;
- 
+
 
     double xba,yba,xdc,ydc,xca,yca;
- 
+
 
     xba=x2-x1;    yba=y2-y1;
     xdc=x4-x3;    ydc=y4-y3;
     xca=x3-x1;    yca=y3-y1;
- 
+
 
     delta=xba*ydc-yba*xdc;
     t1=xca*ydc-yca*xdc;
     t2=xca*yba-yca*xba;
- 
+
 
     if(delta!=0)
     {
@@ -457,8 +464,8 @@ int lines_intersect(float x1,float y1,float x2,float y2,float x3,float y3,float 
 }
 
 
-void debugger::debug_output(string rivi, int level, int type){
-	
+void debugger::debug_output(const string& rivi, int level, int type){
+
 	if(debug_state[type]==1){
 
 		if(level==1)debug_level[type]++;
@@ -477,7 +484,7 @@ void debugger::debug_output(string rivi, int level, int type){
 			fclose(fil);
 			if((level==0)||(level==2)) debug_level[type]--;
 		}
-	}	
+	}
 }
 
 

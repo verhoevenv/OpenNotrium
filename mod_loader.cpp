@@ -73,14 +73,6 @@ void Mod::print_effect_numbers(FILE *fil){
 
 	fprintf(fil, "\n");
 
-
-
-
-
-
-
-
-
 	fprintf(fil, "\n");
 	fprintf(fil, "//condition numbers:\n");
 	fprintf(fil, "0=must have item parameter0 amount parameter1\n");
@@ -120,11 +112,10 @@ void Mod::print_effect_numbers(FILE *fil){
 	fprintf(fil, "34=creature (parameter0, 0=is, 1=is not) carrying another creature\n");
 	fprintf(fil, "35=must be distance parameter1 from item parameter0\n");
 
-
 }
 
 
-void Mod::load_item_info(string filename){//loads object info from file
+void Mod::load_item_info(const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -372,7 +363,7 @@ void Mod::load_item_info(string filename){//loads object info from file
 }
 
 
-void Mod::load_object_info(string filename){//loads object info from file
+void Mod::load_object_info(const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -520,7 +511,7 @@ void Mod::load_object_info(string filename){//loads object info from file
 
 
 
-void Mod::load_creature_info(string filename){//loads object info from file
+void Mod::load_creature_info(const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -1027,7 +1018,7 @@ void Mod::load_creature_info(string filename){//loads object info from file
 }
 
 
-void Mod::load_weapon_info(string filename){//loads object info from file
+void Mod::load_weapon_info(const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -1239,7 +1230,7 @@ void Mod::load_weapon_info(string filename){//loads object info from file
 
 
 
-void Mod::load_climate_info(string filename){//loads climate info from file
+void Mod::load_climate_info(const string& filename){//loads climate info from file
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -1379,7 +1370,7 @@ void Mod::load_climate_info(string filename){//loads climate info from file
 }
 
 
-void Mod::load_area_info(string filename){//loads area info from file
+void Mod::load_area_info(const string& filename){//loads area info from file
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -1448,7 +1439,7 @@ void Mod::load_area_info(string filename){//loads area info from file
 }
 
 
-void Mod::load_light_info(string filename){//loads light info from file
+void Mod::load_light_info(const string& filename){//loads light info from file
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -1501,7 +1492,7 @@ void Mod::load_light_info(string filename){//loads light info from file
 
 
 
-void Mod::load_plot_object_info(string filename){//loads object info from file
+void Mod::load_plot_object_info(const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -1705,7 +1696,7 @@ void Mod::load_plot_object_info(string filename){//loads object info from file
 }
 
 
-void Mod::load_animation_info(string filename){//loads object info from file
+void Mod::load_animation_info(const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -1753,7 +1744,7 @@ void Mod::load_animation_info(string filename){//loads object info from file
 
 
 
-void Mod::load_race_info(string filename){//loads race info from file
+void Mod::load_race_info(const string& filename){//loads race info from file
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -1910,7 +1901,7 @@ void Mod::load_race_info(string filename){//loads race info from file
 	debug->debug_output("Load file "+filename,0,0);
 }
 
-void Mod::load_polygons(string filename){//loads polygon info from file
+void Mod::load_polygons(const string& filename){//loads polygon info from file
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -1997,7 +1988,7 @@ void Mod::grow_polygon(polygon_base *temp_polygon){
 
 
 
-void Mod::load_scripts(string filename){
+void Mod::load_scripts(const string& filename){
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -2082,7 +2073,7 @@ void Mod::load_scripts(string filename){
 
 }
 
-void Mod::load_AI_side(string filename){//loads AI info from file
+void Mod::load_AI_side(const string& filename){//loads AI info from file
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -2145,7 +2136,7 @@ void Mod::load_AI_side(string filename){//loads AI info from file
 }
 
 
-void Mod::load_bars(string filename){//loads bar info from file
+void Mod::load_bars(const string& filename){//loads bar info from file
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -2213,7 +2204,7 @@ void Mod::load_bars(string filename){//loads bar info from file
 
 
 
-void Mod::load_AI_info(string filename){//loads AI info from file
+void Mod::load_AI_info(const string& filename){//loads AI info from file
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -2265,7 +2256,7 @@ void Mod::load_AI_info(string filename){//loads AI info from file
 }
 
 
-void Mod::load_terrain_types(string filename){
+void Mod::load_terrain_types(const string& filename){
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -2450,7 +2441,7 @@ void Mod::load_terrain_types(string filename){
 
 
 
-void Mod::load_terrain_maps(string filename){
+void Mod::load_terrain_maps(const string& filename){
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -2614,7 +2605,7 @@ void Mod::save_terrain_maps(string filename){
 }
 
 
-void Mod::load_dialogs(string filename){
+void Mod::load_dialogs(const string& filename){
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -2663,7 +2654,7 @@ void Mod::load_dialogs(string filename){
 }
 
 
-void Mod::load_music(string filename){
+void Mod::load_music(const string& filename){
 	debug->debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -2709,7 +2700,7 @@ void Mod::load_music(string filename){
 
 
 
-void Mod::load_mod(string mod, debugger *debugger, resource_handler *resources){
+void Mod::load_mod(const string& mod, debugger *debugger, resource_handler *resources){
 	debug=debugger;
 	this->resources=resources;
 	this->mod_name=mod;

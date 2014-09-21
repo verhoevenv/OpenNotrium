@@ -9,13 +9,13 @@ class SoundSample
     Mix_Chunk* chunk;
     int samplefreq, bytespersample; //TODO: this does not quite belong here, I think
 public:
-    SoundSample(char *filename, int samplefreq, int bytespersample);
+    SoundSample(const char *filename, int samplefreq, int bytespersample);
 
-    bool initOkay();
+    bool initOkay(void);
     /**
     * Returns the length of the sound, in milliseconds.
     */
-    float GetSoundLength();
+    float GetSoundLength(void);
 
     /**
     * volume clipped between 0 and 1, pan between -1 (left) and 1 (right) (TODO: is that right?)
@@ -31,14 +31,14 @@ class SoundManager
     static const int numchannels = 64;
     Mix_Music *currentmusic;
 public:
-    bool Create( SoundSample** dest, char *filename );
+    bool Create( SoundSample** dest, const char *filename );
 
     /**
     * For now, let us assume signed 16 bit data.
     */
     bool Initialize(int freq, int channels);
 
-    void playMusic(char* filename);
+    void playMusic(const char* filename);
 
     /**
     * Sets the volume of the music. Value between 0 and 1.

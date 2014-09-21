@@ -41,6 +41,8 @@
 	#define new DEBUG_NEW
 	#undef THIS_FILE
 	static char THIS_FILE[] = __FILE__;
+	#define SDL_ASSERT_LEVEL 2
+
 #endif
 
 
@@ -59,11 +61,6 @@ class game_engine;
 class game_engine
 {
 protected:
-
-
-
-
-
 
 	//player's items
 	struct item_list_object{
@@ -396,7 +393,7 @@ protected:
 	bool music_initialized;
 	void play_music_file(int song_number, int *do_not_play);
 	int last_played_music;
-	bool SwapSourceFilter(char* file);
+	bool SwapSourceFilter(const char* file);
 	bool set_volume(float volume);
 	bool GraphInit(void);
 	bool HandleGraphEvent(void);
@@ -448,7 +445,7 @@ protected:
 	void AI_initiate_behavior_parameters(creature_base* creature);
 	void save_game(int slot);
 	void load_game(int slot);
-	void load_mod(string mod_name);
+	void load_mod(const string& mod_name);
 	void new_game(void);
 	void read_saves(void);
 	void calculate_body_temperature(void);
@@ -456,13 +453,13 @@ protected:
 	void handle_map_changed(void);
 	bool creature_will_collide(map *new_map, creature_base *creature);
 	void change_map(int move, float new_x, float new_y, bool move_enemies);
-	void combine_items(int a,int combine_item, vector <Mod::combines::combine_results_base> combine_results, bool discard_this, bool discard_that);
+	void combine_items(int a,int combine_item, const vector<Mod::combines::combine_results_base>& combine_results, bool discard_this, bool discard_that);
 	void create_maps(void);
 	//bool init_mouse(void);
 	//void deinit_mouse(void);
 	//void calculate_endings(void);
 	void calculate_weather(void);
-	void load_mod_names(string StartingPath);
+	void load_mod_names(const string& StartingPath);
 	void spawn_creature(int side, int tactic, int tactic2, float x, float y, float angle, int type, map *map);
 	void set_edges(void);
 	static int arrange_item_list_callback(const void *c, const void *d);
@@ -474,7 +471,7 @@ protected:
 	void disable_input_override(void);
 	bool race_specialty(int find_specialty, Mod::specialty *specialty);
 	vector <collision_base> list_collisions(float x1,float y1, float x2, float y2, bool only_visible_area);
-	void draw_line_map(int x1, int y1, int width, int height, map *map_draw);
+	void draw_line_map(int x1, int y1, int width, int height, const map* map_draw);
 	bool has_terrain_effect(map *map_to_edit, int terrain_type, int search_effect, Mod::effect *effect);
 	bool use_item(int general_item_number,int *item_number_in_list, Mod::effect_base effect, bool unuse, bool output, bool just_asking, bool check_slots);
 	bool item_has_effect(int item_type, int search_effect, Mod::effect *effect);
@@ -489,7 +486,7 @@ protected:
 	//void debug_output(string rivi, int level);
 	void calculate_scripts(void);
 	void run_script(int script_number, bool check_conditions, bool check_time);
-	void set_bar(creature_base *creature, int bar, float value);
+	void set_bar(creature_base *creature, unsigned int bar, float value);
 	void carry_light(map *edit_map, creature_base *creature, int light);
 	void delete_light(map *edit_map, int light);
 	bool run_plot_object(int item);
@@ -539,8 +536,8 @@ public:
 	//void print_effect_numbers(FILE *fil);
 	//void load_item_info(string filename);//loads item info from file
 
-	void load_particles(string filename);
-	void load_sounds(string filename);
+	void load_particles(const string& filename);
+	void load_sounds(const string& filename);
 
 	bool cfg_load(void);
 	void initialize_game(void);//initialize game variables
@@ -556,8 +553,8 @@ public:
 	void player_controls(int control_type);//check and control the player input
 	void draw_lights(int layer);//draws light effects (flashlight, explosions
 	//void flash_light(void);//handles the flashlight
-	void load_setup(char *filename);
-	void save_setup(char *filename);
+	void load_setup(const char *filename);
+	void save_setup(const char *filename);
 	float calculate_flashlight(float c_x,float c_y,float rotation, float t_x, float t_y,float *distance,float *angle);//returns the light value using the flashlight
 	bullet shoot(int from_creature, int side,int type, float startx,float starty,float angle);//fire a bullet
 	void calculate_bullets(void);//calculates bullet flight
@@ -568,8 +565,8 @@ public:
 	void calculate_particles(void);
 	void draw_particles(int layer);//draws particles
 	void draw_mouse(int cursor, float hot_spot_x, float hot_spot_y, float r, float g, float b);//draws mouse
-	void Screenshot(string *screenshot_name);
-	void GetScreenshotFileName(string *FileName);
+	void Screenshot(string& screenshot_name);
+	void GetScreenshotFileName(string& FileName);
 	//void kirjain(char kirjain, int *nume, int *kirjainleveys);
 	//int tekstaa(float x, float y, string text,float size);
 	bool give_item(int item_number, int amount, float time, bool arrange);

@@ -187,7 +187,11 @@ void map::check_creatures(void){
 }
 
 
-void map::generate_map(float amount_multiplier, vector <int> terrain_types, vector <bool> no_random_terrain_types, vector <bool> do_not_place_on_map_edges, vector <bool> terrain_is_hazardous, vector<int> prop_amounts, vector<int> prop_objects, vector <int> alien_types, vector <int> alien_amounts, vector <int> alien_sides){
+void map::generate_map(float amount_multiplier, const vector<int>& terrain_types,
+                       const vector<bool>& no_random_terrain_types, const vector<bool>& do_not_place_on_map_edges,
+                       const vector<bool>& terrain_is_hazardous, const vector<int>& prop_amounts,
+                       const vector<int>& prop_objects, const vector<int>& alien_types,
+                       const vector<int>& alien_amounts, const vector<int>& alien_sides){
 	int i,j,k,a,b;
 
 	//special locations

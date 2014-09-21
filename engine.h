@@ -9,7 +9,8 @@
 #include "keys.h"
 #include "blendstate.h"
 
-typedef bool (*ProgramCallback)(void);
+typedef
+bool (*ProgramCallback)(void);
 
 class MouseState {
 public:
@@ -35,7 +36,7 @@ public:
 
 class Engine
 {
-    char* title;
+    const char* title;
     int width,height,bpp;
     bool fullscreen;
     float clear_r,clear_g,clear_b,clear_a;
@@ -72,7 +73,7 @@ class Engine
     void setup_opengl();
     void setglColor(int index);
     void Draw4V(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
-    int createNewTexture(std::string name, int width, int height);
+    int createNewTexture(const std::string& name, int width, int height);
     void startFrame();
 public:
     Engine();
@@ -81,7 +82,7 @@ public:
     * Save a screenshot in BMP format, under the given filename.
     * I think it's supposed to be a relative pathname
     */
-    void System_SaveScreenshot(std::string filename);
+    void System_SaveScreenshot(const std::string& filename);
 
     /**
     * Copies relevant stuff into the state. We need to make a copy anyway, so just return the object.
@@ -102,7 +103,7 @@ public:
     void System_SetState_ScreenWidth(int w);
 	void System_SetState_ScreenHeight(int h);
 	void System_SetState_ScreenBPP(int bpp);
-	void System_SetState_Title(char* title);
+	void System_SetState_Title(const char* title);
 
 	/**
 	* Initialises the system with the given states, starts engine, etc. Does not enter the main loop yet.
@@ -145,18 +146,18 @@ public:
     * Gets texture handle (texture slot) of texture with given id string, or -1 if id string doesn't match any texture.
     * This uses linear time in the amount of textures created (sicko interface).
     */
-    int Texture_Get(std::string id);
+    int Texture_Get(const std::string& id);
 
     /**
     * Creates a render target texture with given id string, width and height.
     */
-    bool Texture_Create(std::string id, int width, int height);
+    bool Texture_Create(const std::string& id, int width, int height);
 
     /**
     * Loads a texture either from a "normal file" from work directory. False is returned if file wasn't found or it was wrong format or corrupted.
     * Supported image formats are PNG, BMP, JPG, a lot more (not TIFF though)
     */
-    bool Texture_Load(std::string id, char *filename);
+    bool Texture_Load(const std::string& id, char *filename);
 
     /**
     * Sets quad rotation around its center, in radians
@@ -181,9 +182,9 @@ public:
 
 	//TODO: other file stuff (reading, writing, ...)
 	//bool File_Exists_ReadDir(std::string filename);
-	bool File_Exists(std::string filename);
-	bool File_IsDirectory(std::string filename);
-	std::vector<std::string> File_ListDirectory(std::string dir);
+	bool File_Exists(const std::string& filename);
+	bool File_IsDirectory(const std::string& filename);
+	std::vector<std::string> File_ListDirectory(const std::string& dir);
 
 	/**
 	* Returns the amount of milliseconds the program has been running. Might wrap around after ~ 50 or 25 days.

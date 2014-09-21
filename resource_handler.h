@@ -36,7 +36,7 @@ protected:
 	int textures_count;
 
 	vector <texture_handling_primitive_base> textures;
-	int load_texture_in_grim(char *name, string mod_name);
+	int load_texture_in_grim(const char* name, const string& mod_name);
 	SoundManager* g_pSoundManager;
 	string sample_name[maximum_samples];
 	string sample_name_mod[maximum_samples];
@@ -49,8 +49,8 @@ public:
 	SoundSample*        sample[maximum_samples];
 	float system_time;
 
-	int load_texture(char *name, string mod_name);
-	int load_sample(string name, int samples, string mod_name);//loads the sample if it's unique
+	int load_texture(const string& name, const string& mod_name);
+	int load_sample(const string& name, int samples, const string& mod_name);//loads the sample if it's unique
 	void unload_unneeded_textures(bool unload_all);
 
 	void Texture_Set(int number);

@@ -4,14 +4,34 @@
 
 #include <iostream>
 
-#define RELEASE(x) {if (x) {(x)->Release(); (x)=NULL;}}
-#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
+#ifndef isnan
+#define isnan(x) _isnan(x)
+#endif
+
+//#define RELEASE(x) {if (x) {(x)->Release(); (x)=NULL;}}
+template<typename T>
+inline void RELEASE(T*& x) {
+    if (x) {
+        x->Release();
+        x = NULL;
+    }
+}
+
+//#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
+template<typename T>
+inline void SAFE_DELETE_ARRAY(T*& p) {
+    if (p) {
+        delete[] p;
+        p = NULL;
+    }
+}
+
 #define WM_GRAPHNOTIFY  WM_APP + 1
 
 
 using namespace std;
 
-Engine *grim = 0;
+Engine *grim = NULL;
 game_engine *engine;
 //HHOOK hkb;
 int bug1=0,bug2=0,bug3=0;//debugging variables
@@ -46,17 +66,17 @@ game_engine::~game_engine()
 
 }
 
-void game_engine::Screenshot(string *screenshot_name){
+void game_engine::Screenshot(string& screenshot_name){
     string FileName;
-    GetScreenshotFileName(&FileName);
+    GetScreenshotFileName(FileName);
     /*
     strcpy(filename,FileName->data());
     strcpy(screenshot_name,FileName->data());*/
-    *screenshot_name=FileName;
+    screenshot_name=FileName;
     grim->System_SaveScreenshot(FileName);
 }
 
-void game_engine::GetScreenshotFileName(string *FileName)
+void game_engine::GetScreenshotFileName(string& FileName)
 {
     // search for first unused filename
     string buffer;
@@ -71,7 +91,7 @@ void game_engine::GetScreenshotFileName(string *FileName)
     }
 
     // set FileName to the first unused filename
-    *FileName = buffer;
+    FileName = buffer;
 }
 
 /*
@@ -410,7 +430,7 @@ bool game_engine::Frame(void)
 
 	//print screen to file
 	if (grim->Key_Click(KEY_PRINT )){
-		Screenshot(&screenshot_name);
+		Screenshot(screenshot_name);
 		if(screenshot_name=="none"){
 			tempstring="Screenshots not available in windowed mode";
 			text_manager.message(5000,1000,tempstring);
@@ -1803,7 +1823,7 @@ bool game_engine::draw_item(map_object *object, int layer,float object_x, float 
 
 
 
-void game_engine::load_particles(string filename){
+void game_engine::load_particles(const string& filename){
 	debug.debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -1862,7 +1882,7 @@ void game_engine::load_particles(string filename){
 
 
 
-void game_engine::load_sounds(string filename){
+void game_engine::load_sounds(const string& filename){
 	debug.debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
@@ -3472,6 +3492,8 @@ void game_engine::creature_actions_loop(void){
 
 bool game_engine::creature_actions(int creature, bool visible){//calculates the creature actions and animation
 
+    //FIXME: it's strange that a creature righgt now can be in (NaN,NaN)
+
 	/*
 	float alien_speed_difficulty_modifier=0.0005f;
 	if(game_difficulty_level==0)
@@ -3481,19 +3503,20 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 
 	//if(creature>0)return;
 
+    creature_base& thiscreature = map_main->creature[creature];
 
+    assert (!isnan(thiscreature.x));
+    assert (!isnan(thiscreature.y));
 
 	float bound_circle=14;
 	int a,b,c;
 
+		if(thiscreature.dead) return false;
 
+		const float movement_change_speed=0.001f*5*mod.general_creatures[thiscreature.type].inertia;
 
-		if(map_main->creature[creature].dead)return false;
-
-		float movement_change_speed=0.001f*5*mod.general_creatures[map_main->creature[creature].type].inertia;
-
-		float size=mod.general_creatures[map_main->creature[creature].type].size*map_main->creature[creature].size*general_creature_size;
-
+		const float size=mod.general_creatures[thiscreature.type].size*thiscreature.size*general_creature_size;
+        assert (size > 0);
 		/*
 
 				map_main->creature[creature].up=true;
@@ -3505,47 +3528,47 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 
 		//visibility
 		if((creature==player_controlled_creature)||(creature==0)){
-			map_main->creature[creature].alpha=1;
+			thiscreature.alpha=1;
 		}
 		else{
-			map_main->creature[creature].alpha-=elapsed*game_speed*CREATURE_FADE_OUT_SPEED;
-			if(map_main->creature[creature].alpha<0)map_main->creature[creature].alpha=0;
+			thiscreature.alpha-=elapsed*game_speed*CREATURE_FADE_OUT_SPEED;
+			if(thiscreature.alpha<0)thiscreature.alpha=0;
 		}
 
 
-		float distance=sqr(map_main->creature[creature].x-map_main->creature[0].x)+sqr(map_main->creature[creature].y-map_main->creature[0].y);
+		float distance=sqr(thiscreature.x-map_main->creature[0].x)+sqr(thiscreature.y-map_main->creature[0].y);
 		if(distance<sqr(300)){
-			creature_base temp_creature=map_main->creature[creature];
+			creature_base temp_creature=thiscreature;
 		}
 
 
 		//death
 		if(creature!=0)//only for non-player creatures
-		if(!map_main->creature[creature].killed){
+		if(!thiscreature.killed){
 			bool die_now=false;
 
 			//any bar too low, die
 			for(int meter=0;meter<maximum_bars;meter++){
-				if(!map_main->creature[creature].bars[meter].active)continue;
-				if(map_main->creature[creature].bars[meter].value<=map_main->creature[creature].bars[meter].minimum)
+				if(!thiscreature.bars[meter].active)continue;
+				if(thiscreature.bars[meter].value<=thiscreature.bars[meter].minimum)
 					die_now=true;
 			}
 
 			//time is up
-			if(mod.general_creatures[map_main->creature[creature].type].die_after_seconds>0){
-				map_main->creature[creature].life_time+=elapsed*game_speed;
-				if(map_main->creature[creature].life_time>mod.general_creatures[map_main->creature[creature].type].die_after_seconds*1000){
+			if(mod.general_creatures[thiscreature.type].die_after_seconds>0){
+				thiscreature.life_time+=elapsed*game_speed;
+				if(thiscreature.life_time>mod.general_creatures[thiscreature.type].die_after_seconds*1000){
 					die_now=true;
 
 					//run creature death effects
-					for(c=0;c<mod.general_creatures[map_main->creature[creature].type].death_block.size();c++){
-						Mod::general_creatures_base::death_effect_block effect=mod.general_creatures[map_main->creature[creature].type].death_block[c];
+					for(c=0;c<mod.general_creatures[thiscreature.type].death_block.size();c++){
+						Mod::general_creatures_base::death_effect_block effect=mod.general_creatures[thiscreature.type].death_block[c];
 						if(effect.death_type!=1)continue;//only on timed death
 
 						//go throught all conditions
 						bool OK=true;
 						for(b=0;b<effect.conditions.size();b++){
-							if(!check_condition(effect.conditions[b],&map_main->creature[creature],creature,map_main->creature[creature].x+size*0.5f,map_main->creature[creature].y+size*0.5f,false)){
+							if(!check_condition(effect.conditions[b],&thiscreature,creature,thiscreature.x+size*0.5f,thiscreature.y+size*0.5f,false)){
 								OK=false;
 								break;
 							}
@@ -3554,7 +3577,7 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 
 						//run effects
 						for(b=0;b<effect.effects.size();b++){
-							run_effect(effect.effects[b],&map_main->creature[creature],creature,map_main->creature[creature].x+size*0.5f,map_main->creature[creature].y+size*0.5f,map_main->creature[creature].rotation,false);
+							run_effect(effect.effects[b],&thiscreature,creature,thiscreature.x+size*0.5f,thiscreature.y+size*0.5f,thiscreature.rotation,false);
 						}
 					}
 				}
@@ -3567,15 +3590,15 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 				//	aliens_killed++;
 
 				//run creature death effects
-				for(c=0;c<mod.general_creatures[map_main->creature[creature].type].death_block.size();c++){
-					Mod::general_creatures_base::death_effect_block effect=mod.general_creatures[map_main->creature[creature].type].death_block[c];
+				for(c=0;c<mod.general_creatures[thiscreature.type].death_block.size();c++){
+					Mod::general_creatures_base::death_effect_block effect=mod.general_creatures[thiscreature.type].death_block[c];
 
-					if((effect.death_type==0)||((effect.death_type==2)&&(map_main->creature[creature].last_bullet_hit_from_creature_number==0))){//only on any death
+					if((effect.death_type==0)||((effect.death_type==2)&&(thiscreature.last_bullet_hit_from_creature_number==0))){//only on any death
 
 						//go throught all conditions
 						bool OK=true;
 						for(b=0;b<effect.conditions.size();b++){
-							if(!check_condition(effect.conditions[b],&map_main->creature[creature],creature,map_main->creature[creature].x+size*0.5f,map_main->creature[creature].y+size*0.5f,false)){
+							if(!check_condition(effect.conditions[b],&thiscreature,creature,thiscreature.x+size*0.5f,thiscreature.y+size*0.5f,false)){
 								OK=false;
 								break;
 							}
@@ -3584,37 +3607,37 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 
 						//run effects
 						for(b=0;b<effect.effects.size();b++){
-							run_effect(effect.effects[b],&map_main->creature[creature],creature,map_main->creature[creature].x+size*0.5f,map_main->creature[creature].y+size*0.5f,map_main->creature[creature].rotation,false);
+							run_effect(effect.effects[b],&thiscreature,creature,thiscreature.x+size*0.5f,thiscreature.y+size*0.5f,thiscreature.rotation,false);
 						}
 					}
 				}
 
 
 				//disable light
-				if(map_main->creature[creature].carry_light>=0)
-					delete_light(map_main,map_main->creature[creature].carry_light);
+				if(thiscreature.carry_light>=0)
+					delete_light(map_main,thiscreature.carry_light);
 
 				//die sound
-				if(mod.general_creatures[map_main->creature[creature].type].die_sound.size()>0)
-				playsound(mod.general_creatures[map_main->creature[creature].type].die_sound[randInt(0,mod.general_creatures[map_main->creature[creature].type].die_sound.size())],randDouble(0.8f,1.0f),map_main->creature[creature].x,map_main->creature[creature].y,player_middle_x,player_middle_y);
+				if(mod.general_creatures[thiscreature.type].die_sound.size()>0)
+				playsound(mod.general_creatures[thiscreature.type].die_sound[randInt(0,mod.general_creatures[thiscreature.type].die_sound.size())],randDouble(0.8f,1.0f),thiscreature.x,thiscreature.y,player_middle_x,player_middle_y);
 
 				//drop carried creature
-				if(map_main->creature[creature].carried_creature>=0){
-					map_main->creature[map_main->creature[creature].carried_creature].dead=false;
+				if(thiscreature.carried_creature>=0){
+					map_main->creature[thiscreature.carried_creature].dead=false;
 
-					float size_dropped=mod.general_creatures[map_main->creature[map_main->creature[creature].carried_creature].type].size*map_main->creature[map_main->creature[creature].carried_creature].size*general_creature_size;
-					float place_x=map_main->creature[creature].x+size*0.5f-size_dropped*0.5f;
-					float place_y=map_main->creature[creature].y+size*0.5f-size_dropped*0.5f;
-
-
-					map_main->creature[map_main->creature[creature].carried_creature].x=place_x;
-					map_main->creature[map_main->creature[creature].carried_creature].y=place_y;
-					map_main->creature[map_main->creature[creature].carried_creature].rotation=map_main->creature[creature].rotation;
-					map_main->creature[map_main->creature[creature].carried_creature].rotation_head=map_main->creature[creature].rotation;
-					map_main->creature[map_main->creature[creature].carried_creature].rotation_legs=map_main->creature[creature].rotation;
+					float size_dropped=mod.general_creatures[map_main->creature[thiscreature.carried_creature].type].size*map_main->creature[thiscreature.carried_creature].size*general_creature_size;
+					float place_x=thiscreature.x+size*0.5f-size_dropped*0.5f;
+					float place_y=thiscreature.y+size*0.5f-size_dropped*0.5f;
 
 
-					map_main->creature[creature].carried_creature=-1;
+					map_main->creature[thiscreature.carried_creature].x=place_x;
+					map_main->creature[thiscreature.carried_creature].y=place_y;
+					map_main->creature[thiscreature.carried_creature].rotation=thiscreature.rotation;
+					map_main->creature[thiscreature.carried_creature].rotation_head=thiscreature.rotation;
+					map_main->creature[thiscreature.carried_creature].rotation_legs=thiscreature.rotation;
+
+
+					thiscreature.carried_creature=-1;
 
 				}
 
@@ -3629,31 +3652,31 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 				for(a=0;a<AI_thinkers.size();a++){
 					int creature2=AI_thinkers[a];
 					if(creature2<=-1)continue;
-					if(map_main->creature[creature2].side==map_main->creature[creature].side)continue;
-					if(sqr(map_main->creature[creature2].x-map_main->creature[creature].x)+sqr(map_main->creature[creature2].y-map_main->creature[creature].y)>sqr(500))continue;
+					if(map_main->creature[creature2].side==thiscreature.side)continue;
+					if(sqr(map_main->creature[creature2].x-thiscreature.x)+sqr(map_main->creature[creature2].y-thiscreature.y)>sqr(500))continue;
 					map_main->creature[creature2].anger_level-=0.3f;
 					if(map_main->creature[creature2].anger_level<0)
 						map_main->creature[creature2].anger_level=0;
 				}
 
 
-				map_main->creature[creature].die();
+				thiscreature.die();
 			}
 		}
 
 
 		//timed effects block
-		if(!map_main->creature[creature].killed)
-		for(c=0;c<mod.general_creatures[map_main->creature[creature].type].timed_block.size();c++){
-			Mod::general_creatures_base::timed_effect_block effect=mod.general_creatures[map_main->creature[creature].type].timed_block[c];
-			if((time_from_beginning-map_main->creature[creature].script_timer[c])*1000<effect.interval)continue;
+		if(!thiscreature.killed)
+		for(c=0;c<mod.general_creatures[thiscreature.type].timed_block.size();c++){
+			Mod::general_creatures_base::timed_effect_block effect=mod.general_creatures[thiscreature.type].timed_block[c];
+			if((time_from_beginning-thiscreature.script_timer[c])*1000<effect.interval)continue;
 
-			map_main->creature[creature].script_timer[c]=time_from_beginning;
+			thiscreature.script_timer[c]=time_from_beginning;
 
 			//go throught all conditions
 			bool OK=true;
 			for(b=0;b<effect.conditions.size();b++){
-				if(!check_condition(effect.conditions[b],&map_main->creature[creature],creature,map_main->creature[creature].x+size*0.5f,map_main->creature[creature].y+size*0.5f,false)){
+				if(!check_condition(effect.conditions[b],&thiscreature,creature,thiscreature.x+size*0.5f,thiscreature.y+size*0.5f,false)){
 					OK=false;
 					break;
 				}
@@ -3662,15 +3685,15 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 
 			//run effects
 			for(b=0;b<effect.effects.size();b++){
-				run_effect(effect.effects[b],&map_main->creature[creature],creature,map_main->creature[creature].x+size*0.5f,map_main->creature[creature].y+size*0.5f,map_main->creature[creature].rotation,false);
+				run_effect(effect.effects[b],&thiscreature,creature,thiscreature.x+size*0.5f,thiscreature.y+size*0.5f,thiscreature.rotation,false);
 			}
 		}
 
 		//speech
-		if(map_main->creature[creature].dialog>=0){
-			if(time_from_beginning-map_main->creature[creature].dialog_timer>mod.dialogs[map_main->creature[creature].dialog].duration*0.001f){
-				map_main->creature[creature].dialog_timer=time_from_beginning;
-				map_main->creature[creature].dialog=mod.dialogs[map_main->creature[creature].dialog].next_line;
+		if(thiscreature.dialog>=0){
+			if(time_from_beginning-thiscreature.dialog_timer>mod.dialogs[thiscreature.dialog].duration*0.001f){
+				thiscreature.dialog_timer=time_from_beginning;
+				thiscreature.dialog=mod.dialogs[thiscreature.dialog].next_line;
 
 
 			}
@@ -3680,21 +3703,21 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 		float sneak_multiplier=1;//*(map_main->creature[creature].up+map_main->creature[creature].down);
 
 		//anger level
-		if(map_main->creature[creature].anger_level>0){
-			map_main->creature[creature].anger_level-=elapsed*game_speed*0.0001f*AI_ANGER_REDUCE_SPEED;
-			if(map_main->creature[creature].anger_level<0)
-				map_main->creature[creature].anger_level=0;
+		if(thiscreature.anger_level>0){
+			thiscreature.anger_level-=elapsed*game_speed*0.0001f*AI_ANGER_REDUCE_SPEED;
+			if(thiscreature.anger_level<0)
+				thiscreature.anger_level=0;
 		}
-		if(map_main->creature[creature].anger_level<0)
-			map_main->creature[creature].anger_level=0;
+		if(thiscreature.anger_level<0)
+			thiscreature.anger_level=0;
 
 
 		//weapon effects
 		bool can_fire_weapon=true;
-		for(a=0;a<map_main->creature[creature].weapon_effects_amount;a++){
+		for(a=0;a<thiscreature.weapon_effects_amount;a++){
 
 			//effects on creature
-			switch(map_main->creature[creature].weapon_effects[a].effect_type){
+			switch(thiscreature.weapon_effects[a].effect_type){
 				//0=stun for time
 				case 0:
 					/*map_main->creature[creature].up=false;
@@ -3702,7 +3725,7 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 					map_main->creature[creature].left=false;
 					map_main->creature[creature].right=false;
 					map_main->creature[creature].fire=false;*/
-					sneak_multiplier=sneak_multiplier*map_main->creature[creature].weapon_effects[a].parameter0;
+					sneak_multiplier=sneak_multiplier*thiscreature.weapon_effects[a].parameter0;
 					break;
 				//1=charm target for time
 				case 1:
@@ -3716,16 +3739,16 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 				//4=cannot fire weapon
 				case 4:
 					//check if the creature has such weapon type
-					if((int)map_main->creature[creature].weapon_effects[a].parameter0<0){
+					if((int)thiscreature.weapon_effects[a].parameter0<0){
 						can_fire_weapon=false;
 					}
 					//individual weapons
-					if((int)map_main->creature[creature].weapon_effects[a].parameter1==0){
-						if(mod.general_creatures[map_main->creature[creature].type].weapon==(int)map_main->creature[creature].weapon_effects[a].parameter0)
+					if((int)thiscreature.weapon_effects[a].parameter1==0){
+						if(mod.general_creatures[thiscreature.type].weapon==(int)thiscreature.weapon_effects[a].parameter0)
 						can_fire_weapon=false;
 					}
-					else if((int)map_main->creature[creature].weapon_effects[a].parameter1==1){
-						if(mod.general_weapons[mod.general_creatures[map_main->creature[creature].type].weapon].weapon_class==(int)map_main->creature[creature].weapon_effects[a].parameter0){
+					else if((int)thiscreature.weapon_effects[a].parameter1==1){
+						if(mod.general_weapons[mod.general_creatures[thiscreature.type].weapon].weapon_class==(int)thiscreature.weapon_effects[a].parameter0){
 							can_fire_weapon=false;
 						}
 					}
@@ -3738,26 +3761,27 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 		}
 
 		if(!can_fire_weapon){
-			map_main->creature[creature].fire=false;
+			thiscreature.fire=false;
 		}
 
 		//dead - reset controls
-		if(map_main->creature[creature].killed){
-			map_main->creature[creature].left=false;
-			map_main->creature[creature].right=false;
-			map_main->creature[creature].up=false;
-			map_main->creature[creature].down=false;
-			map_main->creature[creature].fire=false;
+		if(thiscreature.killed){
+			thiscreature.left=false;
+			thiscreature.right=false;
+			thiscreature.up=false;
+			thiscreature.down=false;
+			thiscreature.fire=false;
 			//map_main->creature[creature].sneak=false;
 		}
 
 		//map limits, end game creatures cannot hide out of sight
-		float left_map_limit=1;
+		bool can_change_area = !mod.general_creatures[thiscreature.type].can_change_area;
+		const float left_map_limit= can_change_area ? 1 : grid_size+4;
+
 		float top_map_limit=1;
 		float right_map_limit=(map_main->sizex-1)*(grid_size)-1;
 		float bottom_map_limit=(map_main->sizey-1)*(grid_size)-1;
-		if(!mod.general_creatures[map_main->creature[creature].type].can_change_area){
-			left_map_limit=grid_size+4;
+		if(!can_change_area){
 			top_map_limit=grid_size+4;
 			right_map_limit=map_main->sizex*grid_size-grid_size*2-4;
 			bottom_map_limit=map_main->sizey*grid_size-grid_size*2-4;
@@ -3766,41 +3790,41 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 
 
 		//fire
-		if(!map_main->creature[creature].killed){
-			if(map_main->creature[creature].fire_timer>=0)
-				map_main->creature[creature].fire_timer-=elapsed*game_speed;
-			if(mod.general_creatures[map_main->creature[creature].type].weapon<0)
-				map_main->creature[creature].fire=false;
+		if(!thiscreature.killed){
+			if(thiscreature.fire_timer>=0)
+				thiscreature.fire_timer-=elapsed*game_speed;
+			if(mod.general_creatures[thiscreature.type].weapon<0)
+				thiscreature.fire=false;
 
-			if(map_main->creature[creature].fire&&can_fire_weapon){
-				map_main->creature[creature].fire=false;
-				if(map_main->creature[creature].fire_timer<0){
-					map_main->creature[creature].animation_timer[1]=mod.general_weapons[mod.general_creatures[map_main->creature[creature].type].weapon].fire_rate;
-					map_main->creature[creature].fire_timer+=mod.general_weapons[mod.general_creatures[map_main->creature[creature].type].weapon].fire_rate;
+			if(thiscreature.fire&&can_fire_weapon){
+				thiscreature.fire=false;
+				if(thiscreature.fire_timer<0){
+					thiscreature.animation_timer[1]=mod.general_weapons[mod.general_creatures[thiscreature.type].weapon].fire_rate;
+					thiscreature.fire_timer+=mod.general_weapons[mod.general_creatures[thiscreature.type].weapon].fire_rate;
 
 
 					float shoot_x, shoot_y;
 
 					if(creature==0){
-						shoot_x=size*0.5f+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[map_main->creature[0].type].weapon].weapon_class].x*(size/general_creature_size)*sincos.table_cos(map_main->creature[creature].rotation)+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[map_main->creature[0].type].weapon].weapon_class].y*(size/general_creature_size)*sincos.table_cos(map_main->creature[creature].rotation-pi/2);
-						shoot_y=size*0.5f+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[map_main->creature[0].type].weapon].weapon_class].x*(size/general_creature_size)*sincos.table_sin(map_main->creature[creature].rotation)+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[map_main->creature[0].type].weapon].weapon_class].y*(size/general_creature_size)*sincos.table_sin(map_main->creature[creature].rotation-pi/2);
+						shoot_x=size*0.5f+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[map_main->creature[0].type].weapon].weapon_class].x*(size/general_creature_size)*sincos.table_cos(thiscreature.rotation)+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[map_main->creature[0].type].weapon].weapon_class].y*(size/general_creature_size)*sincos.table_cos(thiscreature.rotation-pi/2);
+						shoot_y=size*0.5f+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[map_main->creature[0].type].weapon].weapon_class].x*(size/general_creature_size)*sincos.table_sin(thiscreature.rotation)+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[map_main->creature[0].type].weapon].weapon_class].y*(size/general_creature_size)*sincos.table_sin(thiscreature.rotation-pi/2);
 					}
 
 					else{
-						shoot_x=size*0.5f+mod.general_creatures[map_main->creature[creature].type].weapon_x*(size/general_creature_size)*sincos.table_cos(map_main->creature[creature].rotation)+mod.general_creatures[map_main->creature[creature].type].weapon_y*(size/general_creature_size)*sincos.table_cos(map_main->creature[creature].rotation-pi/2);
-						shoot_y=size*0.5f+mod.general_creatures[map_main->creature[creature].type].weapon_x*(size/general_creature_size)*sincos.table_sin(map_main->creature[creature].rotation)+mod.general_creatures[map_main->creature[creature].type].weapon_y*(size/general_creature_size)*sincos.table_sin(map_main->creature[creature].rotation-pi/2);
+						shoot_x=size*0.5f+mod.general_creatures[thiscreature.type].weapon_x*(size/general_creature_size)*sincos.table_cos(thiscreature.rotation)+mod.general_creatures[thiscreature.type].weapon_y*(size/general_creature_size)*sincos.table_cos(thiscreature.rotation-pi/2);
+						shoot_y=size*0.5f+mod.general_creatures[thiscreature.type].weapon_x*(size/general_creature_size)*sincos.table_sin(thiscreature.rotation)+mod.general_creatures[thiscreature.type].weapon_y*(size/general_creature_size)*sincos.table_sin(thiscreature.rotation-pi/2);
 					}
 
 
 
 
-					bullet bullet_shot=shoot(creature, map_main->creature[creature].side,mod.general_creatures[map_main->creature[creature].type].weapon,map_main->creature[creature].x+shoot_x,map_main->creature[creature].y+shoot_y,map_main->creature[creature].rotation);
+					bullet bullet_shot=shoot(creature, thiscreature.side,mod.general_creatures[thiscreature.type].weapon,thiscreature.x+shoot_x,thiscreature.y+shoot_y,thiscreature.rotation);
 
 					//shooting was a success
 					if(!bullet_shot.dead){
 						//shooter falls back
-						map_main->creature[creature].vx-=bullet_shot.move_x*mod.general_weapons[bullet_shot.type].push_shooter;
-						map_main->creature[creature].vy-=bullet_shot.move_y*mod.general_weapons[bullet_shot.type].push_shooter;
+						thiscreature.vx-=bullet_shot.move_x*mod.general_weapons[bullet_shot.type].push_shooter;
+						thiscreature.vy-=bullet_shot.move_y*mod.general_weapons[bullet_shot.type].push_shooter;
 
 						//increase anger level of all enemies around the shooter
 						for(a=0;a<AI_thinkers.size();a++){
@@ -3808,9 +3832,9 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 							if(creature2<=-1)continue;
 
 							if(creature==0)
-								if(map_main->creature[creature2].side==map_main->creature[creature].side)continue;
+								if(map_main->creature[creature2].side==thiscreature.side)continue;
 							float hear_distance=mod.general_creatures[map_main->creature[creature2].type].AI_hear_range;
-							if(sqr(map_main->creature[creature2].x-map_main->creature[creature].x)+sqr(map_main->creature[creature2].y-map_main->creature[creature].y)>sqr(hear_distance))continue;
+							if(sqr(map_main->creature[creature2].x-thiscreature.x)+sqr(map_main->creature[creature2].y-thiscreature.y)>sqr(hear_distance))continue;
 							map_main->creature[creature2].anger_level+=0.3f*mod.general_weapons[bullet_shot.type].AI_hear_volume;
 							if(map_main->creature[creature2].anger_level<0)
 								map_main->creature[creature2].anger_level=0;
@@ -3827,16 +3851,16 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 
 
 
-		if(!map_main->creature[creature].killed){
+		if(!thiscreature.killed){
 			//make sure creature is on map again
-			if(map_main->creature[creature].x<left_map_limit)map_main->creature[creature].x=left_map_limit;
-			if(map_main->creature[creature].y<top_map_limit)map_main->creature[creature].y=top_map_limit;
-			if(map_main->creature[creature].x>right_map_limit)map_main->creature[creature].x=right_map_limit;
-			if(map_main->creature[creature].y>bottom_map_limit)map_main->creature[creature].y=bottom_map_limit;
+			if(thiscreature.x<left_map_limit)thiscreature.x=left_map_limit;
+			if(thiscreature.y<top_map_limit)thiscreature.y=top_map_limit;
+			if(thiscreature.x>right_map_limit)thiscreature.x=right_map_limit;
+			if(thiscreature.y>bottom_map_limit)thiscreature.y=bottom_map_limit;
 
 
 			//calculate terrain effects
-			int terrain_type=map_main->grid[(int)((map_main->creature[creature].x+size*0.5f)/grid_size)].grid[(int)((map_main->creature[creature].y+size*0.5f)/grid_size)].terrain_type;
+			int terrain_type=map_main->grid[(int)((thiscreature.x+size*0.5f)/grid_size)].grid[(int)((thiscreature.y+size*0.5f)/grid_size)].terrain_type;
 			//go throught all effect blocks
 			for(a=0;a<mod.terrain_types[terrain_type].effects.size();a++){
 
@@ -3847,7 +3871,7 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 				//check conditions
 				bool OK=true;
 				for(b=0;b<effect.conditions.size();b++){
-					if(!check_condition(effect.conditions[b],&map_main->creature[creature],creature,map_main->creature[creature].x+size*0.5f,map_main->creature[creature].y+size*0.5f,false)){
+					if(!check_condition(effect.conditions[b],&thiscreature,creature,thiscreature.x+size*0.5f,thiscreature.y+size*0.5f,false)){
 						OK=false;
 						break;
 					}
@@ -3856,7 +3880,7 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 
 				//run effects
 				for(b=0;b<effect.effects.size();b++){
-					run_effect(effect.effects[b],&map_main->creature[creature],creature,map_main->creature[creature].x+size*0.5f,map_main->creature[creature].y+size*0.5f,map_main->creature[creature].rotation,false);
+					run_effect(effect.effects[b],&thiscreature,creature,thiscreature.x+size*0.5f,thiscreature.y+size*0.5f,thiscreature.rotation,false);
 				}
 
 				if(creature==0)
@@ -3873,138 +3897,136 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 			}*/
 
 			//is carrying creature, slow down
-			if(map_main->creature[creature].carried_creature>=0){
+			if(thiscreature.carried_creature>=0){
 				sneak_multiplier=sneak_multiplier*0.5f;//-(mod.general_creatures[map_main->creature[map_main->creature[creature].carried_creature].type].weight)*0.25f;
 				//if(sneak_multiplier<0)sneak_multiplier=0;
 				//turn_speed=turn_speed*(mod.general_creatures[map_main->creature[creature].type].weight+mod.general_creatures[map_main->creature[map_main->creature[creature].carried_creature].type].weight)*0.25f;
 
 
 				//move carried creature
-				map_main->creature[map_main->creature[creature].carried_creature].x=map_main->creature[creature].x;
-				map_main->creature[map_main->creature[creature].carried_creature].y=map_main->creature[creature].y;
-				map_main->creature[map_main->creature[creature].carried_creature].rotation=map_main->creature[creature].rotation;
-				map_main->creature[map_main->creature[creature].carried_creature].rotation_head=map_main->creature[creature].rotation_head;
-				map_main->creature[map_main->creature[creature].carried_creature].rotation_legs=map_main->creature[creature].rotation_legs;
+				map_main->creature[thiscreature.carried_creature].x=thiscreature.x;
+				map_main->creature[thiscreature.carried_creature].y=thiscreature.y;
+				map_main->creature[thiscreature.carried_creature].rotation=thiscreature.rotation;
+				map_main->creature[thiscreature.carried_creature].rotation_head=thiscreature.rotation_head;
+				map_main->creature[thiscreature.carried_creature].rotation_legs=thiscreature.rotation_legs;
 
 			}
 
 
 			//store location
-			map_main->creature[creature].x2=map_main->creature[creature].x;
-			map_main->creature[creature].y2=map_main->creature[creature].y;
+			thiscreature.x2=thiscreature.x;
+			thiscreature.y2=thiscreature.y;
 
 
 
 			//turn
 			//if(mod.general_creatures[map_main->creature[creature].type].movement_speed>0){
 			//left
-			if(map_main->creature[creature].left>0){
-				map_main->creature[creature].rotation_legs-=turn_speed*elapsed*game_speed*map_main->creature[creature].left*mod.general_creatures[map_main->creature[creature].type].turn_speed;
+			if(thiscreature.left>0){
+				thiscreature.rotation_legs-=turn_speed*elapsed*game_speed*thiscreature.left*mod.general_creatures[thiscreature.type].turn_speed;
 				//map_main->creature[creature].rotation=map_main->creature[creature].rotation_legs;
 			}
 			//right
-			if(map_main->creature[creature].right>0){
-				map_main->creature[creature].rotation_legs+=turn_speed*elapsed*game_speed*map_main->creature[creature].right*mod.general_creatures[map_main->creature[creature].type].turn_speed;
+			if(thiscreature.right>0){
+				thiscreature.rotation_legs+=turn_speed*elapsed*game_speed*thiscreature.right*mod.general_creatures[thiscreature.type].turn_speed;
 				//map_main->creature[creature].rotation=map_main->creature[creature].rotation_legs;
 			}
 			//}
 			//up
-			if(map_main->creature[creature].up>0){
-				map_main->creature[creature].backward_forward_speed+=movement_change_speed*elapsed*game_speed*sneak_multiplier;
-				if(map_main->creature[creature].backward_forward_speed>1)map_main->creature[creature].backward_forward_speed=1;
+			if(thiscreature.up>0){
+				thiscreature.backward_forward_speed+=movement_change_speed*elapsed*game_speed*sneak_multiplier;
+				if(thiscreature.backward_forward_speed>1)thiscreature.backward_forward_speed=1;
 
 
 			}
 			//down
-			if((map_main->creature[creature].down>0)||(map_main->creature[creature].up<0)){
-				map_main->creature[creature].backward_forward_speed-=movement_change_speed*elapsed*game_speed*sneak_multiplier;
-				if(map_main->creature[creature].backward_forward_speed<-1)map_main->creature[creature].backward_forward_speed=-1;
+			if((thiscreature.down>0)||(thiscreature.up<0)){
+				thiscreature.backward_forward_speed-=movement_change_speed*elapsed*game_speed*sneak_multiplier;
+				if(thiscreature.backward_forward_speed<-1)thiscreature.backward_forward_speed=-1;
 			}
 			//not up or down
-			if((map_main->creature[creature].up==0)&&(map_main->creature[creature].down==0)){
-				if(fabs(map_main->creature[creature].backward_forward_speed)<fabs(movement_change_speed*elapsed*game_speed))
-					map_main->creature[creature].backward_forward_speed=0;
+			if((thiscreature.up==0)&&(thiscreature.down==0)){
+				if(fabs(thiscreature.backward_forward_speed)<fabs(movement_change_speed*elapsed*game_speed))
+					thiscreature.backward_forward_speed=0;
 				else
-				map_main->creature[creature].backward_forward_speed-=movement_change_speed*elapsed*game_speed*(float)fabs(map_main->creature[creature].backward_forward_speed)/map_main->creature[creature].backward_forward_speed;
-				//map_main->creature[creature].backward_forward_speed=0;
+				thiscreature.backward_forward_speed-=movement_change_speed*elapsed*game_speed*(float)fabs(thiscreature.backward_forward_speed)/thiscreature.backward_forward_speed;
+				//thiscreature.backward_forward_speed=0;
 			}
 
 
 			//keep rotation in 0>x<2pi
-			if(map_main->creature[creature].rotation_legs<0)map_main->creature[creature].rotation_legs+=pi*2;
-			if(map_main->creature[creature].rotation_legs>2*pi)map_main->creature[creature].rotation_legs-=pi*2;
-			if(map_main->creature[creature].rotation<0)map_main->creature[creature].rotation+=pi*2;
-			if(map_main->creature[creature].rotation>2*pi)map_main->creature[creature].rotation-=pi*2;
-			if(map_main->creature[creature].rotation_head<0)map_main->creature[creature].rotation_head+=pi*2;
-			if(map_main->creature[creature].rotation_head>2*pi)map_main->creature[creature].rotation_head-=pi*2;
-
-
+			if(thiscreature.rotation_legs<0)thiscreature.rotation_legs+=pi*2;
+			if(thiscreature.rotation_legs>2*pi)thiscreature.rotation_legs-=pi*2;
+			if(thiscreature.rotation<0)thiscreature.rotation+=pi*2;
+			if(thiscreature.rotation>2*pi)thiscreature.rotation-=pi*2;
+			if(thiscreature.rotation_head<0)thiscreature.rotation_head+=pi*2;
+			if(thiscreature.rotation_head>2*pi)thiscreature.rotation_head-=pi*2;
 
 			//back and forward
-			if((map_main->creature[creature].backward_forward_speed!=0)||(mod.general_creatures[map_main->creature[creature].type].minimum_movement_speed>0)){
+			if((thiscreature.backward_forward_speed!=0)||(mod.general_creatures[thiscreature.type].minimum_movement_speed>0)){
 
-				float summed_movement_speed=mod.general_creatures[map_main->creature[creature].type].movement_speed*map_main->creature[creature].backward_forward_speed*sneak_multiplier;
-				if(mod.general_creatures[map_main->creature[creature].type].minimum_movement_speed>0){
-					if(summed_movement_speed<mod.general_creatures[map_main->creature[creature].type].minimum_movement_speed)
-						summed_movement_speed=mod.general_creatures[map_main->creature[creature].type].minimum_movement_speed;
+				float summed_movement_speed=mod.general_creatures[thiscreature.type].movement_speed*thiscreature.backward_forward_speed*sneak_multiplier;
+				if(mod.general_creatures[thiscreature.type].minimum_movement_speed>0){
+					if(summed_movement_speed<mod.general_creatures[thiscreature.type].minimum_movement_speed)
+						summed_movement_speed=mod.general_creatures[thiscreature.type].minimum_movement_speed;
 				}
 
-				map_main->creature[creature].x+=sincos.table_cos(map_main->creature[creature].rotation_legs-pi/2)*elapsed*game_speed*summed_movement_speed*movement_speed;
-				map_main->creature[creature].y+=sincos.table_sin(map_main->creature[creature].rotation_legs-pi/2)*elapsed*game_speed*summed_movement_speed*movement_speed;
+				thiscreature.x+=sincos.table_cos(thiscreature.rotation_legs-pi/2)*elapsed*game_speed*summed_movement_speed*movement_speed;
+				thiscreature.y+=sincos.table_sin(thiscreature.rotation_legs-pi/2)*elapsed*game_speed*summed_movement_speed*movement_speed;
 			}
 
 			//pushing
-			if(mod.general_creatures[map_main->creature[creature].type].movement_speed>0){
-				map_main->creature[creature].x+=map_main->creature[creature].vx*elapsed*game_speed/mod.general_creatures[map_main->creature[creature].type].weight;
-				map_main->creature[creature].y+=map_main->creature[creature].vy*elapsed*game_speed/mod.general_creatures[map_main->creature[creature].type].weight;
+			if(mod.general_creatures[thiscreature.type].movement_speed>0){
+				thiscreature.x+=thiscreature.vx*elapsed*game_speed/mod.general_creatures[thiscreature.type].weight;
+				thiscreature.y+=thiscreature.vy*elapsed*game_speed/mod.general_creatures[thiscreature.type].weight;
 			}
 
-			if(map_main->creature[creature].vx>0){
-				map_main->creature[creature].vx-=elapsed*game_speed*0.001f;
-				if(map_main->creature[creature].vx<0)
-					map_main->creature[creature].vx=0;
+			if(thiscreature.vx>0){
+				thiscreature.vx-=elapsed*game_speed*0.001f;
+				if(thiscreature.vx<0)
+					thiscreature.vx=0;
 				//if(map_main->creature[creature].vx>0.5f)map_main->creature[creature].vx=0.5f;
 			}
-			if(map_main->creature[creature].vx<0){
-				map_main->creature[creature].vx+=elapsed*game_speed*0.001f;
-				if(map_main->creature[creature].vx>0)
-					map_main->creature[creature].vx=0;
+			if(thiscreature.vx<0){
+				thiscreature.vx+=elapsed*game_speed*0.001f;
+				if(thiscreature.vx>0)
+					thiscreature.vx=0;
 				//if(map_main->creature[creature].vx<-0.5f)map_main->creature[creature].vx=-0.5f;
 			}
-			if(map_main->creature[creature].vy>0){
-				map_main->creature[creature].vy-=elapsed*game_speed*0.001f;
-				if(map_main->creature[creature].vy<0)
-					map_main->creature[creature].vy=0;
+			if(thiscreature.vy>0){
+				thiscreature.vy-=elapsed*game_speed*0.001f;
+				if(thiscreature.vy<0)
+					thiscreature.vy=0;
 				//if(map_main->creature[creature].vy>0.5f)map_main->creature[creature].vy=0.5f;
 			}
-			if(map_main->creature[creature].vy<0){
-				map_main->creature[creature].vy+=elapsed*game_speed*0.001f;
-				if(map_main->creature[creature].vy>0)
-					map_main->creature[creature].vy=0;
+			if(thiscreature.vy<0){
+				thiscreature.vy+=elapsed*game_speed*0.001f;
+				if(thiscreature.vy>0)
+					thiscreature.vy=0;
 				//if(map_main->creature[creature].vy<-0.5f)map_main->creature[creature].vy=-0.5f;
 			}
 
 			//cap
-			if(sqr(map_main->creature[creature].vx)+sqr(map_main->creature[creature].vy)>1){
-				float kerroin=sqrt(sqr(map_main->creature[creature].vx)+sqr(map_main->creature[creature].vy));
-				map_main->creature[creature].vx=map_main->creature[creature].vx/kerroin*1;
-				map_main->creature[creature].vy=map_main->creature[creature].vy/kerroin*1;
+			if(sqr(thiscreature.vx)+sqr(thiscreature.vy)>1){
+				float kerroin=sqrt(sqr(thiscreature.vx)+sqr(thiscreature.vy));
+				thiscreature.vx=thiscreature.vx/kerroin*1;
+				thiscreature.vy=thiscreature.vy/kerroin*1;
 			}
 
 
 
 			//not too close to other creatures, they push each other
-			if((visible)&&(!map_main->creature[creature].killed)){
+			if((visible)&&(!thiscreature.killed)){
 				//make sure creature is on map again
-				if(map_main->creature[creature].x<left_map_limit)map_main->creature[creature].x=left_map_limit;
-				if(map_main->creature[creature].y<top_map_limit)map_main->creature[creature].y=top_map_limit;
-				if(map_main->creature[creature].x>right_map_limit)map_main->creature[creature].x=right_map_limit;
-				if(map_main->creature[creature].y>bottom_map_limit)map_main->creature[creature].y=bottom_map_limit;
+				if(thiscreature.x<left_map_limit)thiscreature.x=left_map_limit;
+				if(thiscreature.y<top_map_limit)thiscreature.y=top_map_limit;
+				if(thiscreature.x>right_map_limit)thiscreature.x=right_map_limit;
+				if(thiscreature.y>bottom_map_limit)thiscreature.y=bottom_map_limit;
 
-				int start_x=(int)(map_main->creature[creature].x/grid_size)-2;
-				int start_y=(int)(map_main->creature[creature].y/grid_size)-2;
-				int end_x=(int)(map_main->creature[creature].x/grid_size)+2;
-				int end_y=(int)(map_main->creature[creature].y/grid_size)+2;
+				int start_x=(int)(thiscreature.x/grid_size)-2;
+				int start_y=(int)(thiscreature.y/grid_size)-2;
+				int end_x=(int)(thiscreature.x/grid_size)+2;
+				int end_y=(int)(thiscreature.y/grid_size)+2;
 
 				if(start_x<0)start_x=0;
 				if(end_x>map_main->sizex-1)end_x=map_main->sizex-1;
@@ -4013,9 +4035,9 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 
 				float bound_circle2=32;
 
-				float creature_size=(bound_circle2)*(map_main->creature[creature].size*mod.general_creatures[map_main->creature[creature].type].size);
-				float creature_x=map_main->creature[creature].x+creature_size*0.5f/(bound_circle2)*general_creature_size;
-				float creature_y=map_main->creature[creature].y+creature_size*0.5f/(bound_circle2)*general_creature_size;
+				float creature_size=(bound_circle2)*(thiscreature.size*mod.general_creatures[thiscreature.type].size);
+				float creature_x=thiscreature.x+creature_size*0.5f/(bound_circle2)*general_creature_size;
+				float creature_y=thiscreature.y+creature_size*0.5f/(bound_circle2)*general_creature_size;
 
 				for (a=start_x; a<end_x; a++){
 					for (b=start_y; b<end_y; b++){
@@ -4031,9 +4053,9 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 							//collisions prevented in creature specialties of either creature
 							int specialty;
 							bool creature1_prevented=false;
-							for(specialty=0;specialty<mod.general_creatures[map_main->creature[creature].type].specialties.size();specialty++){
-								if(mod.general_creatures[map_main->creature[creature].type].specialties[specialty].number==4){
-									if(mod.general_creatures[map_main->creature[creature].type].specialties[specialty].parameter1==1){
+							for(specialty=0;specialty<mod.general_creatures[thiscreature.type].specialties.size();specialty++){
+								if(mod.general_creatures[thiscreature.type].specialties[specialty].number==4){
+									if(mod.general_creatures[thiscreature.type].specialties[specialty].parameter1==1){
 										creature1_prevented=true;
 									}
 								}
@@ -4052,7 +4074,7 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 
 
 							float creature_size2=(bound_circle2)*(map_main->creature[creature2].size*mod.general_creatures[map_main->creature[creature2].type].size);
-							float creature_weight=mod.general_creatures[map_main->creature[creature].type].weight;
+							float creature_weight=mod.general_creatures[thiscreature.type].weight;
 							float creature2_weight=mod.general_creatures[map_main->creature[creature2].type].weight;
 							float creature_x2=map_main->creature[creature2].x+creature_size2*0.5f/(bound_circle2)*general_creature_size;
 							float creature_y2=map_main->creature[creature2].y+creature_size2*0.5f/(bound_circle2)*general_creature_size;
@@ -4064,7 +4086,7 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 							}
 
 							//for player, he can push his friends as he likes
-							if(((creature==0)||(creature2==0))&&(map_main->creature[creature].side==map_main->creature[creature2].side)){
+							if(((creature==0)||(creature2==0))&&(thiscreature.side==map_main->creature[creature2].side)){
 								//only if the creature can move
 
 								if(creature==0){
@@ -4074,7 +4096,7 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 									}
 								}
 								if(creature2==0){
-									if(mod.general_creatures[map_main->creature[creature].type].movement_speed>0){
+									if(mod.general_creatures[thiscreature.type].movement_speed>0){
 										creature2_weight=1000;
 										creature_weight=1;
 									}
@@ -4085,10 +4107,10 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 							if(sqr(creature_x-creature_x2)+sqr(creature_y-creature_y2)<sqr(creature_size*0.5f+creature_size2*0.5f)){
 
 								//remember the touch
-								if(map_main->creature[creature2].side!=map_main->creature[creature].side)
-								if(!mod.AI_sides[map_main->creature[creature].side].friend_with_side[map_main->creature[creature2].side]){
+								if(map_main->creature[creature2].side!=thiscreature.side)
+								if(!mod.AI_sides[thiscreature.side].friend_with_side[map_main->creature[creature2].side]){
 									map_main->creature[creature2].touched_enemy=creature;
-									map_main->creature[creature].touched_enemy=creature2;
+									thiscreature.touched_enemy=creature2;
 								}
 
 
@@ -4106,16 +4128,16 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 								float kerroin_2=kerroin*(creature2_weight/(creature_weight+creature2_weight));
 
 
-								map_main->creature[creature].x+=move_x*kerroin_2;
-								map_main->creature[creature].y+=move_y*kerroin_2;
+								thiscreature.x+=move_x*kerroin_2;
+								thiscreature.y+=move_y*kerroin_2;
 
 								map_main->creature[creature2].x-=move_x*kerroin_1;
 								map_main->creature[creature2].y-=move_y*kerroin_1;
 
 								//if the new position collides, we're back to the old one
-								if(creature_will_collide(map_main,&map_main->creature[creature])){
-									map_main->creature[creature].x=map_main->creature[creature].x2;
-									map_main->creature[creature].y=map_main->creature[creature].y2;
+								if(creature_will_collide(map_main,&thiscreature)){
+									thiscreature.x=thiscreature.x2;
+									thiscreature.y=thiscreature.y2;
 								}
 								if(creature_will_collide(map_main,&map_main->creature[creature2])){
 									map_main->creature[creature2].x=map_main->creature[creature2].x2;
@@ -4130,38 +4152,38 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 				}
 			}
 
-			if(!map_main->creature[creature].killed){
+			if(!thiscreature.killed){
 
 				int range=2;
 				if(visible)range=3;
 
 				//make sure creature is on map again
-				if(map_main->creature[creature].x<left_map_limit)map_main->creature[creature].x=left_map_limit;
-				if(map_main->creature[creature].y<top_map_limit)map_main->creature[creature].y=top_map_limit;
-				if(map_main->creature[creature].x>right_map_limit)map_main->creature[creature].x=right_map_limit;
-				if(map_main->creature[creature].y>bottom_map_limit)map_main->creature[creature].y=bottom_map_limit;
+				if(thiscreature.x<left_map_limit)thiscreature.x=left_map_limit;
+				if(thiscreature.y<top_map_limit)thiscreature.y=top_map_limit;
+				if(thiscreature.x>right_map_limit)thiscreature.x=right_map_limit;
+				if(thiscreature.y>bottom_map_limit)thiscreature.y=bottom_map_limit;
 
 				//collisions prevented in creature specialties
 				bool prop_prevented=false;
 				bool plot_object_prevented=false;
-				for(b=0;b<mod.general_creatures[map_main->creature[creature].type].specialties.size();b++){
-					if(mod.general_creatures[map_main->creature[creature].type].specialties[b].number==4){
-						if(mod.general_creatures[map_main->creature[creature].type].specialties[b].parameter3==1){
+				for(b=0;b<mod.general_creatures[thiscreature.type].specialties.size();b++){
+					if(mod.general_creatures[thiscreature.type].specialties[b].number==4){
+						if(mod.general_creatures[thiscreature.type].specialties[b].parameter3==1){
 							prop_prevented=true;
 						}
-						if(mod.general_creatures[map_main->creature[creature].type].specialties[b].parameter0==1){
+						if(mod.general_creatures[thiscreature.type].specialties[b].parameter0==1){
 							plot_object_prevented=true;
 						}
 					}
 				}
 
 				//collision detection with objects, only if moved or creature is player
-				if(!map_main->creature[creature].killed)
-				if((map_main->creature[creature].x2!=map_main->creature[creature].x)
-					||(map_main->creature[creature].y2!=map_main->creature[creature].y)
+				if(!thiscreature.killed)
+				if((thiscreature.x2!=thiscreature.x)
+					||(thiscreature.y2!=thiscreature.y)
 					||(creature==0)){
-					int alku_x=(int)(map_main->creature[creature].x/grid_size-range);
-					int alku_y=(int)(map_main->creature[creature].y/grid_size-range);
+					int alku_x=(int)(thiscreature.x/grid_size-range);
+					int alku_y=(int)(thiscreature.y/grid_size-range);
 					int loppu_x=alku_x+range*2;
 					int loppu_y=alku_y+range*2;
 
@@ -4178,11 +4200,8 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 							for(c=0;c<map_main->grid[a].grid[b].objects.size();c++){
 								if(map_main->object[map_main->grid[a].grid[b].objects[c]].dead)continue;
 
-
-
-								if(creature_collision_detection(&map_main->creature[creature],&map_main->object[map_main->grid[a].grid[b].objects[c]],true))
+								if(creature_collision_detection(&thiscreature,&map_main->object[map_main->grid[a].grid[b].objects[c]],true))
 									hits++;
-
 							}
 							//plot_objects
 							if(!plot_object_prevented)
@@ -4190,7 +4209,7 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 								if(map_main->items[map_main->grid[a].grid[b].items[c]].dead)continue;
 								if(map_main->items[map_main->grid[a].grid[b].items[c]].base_type!=0)continue;
 
-								if(creature_collision_detection(&map_main->creature[creature],&map_main->items[map_main->grid[a].grid[b].items[c]],true))
+								if(creature_collision_detection(&thiscreature,&map_main->items[map_main->grid[a].grid[b].items[c]],true))
 									hits++;
 
 							}
@@ -4201,23 +4220,24 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 			}
 
 
-
-
-
 		//make sure creature is on map again
-		if(map_main->creature[creature].x<left_map_limit)map_main->creature[creature].x=left_map_limit;
-		if(map_main->creature[creature].y<top_map_limit)map_main->creature[creature].y=top_map_limit;
-		if(map_main->creature[creature].x>right_map_limit)map_main->creature[creature].x=right_map_limit;
-		if(map_main->creature[creature].y>bottom_map_limit)map_main->creature[creature].y=bottom_map_limit;
+		if(thiscreature.x<left_map_limit)thiscreature.x=left_map_limit;
+		if(thiscreature.y<top_map_limit)thiscreature.y=top_map_limit;
+		if(thiscreature.x>right_map_limit)thiscreature.x=right_map_limit;
+		if(thiscreature.y>bottom_map_limit)thiscreature.y=bottom_map_limit;
 
 		//AI pathfinding is not on, we need to block the creature from entering AI_avoid terrain
 		if(!visible){
-			terrain_type=map_main->grid[(int)((map_main->creature[creature].x+size*0.5f)/grid_size)].grid[(int)((map_main->creature[creature].y+size*0.5f)/grid_size)].terrain_type;
+            int index_x = static_cast<int>((thiscreature.x+size*0.5f)/grid_size);
+            assert (index_x >= 0); assert (index_x < map_main->sizex);
+            int index_y = static_cast<int>((thiscreature.y+size*0.5f)/grid_size);
+            assert (index_y >= 0); assert (index_y < map_main->sizey);
+            terrain_type=map_main->grid[index_x].grid[index_y].terrain_type;
 
-			if(mod.terrain_types[terrain_type].AI_avoid){
-				map_main->creature[creature].x=map_main->creature[creature].x2;
-				map_main->creature[creature].y=map_main->creature[creature].y2;
-			}
+            if(mod.terrain_types[terrain_type].AI_avoid){
+                thiscreature.x=thiscreature.x2;
+                thiscreature.y=thiscreature.y2;
+            }
 		}
 
 		/*if(map_main->creature[creature].x<0)map_main->creature[creature].x+=grid_size*map_main->sizex;
@@ -4227,8 +4247,8 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 		*/
 
 		//move carried lights
-		if(map_main->creature[creature].carry_light>=0){
-			carry_light(map_main,&map_main->creature[creature],map_main->creature[creature].carry_light);
+		if(thiscreature.carry_light>=0){
+			carry_light(map_main,&thiscreature,thiscreature.carry_light);
 		}
 
 
@@ -4237,7 +4257,7 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 	//animation
 	if(visible){
 			//leg animation
-			if(!map_main->creature[creature].killed){
+			if(!thiscreature.killed){
 				int step=0;
 
 				/*
@@ -4258,133 +4278,133 @@ bool game_engine::creature_actions(int creature, bool visible){//calculates the 
 				if((map_main->creature[creature].animation_timer[2]>0)&&(map_main->creature[creature].animation_timer[2]-map_main->creature[creature].backward_forward_speed*elapsed*game_speed*2*mod.general_creatures[map_main->creature[creature].type].movement_speed<=0))
 					step=-1;*/
 
-				float summed_step_speed=mod.general_creatures[map_main->creature[creature].type].leg_animation_speed*map_main->creature[creature].backward_forward_speed;
-				if(mod.general_creatures[map_main->creature[creature].type].minimum_movement_speed>0){
-					if(summed_step_speed<mod.general_creatures[map_main->creature[creature].type].minimum_movement_speed)
-						summed_step_speed=mod.general_creatures[map_main->creature[creature].type].minimum_movement_speed;
+				float summed_step_speed=mod.general_creatures[thiscreature.type].leg_animation_speed*thiscreature.backward_forward_speed;
+				if(mod.general_creatures[thiscreature.type].minimum_movement_speed>0){
+					if(summed_step_speed<mod.general_creatures[thiscreature.type].minimum_movement_speed)
+						summed_step_speed=mod.general_creatures[thiscreature.type].minimum_movement_speed;
 				}
 
 
-				map_main->creature[creature].animation_timer[2]+=elapsed*game_speed*2*summed_step_speed;
+				thiscreature.animation_timer[2]+=elapsed*game_speed*2*summed_step_speed;
 				//going forward
 				if(elapsed*game_speed*2*summed_step_speed>0){
 					//right leg steps
-					if(map_main->creature[creature].animation_timer[2]>1000){
+					if(thiscreature.animation_timer[2]>1000){
 						step=1;
-						map_main->creature[creature].animation_timer[2]=0;
+						thiscreature.animation_timer[2]=0;
 					}
 					//left leg steps
-					if((map_main->creature[creature].animation_timer[2]>500)&&(map_main->creature[creature].animation_timer[2]-elapsed*game_speed*2*summed_step_speed<=500)){
+					if((thiscreature.animation_timer[2]>500)&&(thiscreature.animation_timer[2]-elapsed*game_speed*2*summed_step_speed<=500)){
 						step=-1;
 					}
 				}
 				else{
 					//right leg steps
-					if(map_main->creature[creature].animation_timer[2]<0){
+					if(thiscreature.animation_timer[2]<0){
 						step=1;
-						map_main->creature[creature].animation_timer[2]=1000;
+						thiscreature.animation_timer[2]=1000;
 					}
 					//left leg steps
-					if((map_main->creature[creature].animation_timer[2]<500)&&(map_main->creature[creature].animation_timer[2]+elapsed*game_speed*2*summed_step_speed>=500)){
+					if((thiscreature.animation_timer[2]<500)&&(thiscreature.animation_timer[2]+elapsed*game_speed*2*summed_step_speed>=500)){
 						step=-1;
 					}
 				}
 
 
 				//steps
-				if(mod.general_creatures[map_main->creature[creature].type].footsteps>0)
+				if(mod.general_creatures[thiscreature.type].footsteps>0)
 				if(step!=0){
 
 
 					float leg_xx=5*step;
 					float leg_yy=5;
 
-					float leg_x=map_main->creature[creature].x+size*0.5f+leg_xx*(size/general_creature_size)*sincos.table_cos(map_main->creature[creature].rotation_legs)+leg_yy*(size/general_creature_size)*sincos.table_cos(map_main->creature[creature].rotation_legs-pi/2);
-					float leg_y=map_main->creature[creature].y+size*0.5f+leg_xx*(size/general_creature_size)*sincos.table_sin(map_main->creature[creature].rotation_legs)+leg_yy*(size/general_creature_size)*sincos.table_sin(map_main->creature[creature].rotation_legs-pi/2);
+					float leg_x=thiscreature.x+size*0.5f+leg_xx*(size/general_creature_size)*sincos.table_cos(thiscreature.rotation_legs)+leg_yy*(size/general_creature_size)*sincos.table_cos(thiscreature.rotation_legs-pi/2);
+					float leg_y=thiscreature.y+size*0.5f+leg_xx*(size/general_creature_size)*sincos.table_sin(thiscreature.rotation_legs)+leg_yy*(size/general_creature_size)*sincos.table_sin(thiscreature.rotation_legs-pi/2);
 
 					int terrain_type=map_main->grid[(int)((leg_x)/grid_size)].grid[(int)((leg_y)/grid_size)].terrain_type;
 
-					int particle_number=mod.general_creatures[map_main->creature[creature].type].footsteps;
+					int particle_number=mod.general_creatures[thiscreature.type].footsteps;
 
 					if(particle_number>=0)
 					if(mod.terrain_types[terrain_type].footstep_particle_time>=0)
-					if(mod.general_creatures[map_main->creature[creature].type].footstep_sounds.size()>0){
+					if(mod.general_creatures[thiscreature.type].footstep_sounds.size()>0){
 
-						int sound_number=mod.general_creatures[map_main->creature[creature].type].footstep_sounds[randInt(0,mod.general_creatures[map_main->creature[creature].type].footstep_sounds.size())];
+						int sound_number=mod.general_creatures[thiscreature.type].footstep_sounds[randInt(0,mod.general_creatures[thiscreature.type].footstep_sounds.size())];
 						if(mod.terrain_types[terrain_type].override_footstep_particle>=0)
 							particle_number=mod.terrain_types[terrain_type].override_footstep_particle;
 						if(mod.terrain_types[terrain_type].override_footstep_sound>=0)
 							sound_number=mod.terrain_types[terrain_type].override_footstep_sound;
 
-						make_particle(particle_number, 0, mod.terrain_types[terrain_type].footstep_particle_time, leg_x,leg_y,0,0,map_main->creature[creature].rotation_legs);
+						make_particle(particle_number, 0, mod.terrain_types[terrain_type].footstep_particle_time, leg_x,leg_y,0,0,thiscreature.rotation_legs);
 						playsound(sound_number,1,leg_x,leg_y,player_middle_x,player_middle_y);
 					}
 				}
 
 
 				//5,6,7,8,9,8,7,6,5
-				if(fabs(map_main->creature[creature].animation_timer[2]-500)>400)
-					map_main->creature[creature].animation[2]=5;
-				else if(fabs(map_main->creature[creature].animation_timer[2]-500)>300)
-					map_main->creature[creature].animation[2]=6;
-				else if(fabs(map_main->creature[creature].animation_timer[2]-500)>200)
-					map_main->creature[creature].animation[2]=7;
-				else if(fabs(map_main->creature[creature].animation_timer[2]-500)>100)
-					map_main->creature[creature].animation[2]=8;
-				else if(fabs(map_main->creature[creature].animation_timer[2]-500)>0)
-					map_main->creature[creature].animation[2]=9;
+				if(fabs(thiscreature.animation_timer[2]-500)>400)
+					thiscreature.animation[2]=5;
+				else if(fabs(thiscreature.animation_timer[2]-500)>300)
+					thiscreature.animation[2]=6;
+				else if(fabs(thiscreature.animation_timer[2]-500)>200)
+					thiscreature.animation[2]=7;
+				else if(fabs(thiscreature.animation_timer[2]-500)>100)
+					thiscreature.animation[2]=8;
+				else if(fabs(thiscreature.animation_timer[2]-500)>0)
+					thiscreature.animation[2]=9;
 			}
 			//torso animation
 			//attack
-			if(!map_main->creature[creature].killed)
-			if(map_main->creature[creature].animation[1]<10){
+			if(!thiscreature.killed)
+			if(thiscreature.animation[1]<10){
 
 				float time_maximum=500;
-				if(mod.general_creatures[map_main->creature[creature].type].weapon>0)
-					time_maximum=mod.general_weapons[mod.general_creatures[map_main->creature[creature].type].weapon].fire_rate;
-				map_main->creature[creature].animation_timer[1]-=elapsed*game_speed;
-				if(map_main->creature[creature].animation_timer[1]<0)map_main->creature[creature].animation_timer[1]=0;
+				if(mod.general_creatures[thiscreature.type].weapon>0)
+					time_maximum=mod.general_weapons[mod.general_creatures[thiscreature.type].weapon].fire_rate;
+				thiscreature.animation_timer[1]-=elapsed*game_speed;
+				if(thiscreature.animation_timer[1]<0)thiscreature.animation_timer[1]=0;
 
 				//1,2,3,4,3,2,1
-				//if(fabs(map_main->creature[creature].animation_timer[1])==0)
-				map_main->creature[creature].animation[1]=1;//default
+				//if(fabs(thiscreature.animation_timer[1])==0)
+				thiscreature.animation[1]=1;//default
 
-				if(fabs(map_main->creature[creature].animation_timer[1])>time_maximum*0.83f)
-					map_main->creature[creature].animation[1]=2;
-				else if(fabs(map_main->creature[creature].animation_timer[1])>time_maximum*0.66f)
-					map_main->creature[creature].animation[1]=3;
-				else if(fabs(map_main->creature[creature].animation_timer[1])>time_maximum*0.5f)
-					map_main->creature[creature].animation[1]=4;
-				else if(fabs(map_main->creature[creature].animation_timer[1])>time_maximum*0.33f)
-					map_main->creature[creature].animation[1]=3;
-				else if(fabs(map_main->creature[creature].animation_timer[1])>time_maximum*0.17f)
-					map_main->creature[creature].animation[1]=2;
+				if(fabs(thiscreature.animation_timer[1])>time_maximum*0.83f)
+					thiscreature.animation[1]=2;
+				else if(fabs(thiscreature.animation_timer[1])>time_maximum*0.66f)
+					thiscreature.animation[1]=3;
+				else if(fabs(thiscreature.animation_timer[1])>time_maximum*0.5f)
+					thiscreature.animation[1]=4;
+				else if(fabs(thiscreature.animation_timer[1])>time_maximum*0.33f)
+					thiscreature.animation[1]=3;
+				else if(fabs(thiscreature.animation_timer[1])>time_maximum*0.17f)
+					thiscreature.animation[1]=2;
 			}
 	}
 
 	//die
-	if(map_main->creature[creature].killed)
-	if(map_main->creature[creature].animation[1]>=10)
-	if(map_main->creature[creature].animation[1]<15)
+	if(thiscreature.killed)
+	if(thiscreature.animation[1]>=10)
+	if(thiscreature.animation[1]<15)
 	{
-		map_main->creature[creature].animation_timer[1]-=elapsed*game_speed*mod.general_creatures[map_main->creature[creature].type].death_animation_speed;
-		if(map_main->creature[creature].animation_timer[1]<0){
-			map_main->creature[creature].animation_timer[1]+=100;
-			map_main->creature[creature].animation[1]++;
+		thiscreature.animation_timer[1]-=elapsed*game_speed*mod.general_creatures[thiscreature.type].death_animation_speed;
+		if(thiscreature.animation_timer[1]<0){
+			thiscreature.animation_timer[1]+=100;
+			thiscreature.animation[1]++;
 		}
 
 	}
 	//corpse vanishes when dead
-	if(map_main->creature[creature].animation[1]==15){
-		if(mod.general_creatures[map_main->creature[creature].type].corpse_item==-2){
-			//map_main->creature[creature].dead=true;
+	if(thiscreature.animation[1]==15){
+		if(mod.general_creatures[thiscreature.type].corpse_item==-2){
+			//thiscreature.dead=true;
 			delete_creature(map_main,creature);
 			return true;
 		}
 	}
 
-	if(!map_main->creature[creature].killed)
-		map_main->creature[creature].animation[0]=0;
+	if(!thiscreature.killed)
+		thiscreature.animation[0]=0;
 
 
 	return false;
@@ -5001,7 +5021,7 @@ void game_engine::draw_lights(int layer){//draws light effects (flashlight, expl
 }
 
 
-void game_engine::load_setup(char *filename){//loads setup from file
+void game_engine::load_setup(const char *filename){//loads setup from file
 
 	FILE *fil;
 	char rivi[800]="none";
@@ -5051,7 +5071,7 @@ void game_engine::load_setup(char *filename){//loads setup from file
 
 }
 
-void game_engine::save_setup(char *filename){//saves setup to file
+void game_engine::save_setup(const char *filename){//saves setup to file
 
 	FILE *fil;
 	//char rivi[800];
@@ -6561,8 +6581,6 @@ void game_engine::draw_pop_up(void){
 	grim->Quads_Draw(pop_up_x, pop_up_y+(256.0f-small_computer_size-18)*y_multiplier, 256*x_multiplier, (small_computer_size+18)*y_multiplier);
 	grim->Quads_End();
 
-
-
 	//weapon symbol
 	if(weapon_selected_from_item_list>=0){
 		resources.Texture_Set(mod.general_items[inventory[active_inventory].player_items[weapon_selected_from_item_list].item].texture);
@@ -6572,8 +6590,6 @@ void game_engine::draw_pop_up(void){
 		grim->Quads_Draw(pop_up_x+23*x_multiplier, pop_up_y+219*y_multiplier, 32*x_multiplier, 32*y_multiplier);
 		grim->Quads_End();
 	}
-
-
 
 	//item mode button
 	bool goto_item_mode=false;
@@ -6661,16 +6677,10 @@ void game_engine::draw_pop_up(void){
 	}
 	grim->System_SetRenderTarget(-1);
 
-
-
-
-
-
 	//draw the window
 	//map
 	if(show_radar)
 	{
-
 		if(pop_up_mode==0)transparency=0.8f;
 		grim->System_SetState_Blending(true);
 		resources.Texture_Set(mod.general_races[player_race].interface_texture);
@@ -6680,12 +6690,7 @@ void game_engine::draw_pop_up(void){
 		grim->Quads_Draw(pop_up_x+(29-pop_up_leveys)*x_multiplier, pop_up_y+26*y_multiplier, (0.76f*256+pop_up_leveys*2)*x_multiplier, (0.76f*256)*y_multiplier);
 		grim->Quads_End();
 
-
-
-
-
 		string show_map_name="";
-
 
 		if(pop_up_mode==1){
 
@@ -6693,7 +6698,6 @@ void game_engine::draw_pop_up(void){
 			float map_start_y=32;
 			float map_widthx=204;
 			float map_widthy=173;
-
 
 			//change map mode
 			/*if(!mouse_right&&mouse_right2){
@@ -6713,8 +6717,6 @@ void game_engine::draw_pop_up(void){
 						}
 					}
 			}*/
-
-
 
 			//long range scanner minimizes map
 			if(map_active){
@@ -6765,7 +6767,6 @@ void game_engine::draw_pop_up(void){
 				}
 			}
 
-
 			//find correct dimensions of the map to draw
 			float center_x=map_start_x+map_widthx/2;
 			float center_y=map_start_y+map_widthy/2;
@@ -6798,7 +6799,6 @@ void game_engine::draw_pop_up(void){
 			//passable edges
 			draw_line_map(pop_up_x+map_start_x*x_multiplier,pop_up_y+map_start_y*y_multiplier,map_widthx*x_multiplier,map_widthy*y_multiplier,map_main);
 
-
 			grim->System_SetState_Blending(true);
 			grim->System_SetState_BlendSrc(grBLEND_SRCALPHA);
 			grim->System_SetState_BlendDst(grBLEND_INVSRCALPHA);
@@ -6808,7 +6808,6 @@ void game_engine::draw_pop_up(void){
 			float multiplier_x=(map_widthx)/((map_main->sizex)*grid_size);
 			float multiplier_y=(map_widthy)/((map_main->sizey)*grid_size);
 			grim->Quads_SetSubset(0,0,1,1);
-
 
 			//kill_meter_active=2000;
 			//scanner_active=2000;
@@ -6867,7 +6866,6 @@ void game_engine::draw_pop_up(void){
 							grim->Quads_SetColor(particles[particle_type].r,particles[particle_type].g,particles[particle_type].b,alpha);
 							grim->Quads_Draw(pop_up_x+(map_start_x+x)*x_multiplier, pop_up_y+(map_start_y+y)*y_multiplier, dot_size*x_multiplier, dot_size*y_multiplier);
 							grim->Quads_End();
-
 						}
 					}
 				}
@@ -6876,7 +6874,6 @@ void game_engine::draw_pop_up(void){
 			//scanner
 			{
 				float max_draw_distance=scanner_active;
-
 
 				//all the plot items here
 				for(int i=0;i<map_main->items.size();i++){
@@ -6887,8 +6884,6 @@ void game_engine::draw_pop_up(void){
 					int particle_type=0;
 					float size=map_main->items[i].size*general_object_size;
 
-
-
 					//it's a plot_object
 					if(map_main->items[i].base_type==0){
 						if(map_main->items[i].event_used)continue;
@@ -6896,14 +6891,12 @@ void game_engine::draw_pop_up(void){
 						//if(mod.general_plot_objects[map_main->items[i].item_type].event==-1)continue;
 						show_on_type=mod.general_plot_objects[map_main->items[i].item_type].show_on_radar;
 						particle_type=mod.general_plot_objects[map_main->items[i].item_type].show_on_radar_particle;
-
 					}
 					//it's an item
 					else if(map_main->items[i].base_type==1){
 						show_on_type=mod.general_items[map_main->items[i].type].show_on_radar;
 						particle_type=mod.general_items[map_main->items[i].type].show_on_radar_particle;
 					}
-
 
 					if(show_on_type!=0)
 					{
@@ -6920,13 +6913,10 @@ void game_engine::draw_pop_up(void){
 							if((show_on_type==1)){
 								alpha=1-sqrtf(distance)/(max_draw_distance);
 								if(alpha<0)alpha=0;
-
 							}
-							else{
+							else {
 								alpha=1;
 							}
-
-
 
 							dot_size=particles[particle_type].size;
 							grim->Quads_SetColor(particles[particle_type].r,particles[particle_type].g,particles[particle_type].b,alpha);
@@ -6937,13 +6927,10 @@ void game_engine::draw_pop_up(void){
 							grim->Quads_SetColor(particles[particle_type].r,particles[particle_type].g,particles[particle_type].b,alpha);
 							grim->Quads_Draw(pop_up_x+(map_start_x+x*multiplier_x-dot_size*0.5f)*x_multiplier, pop_up_y+(map_start_y+y*multiplier_y-dot_size*0.5f)*y_multiplier, (dot_size)*x_multiplier, (dot_size)*y_multiplier);
 							grim->Quads_End();
-
 						}
 					}
 				}
 			}
-
-
 
 			//player dot
 			dot_size=4;
@@ -6962,13 +6949,10 @@ void game_engine::draw_pop_up(void){
 				grim->Quads_Draw(pop_up_x+(map_start_x+x)*x_multiplier, pop_up_y+(map_start_y+y)*y_multiplier, (dot_size*2)*x_multiplier, (dot_size*2)*y_multiplier);
 			grim->Quads_End();
 
-
 			//map name
 			if(show_map_name!=""){
 				text_manager.write(font,show_map_name,1*x_multiplier,pop_up_x+(24+3)*x_multiplier, pop_up_y+(32+3)*y_multiplier,screen_width,screen_height,false,0.8f,1.0f,0.8f,0.9f);
 			}
-
-
 		}
 	}
 
@@ -7044,16 +7028,7 @@ void game_engine::draw_pop_up(void){
 		text_manager.write(font,add_info,1*x_multiplier,pop_up_x+(teksti_alku_x)*x_multiplier,pop_up_y+(teksti_alku_y-183)*y_multiplier,pop_up_x+(teksti_loppu_x-15)*x_multiplier,pop_up_y+(teksti_loppu_y-183-30)*y_multiplier,false,0.8f,1.0f,0.8f,1);
 		//text_manager.write(font,"aaaa fawe fwe ",0.7f,pop_up_x+teksti_alku_x,pop_up_y+teksti_alku_y+50,pop_up_x+teksti_loppu_x,pop_up_y+teksti_loppu_y,true,1,1,1);
 	}
-
-
-
-
-
-
-
-
 }
-
 
 //checks the items and objects on the map
 void game_engine::calculate_items(void){
@@ -10325,27 +10300,29 @@ void game_engine::draw_targeting_beam(void){
 
 	if(weapon_selected_from_item_list<0)return;
 
-	int creature=0;
+	const int creature=0;
+    creature_base& thiscreature = map_main->creature[creature];
 
-	float size=mod.general_creatures[map_main->creature[creature].type].size*map_main->creature[creature].size*general_creature_size;
-	float shoot_x=map_main->creature[creature].x+size*0.5f+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[map_main->creature[creature].type].weapon].weapon_class].x*(size/general_creature_size)*sincos.table_cos(map_main->creature[creature].rotation)+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[map_main->creature[creature].type].weapon].weapon_class].y*(size/general_creature_size)*sincos.table_cos(map_main->creature[creature].rotation-pi/2);
-	float shoot_y=map_main->creature[creature].y+size*0.5f+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[map_main->creature[creature].type].weapon].weapon_class].x*(size/general_creature_size)*sincos.table_sin(map_main->creature[creature].rotation)+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[map_main->creature[creature].type].weapon].weapon_class].y*(size/general_creature_size)*sincos.table_sin(map_main->creature[creature].rotation-pi/2);
+	float size=mod.general_creatures[thiscreature.type].size*thiscreature.size*general_creature_size;
+	float shoot_x=thiscreature.x+size*0.5f+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[thiscreature.type].weapon].weapon_class].x*(size/general_creature_size)*sincos.table_cos(thiscreature.rotation)+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[thiscreature.type].weapon].weapon_class].y*(size/general_creature_size)*sincos.table_cos(thiscreature.rotation-pi/2);
+	float shoot_y=thiscreature.y+size*0.5f+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[thiscreature.type].weapon].weapon_class].x*(size/general_creature_size)*sincos.table_sin(thiscreature.rotation)+mod.general_races[player_race].weapon_classes[mod.general_weapons[mod.general_creatures[thiscreature.type].weapon].weapon_class].y*(size/general_creature_size)*sincos.table_sin(thiscreature.rotation-pi/2);
 
 
-	float range=beam_type.parameter3*mod.general_weapons[mod.general_creatures[map_main->creature[creature].type].weapon].time*mod.general_weapons[mod.general_creatures[map_main->creature[creature].type].weapon].bullet_speed+beam_type.parameter2;
-	float shoot_at_x=shoot_x+range*sincos.table_cos(map_main->creature[creature].rotation-pi/2);
-	float shoot_at_y=shoot_y+range*sincos.table_sin(map_main->creature[creature].rotation-pi/2);
+	float range=beam_type.parameter3*mod.general_weapons[mod.general_creatures[thiscreature.type].weapon].time*mod.general_weapons[mod.general_creatures[thiscreature.type].weapon].bullet_speed+beam_type.parameter2;
+	float shoot_at_x=shoot_x+range*sincos.table_cos(thiscreature.rotation-pi/2);
+	float shoot_at_y=shoot_y+range*sincos.table_sin(thiscreature.rotation-pi/2);
 
 	//find if there's an enemy at the path
 	bool enemy_found=false;
 	if(beam_type.parameter1==2){
 		vector <collision_base> collisions=list_collisions(shoot_x,shoot_y,shoot_at_x,shoot_at_y,false);
 		for(int a=0;a<collisions.size();a++){
-			if(collisions[a].type==0)
-			if(collisions[a].subtype>0)
-			if(map_main->creature[collisions[a].subtype].side!=0)
-			if(mod.general_creatures[map_main->creature[collisions[a].subtype].type].particle_on_radar>=0)
-				enemy_found=true;
+			if(collisions[a].type==0
+                && collisions[a].subtype>0
+                && map_main->creature[collisions[a].subtype].side!=0
+			    && mod.general_creatures[map_main->creature[collisions[a].subtype].type].particle_on_radar>=0) {
+                    enemy_found=true;
+            }
 		}
 	}
 
@@ -11395,7 +11372,7 @@ void game_engine::load_game(int slot){
 
 }
 
-void game_engine::load_mod(string mod_name){
+void game_engine::load_mod(const string& mod_name){
 
 	int a,b;
 
@@ -12877,7 +12854,7 @@ void game_engine::play_music_file(int song_number, int *do_not_play)
 }
 
 
-bool game_engine::SwapSourceFilter(char* file)
+bool game_engine::SwapSourceFilter(const char* file)
 {
     g_pSoundManager->playMusic(file);
 	return true;
@@ -13272,7 +13249,6 @@ bool game_engine::point_will_collide(map *new_map, float x, float y, bool only_o
 
 void game_engine::change_map(int move, float new_x, float new_y, bool move_enemies){
 
-
 	int a;
 
 	//area doesn't exist
@@ -13286,9 +13262,6 @@ void game_engine::change_map(int move, float new_x, float new_y, bool move_enemi
 
 	//a good time to unload unneeded textures
 	resources.unload_unneeded_textures(false);
-
-
-
 
 	//store old area
 	int old_map=player_area;
@@ -13350,8 +13323,6 @@ void game_engine::change_map(int move, float new_x, float new_y, bool move_enemi
 			delete_creature(map_storage[old_map],map_storage[old_map]->creature[0].carried_creature);
 		}
 
-
-
 		//copy player from old to new
 		memcpy(&map_main->creature[0],
 			&map_storage[old_map]->creature[0],
@@ -13396,10 +13367,15 @@ void game_engine::change_map(int move, float new_x, float new_y, bool move_enemi
 
 	//make sure player is on valid map
 	int creature=0;
-	if(map_main->creature[creature].x<grid_size+10-size*0.5f)map_main->creature[creature].x=grid_size+10-size*0.5f;
-	if(map_main->creature[creature].y<grid_size+10-size*0.5f)map_main->creature[creature].y=grid_size+10-size*0.5f;
-	if(map_main->creature[creature].x>map_main->sizex*grid_size-grid_size*2-10-size*0.5f)map_main->creature[creature].x=map_main->sizex*grid_size-grid_size*2-10-size*0.5f;
-	if(map_main->creature[creature].y>map_main->sizey*grid_size-grid_size*2-10-size*0.5f)map_main->creature[creature].y=map_main->sizey*grid_size-grid_size*2-10-size*0.5f;
+
+	if(map_main->creature[creature].x<grid_size+10-size*0.5f)
+        map_main->creature[creature].x=grid_size+10-size*0.5f;
+	if(map_main->creature[creature].y<grid_size+10-size*0.5f)
+        map_main->creature[creature].y=grid_size+10-size*0.5f;
+	if(map_main->creature[creature].x>map_main->sizex*grid_size-grid_size*2-10-size*0.5f)
+        map_main->creature[creature].x=map_main->sizex*grid_size-grid_size*2-10-size*0.5f;
+	if(map_main->creature[creature].y>map_main->sizey*grid_size-grid_size*2-10-size*0.5f)
+        map_main->creature[creature].y=map_main->sizey*grid_size-grid_size*2-10-size*0.5f;
 
 	//check collisions for player, we don't want to end up in a rock
 	while(creature_will_collide(map_main,&map_main->creature[0])){
@@ -13408,13 +13384,15 @@ void game_engine::change_map(int move, float new_x, float new_y, bool move_enemi
 		map_main->creature[creature].y+=randDouble(-50,50);
 
 		//make sure creature is on map again
-		if(map_main->creature[creature].x<grid_size+10+size*0.5f)map_main->creature[creature].x=grid_size+10+size*0.5f;
-		if(map_main->creature[creature].y<grid_size+10+size*0.5f)map_main->creature[creature].y=grid_size+10+size*0.5f;
-		if(map_main->creature[creature].x>map_main->sizex*grid_size-grid_size*2-10+size*0.5f)map_main->creature[creature].x=map_main->sizex*grid_size-grid_size*2-10+size*0.5f;
-		if(map_main->creature[creature].y>map_main->sizey*grid_size-grid_size*2-10+size*0.5f)map_main->creature[creature].y=map_main->sizey*grid_size-grid_size*2-10+size*0.5f;
-
+		if(map_main->creature[creature].x<grid_size+10+size*0.5f)
+            map_main->creature[creature].x=grid_size+10+size*0.5f;
+		if(map_main->creature[creature].y<grid_size+10+size*0.5f)
+            map_main->creature[creature].y=grid_size+10+size*0.5f;
+		if(map_main->creature[creature].x>map_main->sizex*grid_size-grid_size*2-10+size*0.5f)
+            map_main->creature[creature].x=map_main->sizex*grid_size-grid_size*2-10+size*0.5f;
+		if(map_main->creature[creature].y>map_main->sizey*grid_size-grid_size*2-10+size*0.5f)
+            map_main->creature[creature].y=map_main->sizey*grid_size-grid_size*2-10+size*0.5f;
 	}
-
 
 	//find new camera position
 	attach_camera_time=-1;
@@ -13426,12 +13404,8 @@ void game_engine::change_map(int move, float new_x, float new_y, bool move_enemi
 	real_camera_x=suggested_camera_x;
 	real_camera_y=suggested_camera_y;
 
-
-
-
 	mousex=screen_width/2;
 	mousey=screen_height/2;
-
 
 	//if(move_enemies){
 		int player_controlled_creature_was=player_controlled_creature;
@@ -13443,7 +13417,8 @@ void game_engine::change_map(int move, float new_x, float new_y, bool move_enemi
 					//if(map_storage[old_map]->creature[a].AI_order!=1)//not commanded to stay
 					if(mod.general_creatures[map_storage[old_map]->creature[a].type].can_change_area)
 					//if(map_storage[old_map]->creature[a].may_change_area)
-						if((mod.general_creatures[map_storage[old_map]->creature[a].type].movement_speed>0)||(map_storage[old_map]->creature[a].side==map_storage[old_map]->creature[0].side)){
+						if((mod.general_creatures[map_storage[old_map]->creature[a].type].movement_speed>0)
+                                ||(map_storage[old_map]->creature[a].side==map_storage[old_map]->creature[0].side)){
 
 							//if we're not supposed to move any other creatures, the only creature we move is the one carrying the player
 							if(!move_enemies){
@@ -13527,13 +13502,15 @@ void game_engine::change_map(int move, float new_x, float new_y, bool move_enemi
 								map_main->creature[creature].x+=randDouble(-50,50);
 								map_main->creature[creature].y+=randDouble(-50,50);
 								//make sure creature is on map again
-								if(map_main->creature[creature].x<1)map_main->creature[creature].x=1;
-								if(map_main->creature[creature].y<1)map_main->creature[creature].y=1;
-								if(map_main->creature[creature].x>(map_main->sizex-1)*(grid_size)-1)map_main->creature[creature].x=(map_main->sizex-1)*(grid_size)-1;
-								if(map_main->creature[creature].y>(map_main->sizey-1)*(grid_size)-1)map_main->creature[creature].y=(map_main->sizey-1)*(grid_size)-1;
+								if(map_main->creature[creature].x<1)
+                                    map_main->creature[creature].x=1;
+								if(map_main->creature[creature].y<1)
+                                    map_main->creature[creature].y=1;
+								if(map_main->creature[creature].x>(map_main->sizex-1)*(grid_size)-1)
+                                    map_main->creature[creature].x=(map_main->sizex-1)*(grid_size)-1;
+								if(map_main->creature[creature].y>(map_main->sizey-1)*(grid_size)-1)
+								map_main->creature[creature].y=(map_main->sizey-1)*(grid_size)-1;
 							}
-
-
 
 							//remove from old area
 							if(old_map!=player_area){
@@ -13545,13 +13522,11 @@ void game_engine::change_map(int move, float new_x, float new_y, bool move_enemi
 								if(a<player_controlled_creature_was)
 									player_controlled_creature_was--;
 							}
-
 						}
 				//}
 			}
 		}
 	//}
-
 
 	//recalculate creature positions
 	map_main->check_creatures();
@@ -13560,10 +13535,6 @@ void game_engine::change_map(int move, float new_x, float new_y, bool move_enemi
 	for(a=0;a<map_main->creature.size();a++){
 		map_main->creature[a].wall_between_creature_and_player=-1;
 	}
-
-
-
-
 
 	//on_enter_text
 	if(mod.general_areas[map_main->area_type].on_enter_text!="none")
@@ -13582,12 +13553,9 @@ void game_engine::change_map(int move, float new_x, float new_y, bool move_enemi
 		}
 	}
 
-
-
 }
 
-void game_engine::combine_items(int a,int combine_item, vector <Mod::combines::combine_results_base> combine_results, bool discard_this, bool discard_that){
-
+void game_engine::combine_items(int a,int combine_item, const vector<Mod::combines::combine_results_base>& combine_results, bool discard_this, bool discard_that){
 
 	//unuse the combination items
 	if(discard_this){
@@ -13658,12 +13626,6 @@ void game_engine::create_maps(void){
 	}
 	map_storage.clear();
 
-
-
-
-
-
-
 	//int maps=areas_x*areas_x;//power of 2
 
 	/*//declare special areas
@@ -13681,7 +13643,6 @@ void game_engine::create_maps(void){
 			special_areas[place]=a;
 		}
 	}*/
-
 
 	//find total area of all areas
 	float total_area=0;
@@ -13703,8 +13664,6 @@ void game_engine::create_maps(void){
 		//	items_max++;
 		//}
 	}
-
-
 
 	//distribute items
 	debug.debug_output("Distributing Items",1,0);
@@ -13823,9 +13782,6 @@ void game_engine::create_maps(void){
 			no_random_terrain_types.push_back(mod.terrain_types[a].do_not_place_random_objects);
 		}
 		debug.debug_output("List no_random_objects_terrain",0,0);
-
-
-
 
 		debug.debug_output("Allocate memory for map",1,0);
 		map *temp_map;
@@ -14167,8 +14123,6 @@ void game_engine::calculate_mouse_on_creatures(void){
 	if(alku_y<0)alku_y=0;
 	if(loppu_y>map_main->sizey-1)loppu_y=map_main->sizey-1;
 
-
-
 	//all the creatures here
 	for(i=alku_x;i<loppu_x;i++){
 		for(j=alku_y;j<loppu_y;j++){
@@ -14176,35 +14130,30 @@ void game_engine::calculate_mouse_on_creatures(void){
 			for(k=0;k<map_main->grid[i].grid[j].total_creatures;k++){
 				if(map_main->creature[map_main->grid[i].grid[j].creatures[k]].dead)continue;
 
-
 				int creature=map_main->grid[i].grid[j].creatures[k];
+				creature_base& thiscreature = map_main->creature[creature];
 
 				if(creature==0)continue;//not player
 
-
-				float size=mod.general_creatures[map_main->creature[creature].type].size*map_main->creature[creature].size*general_creature_size;
-				float distance = sqr(map_main->creature[creature].x+size*0.5f-player_middle_x)+sqr(map_main->creature[creature].y+size*0.5f-player_middle_y);
-
-
-
+				float size=mod.general_creatures[thiscreature.type].size*thiscreature.size*general_creature_size;
+				float distance = sqr(thiscreature.x+size*0.5f-player_middle_x)+sqr(thiscreature.y+size*0.5f-player_middle_y);
 
 				//energy bar
-				map_main->creature[creature].show_energy=false;
+				thiscreature.show_energy=false;
 
 				//mouse is on it
-				if(sqr(map_main->creature[creature].x+size*0.5f-(camera_x+mousex))+sqr(map_main->creature[creature].y+size*0.5f-(camera_y+mousey))<sqr(size*0.35f)){
+				if(sqr(thiscreature.x+size*0.5f-(camera_x+mousex))+sqr(thiscreature.y+size*0.5f-(camera_y+mousey))<sqr(size*0.35f)){
 
 					//pick up corpses
-					if(map_main->creature[creature].killed)
-					if(mod.general_creatures[map_main->creature[creature].type].corpse_item>=0)
-					if(mod.general_creatures[map_main->creature[creature].type].corpse_item_amount>0)
+					if(thiscreature.killed)
+					if(mod.general_creatures[thiscreature.type].corpse_item>=0)
+					if(mod.general_creatures[thiscreature.type].corpse_item_amount>0)
 					{
 
 						float touch_size=size;
 						if(touch_size<80)touch_size=80;
 
-						tempstring=mod.general_items[mod.general_creatures[map_main->creature[creature].type].corpse_item].name;
-
+						tempstring=mod.general_items[mod.general_creatures[thiscreature.type].corpse_item].name;
 
 						//if the player is close enough we can show the use text
 						//if(mod.general_plot_objects[map_main->items[map_main->grid[i].grid[j].items[k]].item_type].event!=8)//item is not a resting place
@@ -14212,8 +14161,8 @@ void game_engine::calculate_mouse_on_creatures(void){
 							tempstring+=" (Right click to pick up)";
 							if(!mouse_right&&mouse_right2){
 								mouse_right2=false;
-								give_item(mod.general_creatures[map_main->creature[creature].type].corpse_item,mod.general_creatures[map_main->creature[creature].type].corpse_item_amount,time_from_beginning,true);
-								//map_main->creature[creature].dead=true;
+								give_item(mod.general_creatures[thiscreature.type].corpse_item,mod.general_creatures[thiscreature.type].corpse_item_amount,time_from_beginning,true);
+								//thiscreature.dead=true;
 								delete_creature(map_main,creature);
 								k--;
 								playsound(pick_up,1,0,0,0,0);
@@ -14228,32 +14177,30 @@ void game_engine::calculate_mouse_on_creatures(void){
 
 					//show energy bar
 					if(!map_main->creature[map_main->grid[i].grid[j].creatures[k]].killed){
-						map_main->creature[creature].show_energy=true;
+						thiscreature.show_energy=true;
 						creature_nearest_to_the_mouse=creature;
 					}
 
 					//if it's a moving fried, command it to stop
-					if(map_main->creature[creature].side==map_main->creature[0].side)
-					//if(mod.general_creatures[map_main->creature[creature].type].movement_speed!=0)
-					if(!map_main->creature[creature].killed)
+					if(thiscreature.side==map_main->creature[0].side)
+					//if(mod.general_creatures[thiscreature.type].movement_speed!=0)
+					if(!thiscreature.killed)
 					{
-						tempstring=mod.AI_tactics[map_main->creature[creature].tactic[map_main->creature[creature].AI_order]].name;
+						tempstring=mod.AI_tactics[thiscreature.tactic[thiscreature.AI_order]].name;
 						tempstring+=" Mode (Right click to change)";
 
 						text_manager.message(1000,1000,tempstring);
 
 						//clicked
 						if(!mouse_right&&mouse_right2){
-							if(map_main->creature[creature].AI_order==0)
-								map_main->creature[creature].AI_order=1;
-							else if(map_main->creature[creature].AI_order==1)
-								map_main->creature[creature].AI_order=0;
+							if(thiscreature.AI_order==0)
+								thiscreature.AI_order=1;
+							else if(thiscreature.AI_order==1)
+								thiscreature.AI_order=0;
 
-							AI_initiate_behavior_parameters(&map_main->creature[creature]);
+							AI_initiate_behavior_parameters(&thiscreature);
 						}
 					}
-
-
 
 				}
 			}
@@ -14262,7 +14209,7 @@ void game_engine::calculate_mouse_on_creatures(void){
 }
 
 
-void game_engine::load_mod_names(string StartingPath)
+void game_engine::load_mod_names(const string& StartingPath)
 {
 	//load mod names
 	mods=0;
@@ -14400,9 +14347,10 @@ void game_engine::set_edges(void){
 		height=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 
 		map_list=new int[width*height];
-		for(a=0;a<width*height;a++){
-			map_list[a]=NULL;
-		}
+		memset(map_list, 0, width*height*sizeof(int));
+		//for(a=0;a<width*height;a++){
+		//	map_list[a]=0;
+		//}
 
 		for(a=0;a<height;a++){
 
@@ -14438,9 +14386,6 @@ void game_engine::set_edges(void){
 	//place areas that are placed by area classes
 	for(a=0;a<width*height;a++){
 		if(map_list[a]>=0){
-
-
-
 
 			//find all areas that fit the class
 			vector <int> areas_class;
@@ -14657,10 +14602,6 @@ void game_engine::show_slider(int type, int item, int item2, int x, int y, int p
 		slider_x=screen_width-233;
 	if(slider_x>screen_height-90)
 		slider_x=screen_height-90;
-
-
-
-
 
 
 	mouse_left=false;
@@ -15133,7 +15074,7 @@ vector <game_engine::collision_base> game_engine::list_collisions(float x1,float
 	return collisions;
 }
 
-void game_engine::draw_line_map(int x1, int y1, int width, int height, map *map_draw){
+void game_engine::draw_line_map(int x1, int y1, int width, int height, const map* map_draw){
 
 	float r,g,b;
 	//left
@@ -15172,10 +15113,8 @@ bool game_engine::has_terrain_effect(map *map_to_edit, int terrain_type, int sea
 	}
 	return false;*/
 
-
-	int a,b;
-	for(a=0;a<mod.terrain_types[terrain_type].effects.size();a++){
-		for(b=0;b<mod.terrain_types[terrain_type].effects[a].effect.effects.size();b++){
+	for(unsigned int a=0;a<mod.terrain_types[terrain_type].effects.size();a++){
+		for(unsigned int b=0;b<mod.terrain_types[terrain_type].effects[a].effect.effects.size();b++){
 			if(mod.terrain_types[terrain_type].effects[a].effect.effects[b].effect_number==search_effect){
 				*effect=mod.terrain_types[terrain_type].effects[a].effect.effects[b];
 				return true;
@@ -15187,7 +15126,7 @@ bool game_engine::has_terrain_effect(map *map_to_edit, int terrain_type, int sea
 
 
 bool game_engine::item_has_effect(int item_type, int search_effect, Mod::effect *effect){
-	int a,b;
+	unsigned int a,b;
 	for(a=0;a<mod.general_items[item_type].effects.size();a++){
 		for(b=0;b<mod.general_items[item_type].effects[a].effect.effects.size();b++){
 			if(mod.general_items[item_type].effects[a].effect.effects[b].effect_number==search_effect){
@@ -15200,7 +15139,7 @@ bool game_engine::item_has_effect(int item_type, int search_effect, Mod::effect 
 }
 
 bool game_engine::plot_object_has_effect(int object_type, int search_effect, Mod::effect *effect){
-	int a,b;
+	unsigned int a,b;
 	for(a=0;a<mod.general_plot_objects[object_type].effects.size();a++){
 		for(b=0;b<mod.general_plot_objects[object_type].effects[a].effects.size();b++){
 			if(mod.general_plot_objects[object_type].effects[a].effects[b].effect_number==search_effect){
@@ -15213,7 +15152,7 @@ bool game_engine::plot_object_has_effect(int object_type, int search_effect, Mod
 }
 
 bool game_engine::item_has_combination(int item_type, int search_combination, Mod::combines *combination){
-	int a;
+	unsigned int a;
 	for(a=0;a<mod.general_items[item_type].combinations.size();a++){
 		if(mod.general_items[item_type].combinations[a].combines_with==search_combination){
 			*combination=mod.general_items[item_type].combinations[a];
@@ -15316,34 +15255,14 @@ int game_engine::translate_key_int(char key){
 	return 0;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 bool game_engine::check_condition(Mod::condition condition, creature_base *creature, int creature_number, float x, float y, bool show_message){
 
-	int a,b,c;
-
+	unsigned int a,b,c;
 
 	switch(condition.condition_number){
 	//0=must have item parameter0 amount parameter1 (use 0 for checking if the player doesn't have such an item)
 	case 0:
 		{
-
-
-
 			//find if we have such an item
 			bool found=false;
 			if(condition.condition_parameter1>0){
@@ -15926,7 +15845,7 @@ bool game_engine::check_condition(Mod::condition condition, creature_base *creat
 		{
 			//find the amount of such creatures
 			int amount=0;
-			for(int a=0;a<map_main->creature.size();a++){
+			for(unsigned int a=0;a<map_main->creature.size();a++){
 				if(map_main->creature[a].dead)continue;
 				if(map_main->creature[a].killed)continue;
 
@@ -15944,7 +15863,7 @@ bool game_engine::check_condition(Mod::condition condition, creature_base *creat
 		{
 			//find the amount of such creatures
 			int amount=0;
-			for(int a=0;a<map_main->creature.size();a++){
+			for(unsigned int a=0;a<map_main->creature.size();a++){
 				if(map_main->creature[a].dead)continue;
 				if(map_main->creature[a].killed)continue;
 
@@ -15962,7 +15881,7 @@ bool game_engine::check_condition(Mod::condition condition, creature_base *creat
 		{
 			//find the amount of such creatures
 			int amount=0;
-			for(int a=0;a<map_main->creature.size();a++){
+			for(unsigned int a=0;a<map_main->creature.size();a++){
 				if(map_main->creature[a].dead)continue;
 				if(map_main->creature[a].killed)continue;
 
@@ -15970,9 +15889,8 @@ bool game_engine::check_condition(Mod::condition condition, creature_base *creat
 					amount++;
 			}
 
-
-			if(amount<condition.condition_parameter1)return false;
-
+			if(amount<condition.condition_parameter1)
+                return false;
 		}
 	break;
 	//32=amount of parameter0 class creatures in area is lower than parameter1
@@ -15980,7 +15898,7 @@ bool game_engine::check_condition(Mod::condition condition, creature_base *creat
 		{
 			//find the amount of such creatures
 			int amount=0;
-			for(int a=0;a<map_main->creature.size();a++){
+			for(unsigned int a=0;a<map_main->creature.size();a++){
 				if(map_main->creature[a].dead)continue;
 				if(map_main->creature[a].killed)continue;
 
@@ -15988,9 +15906,8 @@ bool game_engine::check_condition(Mod::condition condition, creature_base *creat
 					amount++;
 			}
 
-
-			if(amount>=condition.condition_parameter1)return false;
-
+			if(amount>=condition.condition_parameter1)
+                return false;
 		}
 	break;
 	//33=creature (parameter0, 0=is, 1=is not) being carried by another creature
@@ -16006,7 +15923,6 @@ bool game_engine::check_condition(Mod::condition condition, creature_base *creat
 						return true;
 					if(condition.condition_parameter0==1)
 						return false;
-
 				}
 			}
 
@@ -16014,9 +15930,6 @@ bool game_engine::check_condition(Mod::condition condition, creature_base *creat
 				return false;
 			if(condition.condition_parameter0==1)
 				return true;
-
-
-
 
 		}
 	break;
@@ -16035,10 +15948,10 @@ bool game_engine::check_condition(Mod::condition condition, creature_base *creat
 	//35=must be distance parameter1 from item parameter0
 	case 35:
 		{
-			int start_x=(int)(x/grid_size)-(2+condition.condition_parameter1/128);
-			int start_y=(int)(y/grid_size)-(2+condition.condition_parameter1/128);
-			int end_x=(int)(x/grid_size)+(2+condition.condition_parameter1/128);
-			int end_y=(int)(y/grid_size)+(2+condition.condition_parameter1/128);
+			int start_x=static_cast<int>(x/grid_size)-(2+condition.condition_parameter1/128);
+			int start_y=static_cast<int>(y/grid_size)-(2+condition.condition_parameter1/128);
+			int end_x=static_cast<int>(x/grid_size)+(2+condition.condition_parameter1/128);
+			int end_y=static_cast<int>(y/grid_size)+(2+condition.condition_parameter1/128);
 
 			if(start_x<0)start_x=0;
 			if(end_x>map_main->sizex-1)end_x=map_main->sizex-1;
@@ -16255,9 +16168,6 @@ bool game_engine::check_condition(Mod::condition condition, creature_base *creat
 	//46=must have item class parameter0 amount parameter1 (use 0 for checking if the player doesn't have such an item)
 	case 46:
 		{
-
-
-
 			//find if we have such an item
 			bool found=false;
 			if(condition.condition_parameter1>0){
@@ -16281,10 +16191,6 @@ bool game_engine::check_condition(Mod::condition condition, creature_base *creat
 				if(found)return false;
 			}
 		}
-
-
-
-
 	}
 
 	return true;
@@ -16292,7 +16198,7 @@ bool game_engine::check_condition(Mod::condition condition, creature_base *creat
 
 void game_engine::draw_bars(void){
 
-	int a;
+	unsigned int a;
 	grim->System_SetState_Blending(true);
 
 	//int anchor_x[4]={0,screen_width,0,screen_width};
@@ -16463,7 +16369,7 @@ void game_engine::draw_bars(void){
 }
 
 void game_engine::count_bars(void){
-	int a,b,c;
+	unsigned int a,b,c;
 
 	for(a=0;a<maximum_bars;a++){
 
@@ -16581,21 +16487,14 @@ void game_engine::calculate_scripts(void){
 	int script_number;
 
 	for(script_number=0;script_number<mod.scripts.size();script_number++){
-
-
-
-		if(mod.scripts[script_number].dead)continue;
-		if(script_info[script_number].dead)continue;
-		if(!mod.scripts[script_number].run_without_calling)continue;
-			run_script(script_number,true,true);
+		if(mod.scripts[script_number].dead) continue;
+		if(script_info[script_number].dead) continue;
+		if(!mod.scripts[script_number].run_without_calling) continue;
+        run_script(script_number,true,true);
 	}
 }
 
 void game_engine::run_script(int script_number, bool check_conditions, bool check_time){
-
-	int b;
-
-
 
 		tempstring=mod.scripts[script_number].name;
 
@@ -16623,30 +16522,25 @@ void game_engine::run_script(int script_number, bool check_conditions, bool chec
 		}
 
 
-
 		if(check_time){
 			int time_increment=(time_from_beginning-script_info[script_number].script_calculated_on)*1000;
 
-
 			if(time_increment<mod.scripts[script_number].interval)return;
 			script_info[script_number].script_calculated_on=time_from_beginning;
-
-
 
 			//if we're already counting down the execution, no need to check the conditions
 			if((script_info[script_number].timer<=0)&&(check_conditions)){
 
 				//go throught all conditions
 				bool OK=true;
-				for(b=0;b<mod.scripts[script_number].conditions.size();b++){
+				for(unsigned int b=0;b<mod.scripts[script_number].conditions.size();b++){
 					if(!check_condition(mod.scripts[script_number].conditions[b],&map_main->creature[caller],caller,call_x,call_y,false)){
 						OK=false;
 						break;
 					}
 				}
-				if(!OK)return;
+				if (!OK) return;
 			}
-
 
 			//we have a delay
 			if(mod.scripts[script_number].delay>script_info[script_number].timer){
@@ -16660,7 +16554,7 @@ void game_engine::run_script(int script_number, bool check_conditions, bool chec
 		else{
 			//go throught all conditions
 			bool OK=true;
-			for(b=0;b<mod.scripts[script_number].conditions.size();b++){
+			for(unsigned int b=0;b<mod.scripts[script_number].conditions.size();b++){
 				if(!check_condition(mod.scripts[script_number].conditions[b],&map_main->creature[caller],caller,call_x,call_y,false)){
 					OK=false;
 					break;
@@ -16672,9 +16566,8 @@ void game_engine::run_script(int script_number, bool check_conditions, bool chec
 
 
 		//let's run the effects
-		for(b=0;b<mod.scripts[script_number].effects.size();b++){
+		for(unsigned int b=0;b<mod.scripts[script_number].effects.size();b++){
 			run_effect(mod.scripts[script_number].effects[b],&map_main->creature[caller],caller,call_x,call_y,map_main->creature[caller].rotation,false);
-
 		}
 
 		//message
@@ -16699,7 +16592,7 @@ void game_engine::run_script(int script_number, bool check_conditions, bool chec
 
 }
 
-void game_engine::set_bar(creature_base *creature, int bar, float value){
+void game_engine::set_bar(creature_base *creature, unsigned int bar, float value){
 	creature->bars[bar].value=value;
 
 	//bar types, some bars may affect the values they show
@@ -16750,7 +16643,6 @@ void game_engine::carry_light(map *edit_map, creature_base *creature, int light)
 		edit_map->lights[light].x2=creature->x+size*0.5f;
 		edit_map->lights[light].y2=creature->y+size*0.5f;
 	break;
-
 
 	}
 }
@@ -16876,7 +16768,6 @@ bool game_engine::run_plot_object(int item){
 				//delete_plot_object(map_main,item, i, j, k);
 				//k--;
 			}
-
 		}
 
 		//some effect failed
@@ -16890,11 +16781,6 @@ bool game_engine::run_plot_object(int item){
 	map_main->creature[0].rotation=temp_angle;
 	return must_delete;
 }
-
-
-
-
-
 
 
 bool game_engine::creature_in_object(creature_base *creature,map_object *object){
@@ -16951,14 +16837,11 @@ bool game_engine::creature_in_object(creature_base *creature,map_object *object)
 				 ((y2 <= creature_y) && (creature_y < y1))) &&
 				(creature_x < (x2 - x1) * (creature_y - y1) / (y2 - y1) + x1))
 			  c = !c;
-
-
 		}
 		return c;
 
 		break;
 	}
-
 
 	return false;
 }
@@ -16994,7 +16877,6 @@ bool game_engine::point_in_object(float x, float y,map_object *object){
 		float object_x=object->x+object_size*0.5f;
 		float object_y=object->y+object_size*0.5f;
 
-
 		//all the lines
 		int a;
 
@@ -17019,13 +16901,11 @@ bool game_engine::point_in_object(float x, float y,map_object *object){
 				(x < (x2 - x1) * (y - y1) / (y2 - y1) + x1))
 			  c = !c;
 
-
 		}
 		return c;
 
 		break;
 	}
-
 
 	return false;
 }
@@ -17042,9 +16922,6 @@ bool game_engine::creature_collision_detection(creature_base *creature,map_objec
 	float creature_y=creature->y+creature_size*0.5f/(bound_circle)*general_creature_size;
 	float creature_x2=creature->x2+creature_size*0.5f/(bound_circle)*general_creature_size;
 	float creature_y2=creature->y2+creature_size*0.5f/(bound_circle)*general_creature_size;
-
-
-
 
 	switch(mod.general_objects[object->type].collision_type){
 
@@ -17070,12 +16947,8 @@ bool game_engine::creature_collision_detection(creature_base *creature,map_objec
 						creature->x=creature->x2;
 						creature->y=creature->y2;
 					}
-
 				}
-
-
 				return true;
-
 			}
 		}
 		break;
@@ -17103,10 +16976,8 @@ bool game_engine::creature_collision_detection(creature_base *creature,map_objec
 			float line2_x2=creature_x2+(creature_x2-creature_x)*20;//object_x
 			float line2_y2=creature_y2+(creature_y2-creature_y)*20;//object_y
 
-
 			//make_particle(7,1,1000,through_point_x,through_point_y,0,0);
 			//make_particle(7,1,1000,object_x,object_y,0,0);
-
 
 			//go through all lines
 			point2d closest_hit;
@@ -17114,10 +16985,9 @@ bool game_engine::creature_collision_detection(creature_base *creature,map_objec
 			int collision_line=-1;
 			float sin=sincos.table_sin(object->rotation);
 			float cos=sincos.table_cos(object->rotation);
-			int a;
 
 			float closest_distance=0;
-			for(a=0;a<mod.polygons[mod.general_objects[object->type].collision_parameter0].points.size()-1;a++){
+			for(unsigned int a=0;a<mod.polygons[mod.general_objects[object->type].collision_parameter0].points.size()-1;a++){
 				//float bound_size=1.001f;
 				float xx1=mod.polygons[mod.general_objects[object->type].collision_parameter0].grown_points[a].x*object_size*mod.general_objects[object->type].collision_parameter1;
 				float yy1=mod.polygons[mod.general_objects[object->type].collision_parameter0].grown_points[a].y*object_size*mod.general_objects[object->type].collision_parameter1;
@@ -17205,7 +17075,7 @@ bool game_engine::creature_collision_detection(creature_base *creature,map_objec
 					float jump_distance=10;
 					vector <jump_point> jump_points;
 					//find closest point on lines in polygon
-					for(a=0;a<mod.polygons[mod.general_objects[object->type].collision_parameter0].points.size()-1;a++){
+					for(unsigned int a=0;a<mod.polygons[mod.general_objects[object->type].collision_parameter0].points.size()-1;a++){
 						//float bound_size=1.001f;
 						float xx1=mod.polygons[mod.general_objects[object->type].collision_parameter0].grown_points[a].x*object_size*mod.general_objects[object->type].collision_parameter1;
 						float yy1=mod.polygons[mod.general_objects[object->type].collision_parameter0].grown_points[a].y*object_size*mod.general_objects[object->type].collision_parameter1;
@@ -17240,7 +17110,7 @@ bool game_engine::creature_collision_detection(creature_base *creature,map_objec
 					std::sort(jump_points.begin(),jump_points.end());
 
 					//try the points out one by one
-					for(a=0;a<jump_points.size();a++){
+					for(unsigned int a=0;a<jump_points.size();a++){
 						creature->x=jump_points[a].x;
 						creature->y=jump_points[a].y;
 
@@ -17256,36 +17126,19 @@ bool game_engine::creature_collision_detection(creature_base *creature,map_objec
 						}
 					}
 				}
-
-
-
-
-
 			}
-
-
-
-
-
 			return true;
 		}
-
-
-
 		break;
 	}
-
 	return false;
-
 }
 
 
 vector <point2d> game_engine::line_will_collide(float x1, float y1, float x2, float y2, bool return_on_first, bool avoid_terrain, bool only_ones_that_hinder_visibility, bool only_ones_that_stop_bullets, int check_area, bool check_props, bool check_plot_objects){
-
 	vector <point2d> hits;
 	int a,b,c;
 	//float bound_circle=14;
-
 
 	float temp_x1=x1;
 	float temp_y1=y1;
@@ -17363,7 +17216,6 @@ vector <point2d> game_engine::line_hazardous_terrain(float x1, float y1, float x
 	int a,b;
 	//float bound_circle=14;
 
-
 	float temp_x1=x1;
 	float temp_y1=y1;
 	float temp_x2=x2;
@@ -17434,12 +17286,9 @@ vector <point2d> game_engine::line_collision_detection(float x1, float y1, float
 	case 0:
 		if(mod.general_objects[object->type].collision_parameter0>0){
 
-
 			float object_size=mod.general_objects[object->type].collision_parameter0*object->size*general_object_size;
 			float object_x=object->x+object_size*0.5f/mod.general_objects[object->type].collision_parameter0;
 			float object_y=object->y+object_size*0.5f/mod.general_objects[object->type].collision_parameter0;
-
-
 
 			hits=sphere_line_intersection (
 				x1 , y1 ,
@@ -17447,11 +17296,7 @@ vector <point2d> game_engine::line_collision_detection(float x1, float y1, float
 				object_x , object_y ,
 				object_size*0.5f*0.99f );
 
-
 			return hits;
-
-
-
 		}
 		break;
 
@@ -17461,13 +17306,11 @@ vector <point2d> game_engine::line_collision_detection(float x1, float y1, float
 		float object_x=object->x+object_size*0.5f;
 		float object_y=object->y+object_size*0.5f;
 
-
 		//all the lines
 		int a;
 
 		float sin=sincos.table_sin(object->rotation);
 		float cos=sincos.table_cos(object->rotation);
-
 
 		for(a=0;a<mod.polygons[mod.general_objects[object->type].collision_parameter0].points.size()-1;a++){
 			float xx1=mod.polygons[mod.general_objects[object->type].collision_parameter0].points[a].x*object_size*mod.general_objects[object->type].collision_parameter1;
@@ -17486,8 +17329,6 @@ vector <point2d> game_engine::line_collision_detection(float x1, float y1, float
 				if(return_on_first)
 					return hits;
 			}
-
-
 		}
 
 		break;
@@ -17500,9 +17341,7 @@ vector <point2d> game_engine::line_collision_detection(float x1, float y1, float
 
 void game_engine::start_map_editor(void){
 
-
 	//load_game(0);////////////////////////////////////////////////testing!
-
 
 	//load object infos + referred textures
 	mod.mod_name=mod_names[selected_mod];
@@ -17514,10 +17353,9 @@ void game_engine::start_map_editor(void){
 
 void game_engine::initialize_creature_specialties(creature_base *creature, map *map_to_edit, bool reset_bars){
 
-	int a;
 	//make sure no bars exist
 	if(reset_bars)
-	for(a=0;a<maximum_bars;a++){
+	for(unsigned int a=0;a<maximum_bars;a++){
 		creature->bars[a].active=false;
 	}
 	//delete carried lights
@@ -17555,13 +17393,10 @@ void game_engine::initialize_creature_specialties(creature_base *creature, map *
 
 void game_engine::initialize_animation_frames(map *map_to_edit){
 
-	int i,j;
-
 	//terrain
 	debug.debug_output("Initialize terrain frames",1,0);
-	for(i=0;i<map_to_edit->sizex;i++){
-		for(j=0;j<map_to_edit->sizey;j++){
-
+	for(int i=0;i<map_to_edit->sizex;i++){
+		for(int j=0;j<map_to_edit->sizey;j++){
 
 			//start with random frame
 			map_to_edit->grid[i].grid[j].current_frame=randInt(0,mod.terrain_types[map_to_edit->grid[i].grid[j].terrain_type].terrain_frames.size());
@@ -17574,9 +17409,8 @@ void game_engine::initialize_animation_frames(map *map_to_edit){
 
 	//props
 	debug.debug_output("Initialize object frames",1,0);
-	for(i=0;i<map_to_edit->object.size();i++){
+	for(unsigned i=0;i<map_to_edit->object.size();i++){
 		if(map_to_edit->object[i].dead)continue;
-
 
 		/*itoa(map_to_edit->object[i].type,temprivi,10);
 		debug.debug_output((string)"type="+temprivi,3,0);*/
@@ -17615,8 +17449,6 @@ void game_engine::find_suggested_camera_position(float *suggested_camera_x, floa
 		*suggested_camera_y=attach_camera_parameter2-screen_height/2.0f;
 	}
 }
-
-
 
 void game_engine::draw_map_grid_small(map *map_to_edit, int texture, int texture2){//renders map grid
 
