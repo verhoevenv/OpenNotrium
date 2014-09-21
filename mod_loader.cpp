@@ -1471,8 +1471,6 @@ void Mod::load_light_info(const string& filename){//loads light info from file
 			//temp_light.particle_size=atof(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_light.particle_time=atof(stripped_fgets(rivi,sizeof(rivi),fil));
 
-
-
 			//if the identifier is bigger than current list size, increase list size
 			temp_light.dead=true;
 			while(general_lights.size()<temp_light.identifier+1){
@@ -1489,8 +1487,6 @@ void Mod::load_light_info(const string& filename){//loads light info from file
 
 	debug->debug_output("Load file "+filename,0,0);
 }
-
-
 
 void Mod::load_plot_object_info(const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,1,0);
@@ -1517,7 +1513,6 @@ void Mod::load_plot_object_info(const string& filename){//loads object info from
 			temp_object.name=rivi;
 			debug->debug_output("Load "+temp_object.name,1,0);
 
-
 			temp_object.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_object.map_type_to_place=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_object.plot_object_class=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
@@ -1538,8 +1533,6 @@ void Mod::load_plot_object_info(const string& filename){//loads object info from
 			temp_object.trigger_event_by=atoi(stripped_fgets(rivi,sizeof(rivi),fil));//event trigger
 			temp_object.trigger_event_parameter1=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_object.show_condition_help=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
-
-
 
 			//uses
 			temp_object.effects.clear();
@@ -1584,7 +1577,6 @@ void Mod::load_plot_object_info(const string& filename){//loads object info from
 				temp_object.effects.push_back(temp_effect);
 			}
 
-
 			//if the identifier is bigger than current list size, increase list size
 			temp_object.dead=true;
 			while(general_plot_objects.size()<temp_object.identifier+1){
@@ -1596,7 +1588,6 @@ void Mod::load_plot_object_info(const string& filename){//loads object info from
 			general_plot_objects[temp_object.identifier]=temp_object;
 			//seen_plot_object_text[temp_object.identifier]=false;
 
-
 			debug->debug_output("Load "+temp_object.name,0,0);
 		}
 	}
@@ -1606,8 +1597,6 @@ void Mod::load_plot_object_info(const string& filename){//loads object info from
 
 
 	debug->debug_output("Load file "+filename,0,0);
-
-
 
 
 	//save
@@ -1732,8 +1721,6 @@ void Mod::load_animation_info(const string& filename){//loads object info from f
 				animations.push_back(temp_animation);
 			}
 			animations[temp_animation.identifier]=temp_animation;
-
-
 		}
 	}
 
@@ -1861,7 +1848,6 @@ void Mod::load_race_info(const string& filename){//loads race info from file
 					}
 					temp_slot.active=true;
 					temp_race.slots[temp_special.parameter0]=temp_slot;
-
 				}
 			}
 
@@ -1880,7 +1866,6 @@ void Mod::load_race_info(const string& filename){//loads race info from file
 				temp_race.disabled_item_classes.push_back(atoi(rivi));
 				temp_race.disabled_item_classes_text.push_back(stripped_fgets(rivi,sizeof(rivi),fil));
 			}
-
 
 			temp_race.dead=true;
 			//if the identifier is bigger than current list size, increase list size
@@ -1906,7 +1891,6 @@ void Mod::load_polygons(const string& filename){//loads polygon info from file
 
 	FILE *fil;
 	char rivi[2000];
-
 
 	polygons.clear();
 
@@ -1938,9 +1922,7 @@ void Mod::load_polygons(const string& filename){//loads polygon info from file
 			}
 			polygons[temp_polygon.identifier]=temp_polygon;
 
-
 			debug->debug_output("Load "+temp_polygon.name,0,0);
-
 		}
 	}
 
@@ -1961,7 +1943,6 @@ void Mod::grow_polygon(polygon_base *temp_polygon){
 		direction_x=direction_x/length_1;
 		direction_y=direction_y/length_1;
 
-
 		//find the right direction from previous point
 		int previous=a-1;
 		if(previous<0)previous=temp_polygon->points.size()-2;
@@ -1975,14 +1956,11 @@ void Mod::grow_polygon(polygon_base *temp_polygon){
 		temp_point.x=temp_polygon->points[a].x-direction_x*0.001f-direction_x_2*0.001f;
 		temp_point.y=temp_polygon->points[a].y-direction_y*0.001f-direction_y_2*0.001f;
 
-
-
 		temp_polygon->grown_points.push_back(temp_point);
 	}
 
 	//finally, the first point is also the last
 	temp_polygon->grown_points.push_back(temp_polygon->grown_points[0]);
-
 
 }
 
@@ -2060,16 +2038,12 @@ void Mod::load_scripts(const string& filename){
 			//scripts_calculated_on[temp_script.identifier]=randDouble(0,temp_script.interval*0.001f);
 
 			debug->debug_output("Load "+temp_script.name,0,0);
-
 		}
 	}
 
 	fclose(fil);
 
 	debug->debug_output("Load file "+filename,0,0);
-
-
-
 
 }
 
@@ -2086,7 +2060,6 @@ void Mod::load_AI_side(const string& filename){//loads AI info from file
 	if(fil){
 
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//name
-
 
 			AI_side temp_side;
 			temp_side.friend_with_side.clear();
@@ -2117,8 +2090,6 @@ void Mod::load_AI_side(const string& filename){//loads AI info from file
 	if(fil){
 
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//name
-
-
 
 			AI_sides[side].name=rivi;
 
@@ -2449,7 +2420,6 @@ void Mod::load_terrain_maps(const string& filename){
 
 	terrain_maps.clear();
 
-
 	fil = fopen(filename.c_str(),"rt");
 	if(fil){
 		terrain_map_base temp_map;
@@ -2458,8 +2428,8 @@ void Mod::load_terrain_maps(const string& filename){
 			debug->debug_output("Load "+temp_map.name,1,0);
 
 			temp_map.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			int x=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			int y=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			/* int x = */ atoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			/* int y = */ atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 
 			temp_map.terrain_grid.clear();
 			stripped_fgets(rivi,sizeof(rivi),fil);
@@ -2536,21 +2506,20 @@ void Mod::save_terrain_maps(string filename){
 
 	fil = fopen(filename.c_str(),"wt");
 	terrain_map_base temp_map;
-	int a,b,c;
-	for(a=0;a<terrain_maps.size();a++){
+	for(unsigned int a=0;a<terrain_maps.size();a++){
 		temp_map=terrain_maps[a];
 		if(temp_map.dead)continue;
 
 		fprintf(fil, "%s;//name---------------------------------------\n", temp_map.name.c_str());
 		fprintf(fil, "  %d;//identifier\n", temp_map.identifier);
-		fprintf(fil, "  %d;//width\n", temp_map.terrain_grid[0].terrain_blocks.size());
-		fprintf(fil, "  %d;//height\n", temp_map.terrain_grid.size());
+		fprintf(fil, "  %lu;//width\n", temp_map.terrain_grid[0].terrain_blocks.size());
+		fprintf(fil, "  %lu;//height\n", temp_map.terrain_grid.size());
 
 		//terrains
 		fprintf(fil, "  begin_map_grid;\n");
-		for(b=0;b<temp_map.terrain_grid.size();b++){
+		for(unsigned int b=0;b<temp_map.terrain_grid.size();b++){
 			fprintf(fil, "    ");
-			for(c=0;c<temp_map.terrain_grid[b].terrain_blocks.size();c++){
+			for(unsigned int c=0;c<temp_map.terrain_grid[b].terrain_blocks.size();c++){
 				fprintf(fil, "%d", temp_map.terrain_grid[b].terrain_blocks[c].terrain_type);
 				fprintf(fil, ".");
 				fprintf(fil, "%d", temp_map.terrain_grid[b].terrain_blocks[c].no_random_items);
@@ -2558,15 +2527,13 @@ void Mod::save_terrain_maps(string filename){
 					fprintf(fil, "\n");
 				else
 					fprintf(fil, ",");
-
 			}
 		}
 		fprintf(fil, "  end_map_grid;\n");
 
 		//objects
 		fprintf(fil, "  begin_objects;\n");
-		for(b=0;b<temp_map.map_objects.size();b++){
-
+		for(unsigned int b=0;b<temp_map.map_objects.size();b++){
 			int x_grid=temp_map.map_objects[b].x/128;
 			int y_grid=temp_map.map_objects[b].y/128;
 			//is outside borders
@@ -2574,7 +2541,7 @@ void Mod::save_terrain_maps(string filename){
 				continue;
 			}
 
-			float a=temp_map.map_objects[b].rotation;
+			//float a=temp_map.map_objects[b].rotation;
 
 			fprintf(fil, "  %d;//type\n", temp_map.map_objects[b].type);
 			fprintf(fil, "  %d;//number\n", temp_map.map_objects[b].number);
@@ -2588,8 +2555,6 @@ void Mod::save_terrain_maps(string filename){
 		}
 		fprintf(fil, "  end_objects;\n");
 
-
-
 	}
 	fprintf(fil, "end_of_file;\n");
 	fprintf(fil, "\n");
@@ -2597,7 +2562,6 @@ void Mod::save_terrain_maps(string filename){
 	fprintf(fil, "This file is meant to be edited with the map editor.\n");
 	fprintf(fil, "Start the game in debug mode to see the button in the new game menu.\n");
 	fprintf(fil, "Activate the debug mode by setting the first number after the '-' to 1 in setup.dat.\n");
-
 
 	fclose(fil);
 
@@ -2628,8 +2592,6 @@ void Mod::load_dialogs(const string& filename){
 			temp_dialog.g=atof(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_dialog.b=atof(stripped_fgets(rivi,sizeof(rivi),fil));
 
-
-
 			//if the identifier is bigger than current list size, increase list size
 			temp_dialog.dead=true;
 			while(dialogs.size()<temp_dialog.identifier+1){
@@ -2639,8 +2601,6 @@ void Mod::load_dialogs(const string& filename){
 			temp_dialog.dead=false;
 			dialogs[temp_dialog.identifier]=temp_dialog;
 
-
-
 			debug->debug_output("Load "+temp_dialog.name,0,0);
 		}
 	}
@@ -2648,9 +2608,6 @@ void Mod::load_dialogs(const string& filename){
 	fclose(fil);
 
 	debug->debug_output("Load file "+filename,0,0);
-
-
-
 }
 
 
@@ -2673,8 +2630,6 @@ void Mod::load_music(const string& filename){
 			temp_music.name=stripped_fgets(rivi,sizeof(rivi),fil);
 			temp_music.can_be_random=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
 
-
-
 			//if the identifier is bigger than current list size, increase list size
 			temp_music.dead=true;
 			while(music.size()<temp_music.identifier+1){
@@ -2684,8 +2639,6 @@ void Mod::load_music(const string& filename){
 			temp_music.dead=false;
 			music[temp_music.identifier]=temp_music;
 
-
-
 			//debug->debug_output("Load "+temp_dialog.name,0,0);
 		}
 	}
@@ -2693,18 +2646,12 @@ void Mod::load_music(const string& filename){
 	fclose(fil);
 
 	debug->debug_output("Load file "+filename,0,0);
-
-
-
 }
-
-
 
 void Mod::load_mod(const string& mod, debugger *debugger, resource_handler *resources){
 	debug=debugger;
 	this->resources=resources;
 	this->mod_name=mod;
-
 
 	load_object_info("data/"+mod_name+"/object_definitions.dat");
 	load_climate_info("data/"+mod_name+"/climate_types.dat");
@@ -2726,9 +2673,5 @@ void Mod::load_mod(const string& mod, debugger *debugger, resource_handler *reso
 	load_dialogs("data/"+mod_name+"/dialogs.dat");
 	load_music("data/"+mod_name+"/music.dat");
 
-
 	//save_terrain_maps("data/"+mod_name+"/terrain_maps.dat");
-
-
-
 }

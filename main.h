@@ -120,8 +120,7 @@ protected:
 	vector <timer_base> terrain_timers;
 	vector <timer_base> rain_effect_timers;
 
-
-	float elapsed,elapsed2,elapsed3[30];//timer for fps
+	float elapsed,elapsed2,elapsed3[31];//timer for fps
 	bool perf_flag;        // Timer Selection Flag
 	double time_factor;    // Time Scaling Factor
 	long last_time;    // Previous timer value

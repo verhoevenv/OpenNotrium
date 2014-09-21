@@ -798,7 +798,7 @@ void game_engine::uninitialize_game(void){//uninitialize game
 
 
 	debug.debug_output("Clearing maps", 1,0);
-	for(int a=0;a<map_storage.size();a++){
+	for(unsigned int a=0;a<map_storage.size();a++){
 		SAFE_DELETE(map_storage[a]);
 	}
 
@@ -851,12 +851,6 @@ void game_engine::uninitialize_game(void){//uninitialize game
 
 void game_engine::render_map(void){//renders game map
 
-
-	int a,b;
-
-
-
-
 	//slowdown
 	if(debugging){
 		//TODO: crossplatformify
@@ -873,7 +867,6 @@ void game_engine::render_map(void){//renders game map
 
 //	playsound(footstep[randInt(0,3)],1,player_middle_x+mousex-screen_width/2,player_middle_y+mousey-screen_height/2,player_middle_x,player_middle_y);
 
-
 	//rearrange the item list
 	debug.debug_output("Handle Item List",1,1);
 	arrange_item_list(true);
@@ -885,21 +878,15 @@ void game_engine::render_map(void){//renders game map
 	if(pop_up_mode==0)paused=true;//text showing
 	if(pop_up_mode==3)paused=true;//item mode
 
-
-
 	temp_speed=game_speed;
 	if(paused){
 		game_speed=0.000000f;//paused
 	}
 
-
 	//time from beginning
 	if(!paused){
 		time_from_beginning=time_from_beginning+elapsed*game_speed*0.001f;
 	}
-
-
-
 
 	light_level=0.25f;//for all lights
 	creature_light_value=0.5f;//creatures in flashlight are darker
@@ -907,16 +894,13 @@ void game_engine::render_map(void){//renders game map
 	//environmental sounds
 	if(!paused){
 
-
 		//night
 		if((sincos.table_sin(day_timer/mod.general_races[player_race].day_speed*pi*2))<0){
 			if(mod.general_climates[map_main->climate_number].night_sounds.size()>0)
 			if(randInt(0,800/(elapsed*game_speed))==0){
 				int sample_number=mod.general_climates[map_main->climate_number].night_sounds[randInt(0,mod.general_climates[map_main->climate_number].night_sounds.size())];
 				playsound(sample_number,randDouble(0.3f,0.8f),randDouble(-500,500),randDouble(-500,500),0,0);
-
 			}
-
 		}
 		//day
 		else{
@@ -924,13 +908,9 @@ void game_engine::render_map(void){//renders game map
 			if(randInt(0,800/(elapsed*game_speed))==0){
 				int sample_number=mod.general_climates[map_main->climate_number].day_sounds[randInt(0,mod.general_climates[map_main->climate_number].day_sounds.size())];
 				playsound(sample_number,randDouble(0.3f,1),randDouble(-500,500),randDouble(-500,500),0,0);
-
 			}
 		}
 	}
-
-
-
 
 	//quicksave game
 	if(key_f12&&!key_f122){
@@ -950,12 +930,10 @@ void game_engine::render_map(void){//renders game map
 			//load_game(0);
 		}
 
-
 	//handle map changes
 	if(!paused){
 		handle_map_changed();
 	}
-
 
 	//scripts
 	if(!paused)
@@ -967,12 +945,9 @@ void game_engine::render_map(void){//renders game map
 		//scripts_calculated_on=time_from_beginning;
 	}
 
-
-
 	float size=mod.general_creatures[map_main->creature[player_controlled_creature].type].size*map_main->creature[player_controlled_creature].size*general_creature_size;
 	player_middle_x=map_main->creature[player_controlled_creature].x+size*0.5f;
 	player_middle_y=map_main->creature[player_controlled_creature].y+size*0.5f;
-
 
 	//camera
 	//time elapses
@@ -990,14 +965,11 @@ void game_engine::render_map(void){//renders game map
 	float suggested_camera_x,suggested_camera_y;
 	find_suggested_camera_position(&suggested_camera_x,&suggested_camera_y);
 
-
-
 	//move camera location towards suggested
 	//see if we would go overboard
 	if(fabs(suggested_camera_x-real_camera_x)>fabs(suggested_camera_x-real_camera_x)*elapsed*game_speed*0.01f){
 		float move=(suggested_camera_x-real_camera_x)*elapsed*game_speed*0.01f;
 		real_camera_x+=move;
-
 	}
 	else{
 		real_camera_x=suggested_camera_x;
@@ -1010,7 +982,6 @@ void game_engine::render_map(void){//renders game map
 	else{
 		real_camera_y=suggested_camera_y;
 	}
-
 
 	float camera_shake_x=0;
 	float camera_shake_y=0;
@@ -1032,14 +1003,12 @@ void game_engine::render_map(void){//renders game map
 			mousex+=map_main->creature[player_controlled_creature].x-map_main->creature[player_controlled_creature].x2;
 		camera_x=grid_size;
 		x_moved=true;
-
 	}
 	if(camera_y<grid_size){
 		if(!paused)
 			mousey+=map_main->creature[player_controlled_creature].y-map_main->creature[player_controlled_creature].y2;
 		camera_y=grid_size;
 		y_moved=true;
-
 	}
 	if(camera_x>(map_main->sizex-2)*grid_size-screen_width){
 		if(!paused)
@@ -1047,7 +1016,6 @@ void game_engine::render_map(void){//renders game map
 				mousex+=map_main->creature[player_controlled_creature].x-map_main->creature[player_controlled_creature].x2;
 		camera_x=(map_main->sizex-2)*grid_size-screen_width;
 		x_moved=true;
-
 	}
 	if(camera_y>(map_main->sizey-2)*grid_size-screen_height){
 		if(!paused)
@@ -1055,10 +1023,7 @@ void game_engine::render_map(void){//renders game map
 				mousey+=map_main->creature[player_controlled_creature].y-map_main->creature[player_controlled_creature].y2;
 		camera_y=(map_main->sizey-2)*grid_size-screen_height;
 		y_moved=true;
-
 	}
-
-
 
 	//control input
 	if(!paused){
@@ -1107,7 +1072,7 @@ void game_engine::render_map(void){//renders game map
 	//check if the creature is visible from player's point of view
 	if(!paused)
 	if(fabs(time_from_beginning-creature_visibility_checked_on)>0.15f){
-		for(a=0;a<map_main->creature.size();a++){
+		for(unsigned int a=0;a<map_main->creature.size();a++){
 
 			//dead, show the body all the time
 			if(map_main->creature[a].killed){
@@ -1152,8 +1117,8 @@ void game_engine::render_map(void){//renders game map
 
 	//terrain timers
 	if(!paused){
-		for(a=0;a<mod.terrain_types.size();a++){
-			for(b=0;b<mod.terrain_types[a].effects.size();b++){
+		for(unsigned int a=0;a<mod.terrain_types.size();a++){
+			for(unsigned int b=0;b<mod.terrain_types[a].effects.size();b++){
 				if(time_from_beginning-terrain_timers[a].subtype[b]>mod.terrain_types[a].effects[b].interval*0.001f){
 					terrain_timers[a].subtype[b]=time_from_beginning;
 				}
@@ -1180,8 +1145,8 @@ void game_engine::render_map(void){//renders game map
 	if(!paused){
 		calculate_weather();
 		//rain timers
-		for(a=0;a<mod.general_climates.size();a++){
-			for(b=0;b<mod.general_climates[a].rain_effects.size();b++){
+		for(unsigned int a=0;a<mod.general_climates.size();a++){
+			for(unsigned int b=0;b<mod.general_climates[a].rain_effects.size();b++){
 				if(time_from_beginning-rain_effect_timers[a].subtype[b]>mod.general_climates[a].rain_effects[b].interval*0.001f){
 					rain_effect_timers[a].subtype[b]=time_from_beginning;
 				}
@@ -1434,8 +1399,7 @@ void game_engine::render_map(void){//renders game map
 }
 
 void game_engine::draw_map_grid(void){//renders map grid
-
-	int i,j,k;
+	int k;
 	int texture;
 
 	grim->Quads_SetRotation(0);
@@ -1460,8 +1424,8 @@ void game_engine::draw_map_grid(void){//renders map grid
 		texture=mod.terrain_types[k].texture;
 
 		grim->Quads_Begin();*/
-		for(i=screen_start_x;i<screen_end_x;i++){
-			for(j=screen_start_y;j<screen_end_y;j++){
+		for(int i=screen_start_x;i<screen_end_x;i++){
+			for(int j=screen_start_y;j<screen_end_y;j++){
 
 				//advance terrain frames
 				if(mod.terrain_types[map_main->grid[i].grid[j].terrain_type].terrain_frames.size()>1){
@@ -1521,8 +1485,8 @@ void game_engine::draw_map_grid(void){//renders map grid
 		texture=mod.terrain_types[k].texture;
 		resources.Texture_Set(texture);
 		grim->Quads_Begin();*/
-		for(i=alku_x;i<loppu_x;i++){
-			for(j=alku_y;j<loppu_y;j++){
+		for(int i=alku_x;i<loppu_x;i++){
+			for(int j=alku_y;j<loppu_y;j++){
 				k=map_main->grid[i].grid[j].terrain_type;
 				texture=mod.terrain_types[map_main->grid[i].grid[j].terrain_type].terrain_frames[map_main->grid[i].grid[j].current_frame].texture;
 				resources.Texture_Set(texture);
@@ -1682,14 +1646,11 @@ bool game_engine::draw_object(map_object *object, int layer,float object_x, floa
 					}
 				}
 
-
 				//check if it's visible
 				if(-camera_x+x<-size*1.415f){return false;}
 				if(-camera_x+x>screen_width+size*0.415f){return false;}
 				if(-camera_y+y<-size*1.415f){return false;}
 				if(-camera_y+y>screen_height+size*0.415f){return false;}
-
-
 
 				//trees are transparent near the player
 				float transparency=1;
@@ -1750,23 +1711,11 @@ bool game_engine::draw_object(map_object *object, int layer,float object_x, floa
 					}
 				}*/
 
-
-
-
-
-
-
-
-
-
 	return true;
 
 }
 
-
 bool game_engine::draw_item(map_object *object, int layer,float object_x, float object_y){
-
-
 
 				//if on different layer, continue
 				if(0!=layer)return false;
@@ -1781,7 +1730,6 @@ bool game_engine::draw_item(map_object *object, int layer,float object_x, float 
 				if(-camera_y+object_y<-size*1.415f){return false;}
 				if(-camera_y+object_y>screen_height+size*0.415f){return false;}
 
-
 				grim->Quads_SetColor(object->light_level[0],object->light_level[1],object->light_level[2],1);
 				grim->System_SetState_Blending(true);
 				resources.Texture_Set(mod.general_items[object->type].texture);
@@ -1793,14 +1741,6 @@ bool game_engine::draw_item(map_object *object, int layer,float object_x, float 
 	return true;
 
 }
-
-
-
-
-
-
-
-
 
 void game_engine::load_particles(const string& filename){
 	debug.debug_output("Load file "+filename,1,0);
@@ -1859,14 +1799,11 @@ void game_engine::load_particles(const string& filename){
 	debug.debug_output("Load file "+filename,0,0);
 }
 
-
-
 void game_engine::load_sounds(const string& filename){
 	debug.debug_output("Load file "+filename,1,0);
 
 	FILE *fil;
 	char rivi[2000];
-
 
 	preloaded_sounds.clear();
 
@@ -1879,7 +1816,6 @@ void game_engine::load_sounds(const string& filename){
 			int index=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			int sound_number=resources.load_sample(stripped_fgets(rivi,sizeof(rivi),fil),3,mod.mod_name);
 
-
 			//if the identifier is bigger than current list size, increase list size
 			while(preloaded_sounds.size()<index+1){
 				//put in dummy elements
@@ -1887,9 +1823,7 @@ void game_engine::load_sounds(const string& filename){
 			}
 			preloaded_sounds[index]=sound_number;
 
-
 			debug.debug_output("Load "+tempstring,0,0);
-
 		}
 	}
 
@@ -1899,11 +1833,9 @@ void game_engine::load_sounds(const string& filename){
 }
 
 
-
 void game_engine::draw_map_creatures(int layer){//draws the creatures
 
-	int i,j,k;
-
+	unsigned int i,j,k;
 
 	int creature;
 	float x0,y0,x1,y1;
@@ -1942,9 +1874,6 @@ void game_engine::draw_map_creatures(int layer){//draws the creatures
 				//if(map_main->grid[i].grid[j].total_creatures>0)
 				for(k=0;k<map_main->grid[i].grid[j].total_creatures;k++){
 
-
-
-
 					creature=map_main->grid[i].grid[j].creatures[k];
 					if(map_main->creature[creature].dead)continue;
 
@@ -1962,8 +1891,6 @@ void game_engine::draw_map_creatures(int layer){//draws the creatures
 					if(distance<sqr(300)){
 						creature_base temp_creature=map_main->creature[creature];
 					}
-
-
 
 					//coordinates
 					creature_x=map_main->creature[creature].x;
@@ -2071,15 +1998,10 @@ void game_engine::draw_map_creatures(int layer){//draws the creatures
 					}
 					grim->Quads_SetColor(map_main->creature[creature].light[0],map_main->creature[creature].light[1],map_main->creature[creature].light[2],map_main->creature[creature].alpha);
 
-
-
-
-
 					//for computer player's only
 					if(creature>0){
 						resources.Texture_Set(mod.general_creatures[map_main->creature[creature].type].texture);
 						grim->Quads_Begin();
-
 
 						//draw legs
 						if(map_main->creature[creature].animation[2]>=0){
@@ -2174,7 +2096,6 @@ void game_engine::draw_map_creatures(int layer){//draws the creatures
 
 					}
 
-
 					//draw health meter
 					int meters_drawn=0;
 					float meter_x=-camera_x+creature_x;
@@ -2183,7 +2104,6 @@ void game_engine::draw_map_creatures(int layer){//draws the creatures
 					if(map_main->creature[creature].alpha>0.5f)
 					if(mod.general_creatures[map_main->creature[creature].type].bars_visible)
 					if(map_main->creature[creature].show_energy){
-
 
 						for(int meter=0;meter<maximum_bars;meter++){
 							if(!map_main->creature[creature].bars[meter].active)continue;
@@ -2241,12 +2161,13 @@ void game_engine::draw_map_creatures(int layer){//draws the creatures
 //find all own side creatures (except player), add them to list
 vector<int> game_engine::AI_list_thinkers(void){
 
-	int i,j,creature;
+	int i,j;
+	int creature;
 
 	vector<int> AI_thinkers;
 	AI_thinkers.clear();
 
-	#define ALIEN_THINKERS 20
+	const int ALIEN_THINKERS = 20;
 	float shortest_distances[ALIEN_THINKERS];
 	int closest_creatures[ALIEN_THINKERS];
 	for(i=0;i<ALIEN_THINKERS;i++){
@@ -2292,7 +2213,6 @@ vector<int> game_engine::AI_list_thinkers(void){
 			AI_thinkers.push_back(creature);
 			continue;
 		}
-
 
 
 		//for aliens calculate the distances
@@ -6502,7 +6422,8 @@ void game_engine::draw_pop_up(void){
 	pop_up_y=(768-256)*y_multiplier;
 
 	bool accept_mouse_input=true;//for disabling the right button when the mode changes
-	int mahtuu=6;//montako rivi� mahtuu
+	
+	//int mahtuu=6; // (unused)
 
 	//additional info box
 	bool additional_info=false;
@@ -12712,7 +12633,7 @@ void game_engine::play_music_file(int song_number, int *do_not_play)
     string FileName = ModuleFileName.substr(0, ModuleFileName.find_last_of(":\\"));
     // append the sub-folder path
     FileName += folder;
-	FileName += "/*.mp3";
+	FileName += "/\*.mp3";
 
 
     WIN32_FIND_DATA ffd;
@@ -13946,7 +13867,7 @@ void game_engine::create_minimap(map *map_to_edit, int d){
 	grim->Texture_Create(temprivi, map_size_x, map_size_y);
 	map_to_edit->map_texture_2=grim->Texture_Get(temprivi);
 	can_draw_map=false;
-	if(grim->System_SetRenderTarget(map_to_edit->map_texture)!=false){
+	if(grim->System_SetRenderTarget(map_to_edit->map_texture)){
 		can_draw_map=true;
 		draw_map_grid_small(map_to_edit,map_to_edit->map_texture,map_to_edit->map_texture_2);
 	}
@@ -17419,7 +17340,6 @@ void game_engine::draw_map_grid_small(map *map_to_edit, int texture, int texture
 			grim->Quads_Begin();
 			grim->Quads_Draw(0, 0, 256.0f, 256.0f);
 			grim->Quads_End();
-
 
 			grim->System_SetRenderTarget(-1);
 		}
