@@ -421,13 +421,11 @@ bool game_engine::Frame(void)
 
 	}
 
-
 	//debugging
 	if (grim->Key_Down(KEY_KP_SUBTRACT))
 		debugging=false;
 	if (grim->Key_Down(KEY_KP_ADD))
 		debugging=true;
-
 
 	//music event
 	if(music_initialized){
@@ -442,8 +440,6 @@ bool game_engine::Frame(void)
 		debug.debug_output("Release Graphics Engine", 1,0);
 		return false;
 	}
-
-
 
 	return true;
 }
@@ -607,8 +603,6 @@ int main(int argc, char* argv[])
 	//initiate graphics engine
 	grim->System_Initiate(argv[0]);
 
-
-
 	//initialize text manager
 	engine->text_manager.initialize_text_output(grim,&engine->resources,engine->screen_width,engine->screen_height);
 
@@ -738,13 +732,9 @@ void game_engine::initialize_game(void){//initialize game variables
 	mouse_right=false;
 	mouse_right2=false;
 
-
-
 	//engine->g_pMouse=NULL;
 	grim->ShowCursor(false);
 	//SetCursor(NULL);
-
-
 
 	//load object infos + referred textures
 /*	load_object_info("data/object_definitions.dat");
@@ -758,12 +748,6 @@ void game_engine::initialize_game(void){//initialize game variables
 	load_area_info("data/areas.dat");
 	load_endgame_info("data/endings.dat");*/
 
-
-
-
-
-
-
 	//extra textures
 	mouse_texture[0]=resources.load_texture("mouse0.png","Default");
 	mouse_texture[1]=resources.load_texture("mouse1.png","Default");
@@ -774,8 +758,6 @@ void game_engine::initialize_game(void){//initialize game variables
 	bar_texture=resources.load_texture("bar.png","Default");
 	carry_icon=resources.load_texture("carry_icon.png","Default");
 
-
-
 }
 
 void game_engine::uninitialize_game(void){//uninitialize game
@@ -784,14 +766,11 @@ void game_engine::uninitialize_game(void){//uninitialize game
 
 	debug.debug_output("Uninitializing game", 1,0);
 
-
 	debug.debug_output("Saving setup", 1,0);
 	save_setup("data/setup.dat");
 	debug.debug_output("Saving setup", 0,0);
 
-
 	//SAFE_DELETE(m_pGA);
-
 
 	debug.debug_output("Clearing maps", 1,0);
 	for(unsigned int a=0;a<map_storage.size();a++){
@@ -837,11 +816,7 @@ void game_engine::uninitialize_game(void){//uninitialize game
 //		debug.debug_output("Uninitializing music", 0,0);
 //	}
 
-
 	debug.debug_output("Uninitializing game", 0,0);
-
-
-
 
 }
 
@@ -1158,9 +1133,6 @@ void game_engine::render_map(void){//renders game map
 		count_bars();
 	}
 
-
-
-
 	//calculate particles
 	if(!paused){
 		debug.debug_output("Calculate Particles",1,1);
@@ -1194,8 +1166,6 @@ void game_engine::render_map(void){//renders game map
 		if(camera_x>(map_main->sizex-1)*grid_size-screen_width-grid_size)camera_x=(map_main->sizex-1)*grid_size-screen_width-grid_size;
 		if(camera_y>(map_main->sizey-1)*grid_size-screen_height-grid_size)camera_y=(map_main->sizey-1)*grid_size-screen_height-grid_size;
 		*/
-
-
 
 	//calculate map lighting
 	debug.debug_output("Calculate Lights",1,1);
@@ -1234,11 +1204,9 @@ void game_engine::render_map(void){//renders game map
 	draw_map_creatures(1);//living ones
 	debug.debug_output("Draw Map Creatures layers 0 and 1",0,1);
 
-
 	//draw targeting beam
 	if(beam_active)//&&(!paused))
 		draw_targeting_beam();
-
 
 	//draw bullets
 	debug.debug_output("Draw Bullets",1,1);
@@ -1395,8 +1363,6 @@ void game_engine::render_map(void){//renders game map
 }
 
 void game_engine::draw_map_grid(void){//renders map grid
-	int k;
-	int texture;
 
 	grim->Quads_SetRotation(0);
 	grim->Quads_SetSubset(0,0,1,1);
@@ -1407,12 +1373,10 @@ void game_engine::draw_map_grid(void){//renders map grid
 	/*border_visible=false;
 	if((screen_start_x<0)||(screen_start_y<0)||(screen_end_x>map_main->sizex-1)||(screen_end_y>map_main->sizey-1))border_visible=true;
 */
-
 	if(screen_start_x<0)screen_start_x=0;
 	if(screen_end_x>map_main->sizex-1)screen_end_x=map_main->sizex-1;
 	if(screen_start_y<0)screen_start_y=0;
 	if(screen_end_y>map_main->sizey-1)screen_end_y=map_main->sizey-1;
-
 
 	grim->System_SetState_Blending(false);
 	/*for(k=0;k<mod.terrain_types.size();k++){
@@ -1420,9 +1384,9 @@ void game_engine::draw_map_grid(void){//renders map grid
 		texture=mod.terrain_types[k].texture;
 
 		grim->Quads_Begin();*/
+	int texture;
 		for(int i=screen_start_x;i<screen_end_x;i++){
 			for(int j=screen_start_y;j<screen_end_y;j++){
-
 				//advance terrain frames
 				if(mod.terrain_types[map_main->grid[i].grid[j].terrain_type].terrain_frames.size()>1){
 					map_main->grid[i].grid[j].frame_time-=elapsed*game_speed;
@@ -1446,8 +1410,6 @@ void game_engine::draw_map_grid(void){//renders map grid
 
 				//if(map_main->grid[i].grid[j].terrain_type==k){
 
-
-
 				//draw
 				grim->Quads_SetColorVertex(0, map_main->grid[i].grid[j].light_rgb[0], map_main->grid[i].grid[j].light_rgb[1], map_main->grid[i].grid[j].light_rgb[2], 1);
 				grim->Quads_SetColorVertex(1, map_main->grid[(i+1)].grid[j].light_rgb[0], map_main->grid[(i+1)].grid[j].light_rgb[1], map_main->grid[(i+1)].grid[j].light_rgb[2], 1);
@@ -1455,7 +1417,6 @@ void game_engine::draw_map_grid(void){//renders map grid
 				grim->Quads_SetColorVertex(3, map_main->grid[i].grid[(j+1)].light_rgb[0], map_main->grid[i].grid[(j+1)].light_rgb[1], map_main->grid[i].grid[(j+1)].light_rgb[2], 1);
 
 				grim->Quads_Draw(-camera_x+i*128, -camera_y+j*128, 128, 128);
-
 				//}
 				grim->Quads_End();
 			}
@@ -1463,14 +1424,12 @@ void game_engine::draw_map_grid(void){//renders map grid
 		/*grim->Quads_End();
 	}*/
 
-
 	//smooth slides in map grid
 	grim->System_SetState_Blending(true);
 	int alku_x=screen_start_x-1;
 	int alku_y=screen_start_y-1;
 	int loppu_x=screen_end_x+1;
 	int loppu_y=screen_end_y+2;
-
 
 	if(alku_x<1)alku_x=1;
 	if(alku_y<1)alku_y=1;
@@ -1483,7 +1442,7 @@ void game_engine::draw_map_grid(void){//renders map grid
 		grim->Quads_Begin();*/
 		for(int i=alku_x;i<loppu_x;i++){
 			for(int j=alku_y;j<loppu_y;j++){
-				k=map_main->grid[i].grid[j].terrain_type;
+				int k = map_main->grid[i].grid[j].terrain_type;
 				texture=mod.terrain_types[map_main->grid[i].grid[j].terrain_type].terrain_frames[map_main->grid[i].grid[j].current_frame].texture;
 				resources.Texture_Set(texture);
 				grim->Quads_Begin();
@@ -1542,8 +1501,7 @@ void game_engine::draw_map_grid(void){//renders map grid
 						}
 					}
 				//}
-					grim->Quads_End();
-
+                grim->Quads_End();
 			}
 		}
 	/*	grim->Quads_End();
@@ -1582,7 +1540,6 @@ void game_engine::draw_map_objects(int layer){//renders map grid
 	for(i=alku_x;i<loppu_x;i++){
 		for(j=alku_y;j<loppu_y;j++){
 
-
 			//props
 			for(k=0;k<map_main->grid[i].grid[j].objects.size();k++){
 				draw_object(&map_main->object[map_main->grid[i].grid[j].objects[k]],layer,map_main->object[map_main->grid[i].grid[j].objects[k]].x,map_main->object[map_main->grid[i].grid[j].objects[k]].y);
@@ -1605,8 +1562,6 @@ void game_engine::draw_map_objects(int layer){//renders map grid
 
 bool game_engine::draw_object(map_object *object, int layer,float object_x, float object_y){
 
-
-
 				//if on different layer, continue
 				if(mod.general_objects[object->type].layer!=layer)return false;
 				//dead
@@ -1618,7 +1573,6 @@ bool game_engine::draw_object(map_object *object, int layer,float object_x, floa
 				float sway_x=0;
 				float sway_y=0;
 
-
 				//if it's supposed to swing, swing it
 				if(mod.general_objects[object->type].swing==1){
 					float phase=sincos.table_sin(time_from_beginning+object->sway_phase);
@@ -1629,7 +1583,6 @@ bool game_engine::draw_object(map_object *object, int layer,float object_x, floa
 				float x=object_x+sway_x;
 				float y=object_y+sway_y;
 				float size=object->size*general_object_size;
-
 
 				//advance animation frames
 				if(mod.general_objects[object->type].animation_frames.size()>1){
@@ -1671,11 +1624,6 @@ bool game_engine::draw_object(map_object *object, int layer,float object_x, floa
 				grim->Quads_Draw(-camera_x+x, -camera_y+y, size, size);
 				grim->Quads_End();
 
-
-
-
-
-
 /*
 				//collision lines
 				if(mod.general_objects[object->type].collision_type==1){
@@ -1713,26 +1661,26 @@ bool game_engine::draw_object(map_object *object, int layer,float object_x, floa
 
 bool game_engine::draw_item(map_object *object, int layer,float object_x, float object_y){
 
-				//if on different layer, continue
-				if(0!=layer)return false;
-				//dead
-				if(object->dead)return false;
+    //if on different layer, continue
+    if(0!=layer)return false;
+    //dead
+    if(object->dead)return false;
 
-				float size=object->size*general_object_size;
+    float size=object->size*general_object_size;
 
-				//check if it's visible
-				if(-camera_x+object_x<-size*1.415f){return false;}
-				if(-camera_x+object_x>screen_width+size*0.415f){return false;}
-				if(-camera_y+object_y<-size*1.415f){return false;}
-				if(-camera_y+object_y>screen_height+size*0.415f){return false;}
+    //check if it's visible
+    if(-camera_x+object_x<-size*1.415f){return false;}
+    if(-camera_x+object_x>screen_width+size*0.415f){return false;}
+    if(-camera_y+object_y<-size*1.415f){return false;}
+    if(-camera_y+object_y>screen_height+size*0.415f){return false;}
 
-				grim->Quads_SetColor(object->light_level[0],object->light_level[1],object->light_level[2],1);
-				grim->System_SetState_Blending(true);
-				resources.Texture_Set(mod.general_items[object->type].texture);
-				grim->Quads_Begin();
-				grim->Quads_SetRotation(object->rotation);
-				grim->Quads_Draw(-camera_x+object_x, -camera_y+object_y, size, size);
-				grim->Quads_End();
+    grim->Quads_SetColor(object->light_level[0],object->light_level[1],object->light_level[2],1);
+    grim->System_SetState_Blending(true);
+    resources.Texture_Set(mod.general_items[object->type].texture);
+    grim->Quads_Begin();
+    grim->Quads_SetRotation(object->rotation);
+    grim->Quads_Draw(-camera_x+object_x, -camera_y+object_y, size, size);
+    grim->Quads_End();
 
 	return true;
 
@@ -1786,7 +1734,6 @@ void game_engine::load_particles(const string& filename){
 			particles[temp_particle.identifier]=temp_particle;
 
 			debug.debug_output("Load "+temp_particle.name,0,0);
-
 		}
 	}
 
@@ -6418,7 +6365,7 @@ void game_engine::draw_pop_up(void){
 	pop_up_y=(768-256)*y_multiplier;
 
 	bool accept_mouse_input=true;//for disabling the right button when the mode changes
-	
+
 	//int mahtuu=6; // (unused)
 
 	//additional info box
@@ -13845,40 +13792,37 @@ void game_engine::create_maps(void){
 
 void game_engine::create_minimap(map *map_to_edit, int d){
 
-
-
 	map_size_x=256;
 	map_size_y=256;
 
-	tempstring="map_texture ";
+	tempstring="map_texture "+d;
 	//itoa(d,temprivi,10);
-	sprintf(temprivi,"%d",d);
-	tempstring+=temprivi;
+	//sprintf(temprivi,"%d",d);
+	//tempstring+=temprivi;
 	//texture one
-	strcpy(temprivi,tempstring.c_str());
-	grim->Texture_Create(temprivi, map_size_x, map_size_y);
-	map_to_edit->map_texture=grim->Texture_Get(temprivi);
+	//strcpy(temprivi,tempstring.c_str());
+	grim->Texture_Create(tempstring, map_size_x, map_size_y);
+	map_to_edit->map_texture=grim->Texture_Get(tempstring);
 	//texture two
-	strcat(temprivi,"_2");
-	grim->Texture_Create(temprivi, map_size_x, map_size_y);
-	map_to_edit->map_texture_2=grim->Texture_Get(temprivi);
+	//strcat(temprivi,"_2");
+	tempstring += "_2";
+	grim->Texture_Create(tempstring, map_size_x, map_size_y);
+	map_to_edit->map_texture_2=grim->Texture_Get(tempstring);
 	can_draw_map=false;
 	if(grim->System_SetRenderTarget(map_to_edit->map_texture)){
 		can_draw_map=true;
 		draw_map_grid_small(map_to_edit,map_to_edit->map_texture,map_to_edit->map_texture_2);
 	}
 	grim->System_SetRenderTarget(-1);
-	if(!can_draw_map){
+	if (!can_draw_map){
 		grim->Texture_Delete(map_to_edit->map_texture);
 		grim->Texture_Delete(map_to_edit->map_texture_2);
-		map_to_edit->map_texture=-1;
-		map_to_edit->map_texture_2=-1;
+		map_to_edit->map_texture = -1;
+		map_to_edit->map_texture_2 = -1;
 	}
 }
 
-
 void game_engine::calculate_weather(void){
-
 	int a,b;
 
 	//change speed
@@ -16191,7 +16135,6 @@ void game_engine::draw_bars(void){
 		grim->Quads_SetSubset((9/16.0f),(0/16.0f),(16/16.0f),(16/16.0f));
 		grim->Quads_Draw(right_side, y, 7, 16*mod.general_bars[a].height*y_multiplier);
 
-
 		grim->Quads_End();
 
 		//draw number
@@ -17307,11 +17250,9 @@ void game_engine::draw_map_grid_small(map *map_to_edit, int texture, int texture
 	if(can_draw_map){
 		if(grim->System_SetRenderTarget(texture)){
 
-			int i,j;
-
 			grim->Quads_SetRotation(0);
 			grim->Quads_SetSubset(0,0,1,1);
-			float darkness=1.0f;
+			const float darkness=1.0f;
 			grim->Quads_SetColor(darkness,darkness,darkness,1);
 			grim->System_SetState_BlendSrc(grBLEND_SRCALPHA);
 			grim->System_SetState_BlendDst(grBLEND_INVSRCALPHA);
@@ -17321,8 +17262,8 @@ void game_engine::draw_map_grid_small(map *map_to_edit, int texture, int texture
 
 			grim->System_SetState_Blending(false);
 
-			for(i=0;i<map_to_edit->sizex;i++){
-				for(j=0;j<map_to_edit->sizey;j++){
+			for(int i=0;i<map_to_edit->sizex;i++){
+				for(int j=0;j<map_to_edit->sizey;j++){
 					resources.Texture_Set(mod.terrain_types[map_to_edit->grid[i].grid[j].terrain_type].terrain_frames[0].texture);
 					grim->Quads_Begin();
 					grim->Quads_Draw(i*size_x, j*size_y, size_x, size_y);

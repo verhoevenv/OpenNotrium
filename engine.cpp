@@ -363,22 +363,19 @@ int Engine::Texture_Get(const std::string& id){
 bool Engine::Texture_Create(const std::string& id, int width, int height){
     createNewTexture(id,width,height);
 
-    unsigned int* data;						// Stored Data
-
-	data = (unsigned int*)new GLuint[((width * height)* 4 * sizeof(unsigned int))];
-
-	memset(data,0,((128 * 128)* 4 * sizeof(unsigned int)));
+    // Stored Data
+    //GLuint* data = new GLuint[((width * height)* 4 * sizeof(unsigned int))];
+	//memset(data, 0, width * height * 4 * sizeof(unsigned int));
 
     glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
-		GL_RGBA, GL_UNSIGNED_BYTE, data);
+		GL_RGBA, GL_UNSIGNED_BYTE, NULL);
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
-	delete [] data;
+	//delete [] data;
 
     return true;
 }
-
 
 bool Engine::Texture_Load(const std::string& id, char *filename){
     SDL_Surface *surface;
@@ -391,25 +388,25 @@ bool Engine::Texture_Load(const std::string& id, char *filename){
     Uint8 nOfColors = surface->format->BytesPerPixel;
     if (nOfColors == 4)     // contains an alpha channel
     {
-            if (surface->format->Rmask == 0x000000ff)
-                    texture_format = GL_RGBA;
-            else
-                    texture_format = GL_BGRA;
+        if (surface->format->Rmask == 0x000000ff)
+            texture_format = GL_RGBA;
+        else
+            texture_format = GL_BGRA;
     } else if (nOfColors == 3)     // no alpha channel
     {
-            if (surface->format->Rmask == 0x000000ff)
-                    texture_format = GL_RGB;
-            else
-                    texture_format = GL_BGR;
+        if (surface->format->Rmask == 0x000000ff)
+            texture_format = GL_RGB;
+        else
+            texture_format = GL_BGR;
     } else {
-            //image in strange format
-            return false;
+        //image in strange format
+        return false;
     }
 
-    createNewTexture(id,surface->w, surface->h);
+    createNewTexture(id, surface->w, surface->h);
 
 	glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, surface->w, surface->h, 0,
-                      texture_format, GL_UNSIGNED_BYTE, surface->pixels );
+            texture_format, GL_UNSIGNED_BYTE, surface->pixels );
 
     return true;
 }
@@ -479,6 +476,8 @@ void Engine::Quads_Begin(){
     //nothing? Perhaps reinit of stuff or something?
 }
 void Engine::Quads_End(){
+    // FIXME: glFlush only has to be called once in each frame,
+    // and this is being called after each sequence of Quads_Draw
     glFlush();
 }
 
@@ -505,34 +504,29 @@ void Engine::Quads_Draw4V(float x0, float y0, float x1, float y1, float x2, floa
 void Engine::Draw4V(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3){
     EngineTexture *tex = &textures[activetexture];
 
+    float texcoor_tl_v_corrected =
+            (tex->draw_flipped) ? 1 - texcoor_tl_v : texcoor_tl_v;
+    float texcoor_br_v_corrected =
+            (tex->draw_flipped) ? 1 - texcoor_br_v : texcoor_br_v;
+
     glBegin(GL_QUADS);
+
     setglColor(0);
-    if(tex->draw_flipped)
-        glTexCoord2f(texcoor_tl_u, 1 - texcoor_tl_v);
-    else
-        glTexCoord2f(texcoor_tl_u, texcoor_tl_v);
+    glTexCoord2f(texcoor_tl_u, texcoor_tl_v_corrected);
     glVertex3f(x0, y0, -1);
 
     setglColor(3);
-    if(tex->draw_flipped)
-        glTexCoord2f(texcoor_tl_u, 1 - texcoor_br_v);
-    else
-        glTexCoord2f(texcoor_tl_u, texcoor_br_v);
+    glTexCoord2f(texcoor_tl_u, texcoor_br_v_corrected);
     glVertex3f(x3, y3, -1);
 
     setglColor(2);
-    if(tex->draw_flipped)
-        glTexCoord2f(texcoor_br_u, 1 - texcoor_br_v);
-    else
-        glTexCoord2f(texcoor_br_u, texcoor_br_v);
+    glTexCoord2f(texcoor_br_u, texcoor_br_v_corrected);
     glVertex3f(x2, y2, -1);
 
     setglColor(1);
-    if(tex->draw_flipped)
-        glTexCoord2f(texcoor_br_u, 1 - texcoor_tl_v);
-    else
-        glTexCoord2f(texcoor_br_u, texcoor_tl_v);
+    glTexCoord2f(texcoor_br_u, texcoor_tl_v_corrected);
     glVertex3f(x1, y1, -1);
+
     glEnd();
 }
 
