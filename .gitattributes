@@ -1,0 +1,16 @@
+* text=auto
+
+*.cpp text
+*.h text
+*.html text
+*.css text
+*.dat text
+*.cfg text
+
+*.bmp binary
+*.png binary
+*.jpg binary
+*.gif binary
+*.wav binary
+*.mp3 binary
+*.ico binary
