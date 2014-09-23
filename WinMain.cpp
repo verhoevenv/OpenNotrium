@@ -17293,4 +17293,3 @@ void game_engine::draw_map_grid_small(map *map_to_edit, int texture, int texture
 
 }
 
-
