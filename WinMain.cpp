@@ -486,10 +486,6 @@ bool game_engine::cfg_load(void){
             return false;
 		}
 
-		if (!fil) {
-            return false;
-		}
-
 		fgets(temprivi,sizeof(temprivi),fil);screen_width=atoi(temprivi);
 		fgets(temprivi,sizeof(temprivi),fil);screen_height=atoi(temprivi);
 		fgets(temprivi,sizeof(temprivi),fil);bit_depth=atoi(temprivi);
@@ -825,7 +821,6 @@ void game_engine::uninitialize_game(void){//uninitialize game
 //	}
 
 	debug.debug_output("Uninitializing game", 0,0);
-
 }
 
 void game_engine::render_map(void){//renders game map
@@ -3298,6 +3293,11 @@ void game_engine::creature_actions_loop(void){
 
 bool game_engine::creature_actions(const int creature, const bool visible){//calculates the creature actions and animation
 
+<<<<<<< HEAD
+=======
+    //FIXME: it's strange that a creature right now can be in (NaN,NaN)
+
+>>>>>>> 711620b0f1b245289e0defdc6655a8e853e67792
 	/*
 	float alien_speed_difficulty_modifier=0.0005f;
 	if(game_difficulty_level==0)
@@ -16143,6 +16143,10 @@ void game_engine::draw_bars(void){
 		grim->Quads_SetSubset((9/16.0f),(0/16.0f),(16/16.0f),(16/16.0f));
 		grim->Quads_Draw(right_side, y, 7, 16*mod.general_bars[a].height*y_multiplier);
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 711620b0f1b245289e0defdc6655a8e853e67792
 		grim->Quads_End();
 
 		//draw number
