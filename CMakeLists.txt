@@ -1,4 +1,5 @@
-cmake_minimum_required(VERSION 2.4)
+cmake_minimum_required(VERSION 2.6)
+
 project(OpenNotrium)
 
 find_package(OpenGL REQUIRED)
@@ -12,7 +13,8 @@ file(GLOB OpenNotrium_sources *.cpp)
 include_directories(
     ${SDL_INCLUDE_DIR}
     ${SDL_MIXER_INCLUDE_DIR}
-    ${SDL_IMAGE_INCLUDE_DIRS})
+    ${SDL_IMAGE_INCLUDE_DIRS}
+    ${PHYSFS_INCLUDE_DIR})
 
 link_libraries(
     ${OPENGL_LIBRARY}
