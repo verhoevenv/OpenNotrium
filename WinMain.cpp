@@ -3293,11 +3293,6 @@ void game_engine::creature_actions_loop(void){
 
 bool game_engine::creature_actions(const int creature, const bool visible){//calculates the creature actions and animation
 
-<<<<<<< HEAD
-=======
-    //FIXME: it's strange that a creature right now can be in (NaN,NaN)
-
->>>>>>> 711620b0f1b245289e0defdc6655a8e853e67792
 	/*
 	float alien_speed_difficulty_modifier=0.0005f;
 	if(game_difficulty_level==0)
@@ -6373,7 +6368,7 @@ void game_engine::draw_pop_up(void){
 	pop_up_y=(768-256)*y_multiplier;
 
 	bool accept_mouse_input=true;//for disabling the right button when the mode changes
-	
+
 	//int mahtuu=6; // (unused)
 
 	//additional info box
@@ -16108,12 +16103,7 @@ void game_engine::draw_bars(void){
 			r_right=temp_r;
 			g_right=temp_g;
 			b_right=temp_b;
-
 		}
-
-
-
-
 
 		if(left_side<-1*fabs(mod.general_bars[a].length))left_side=-1*fabs(mod.general_bars[a].length);
 		if(right_side>1*fabs(mod.general_bars[a].length))right_side=1*fabs(mod.general_bars[a].length);
@@ -16143,10 +16133,6 @@ void game_engine::draw_bars(void){
 		grim->Quads_SetSubset((9/16.0f),(0/16.0f),(16/16.0f),(16/16.0f));
 		grim->Quads_Draw(right_side, y, 7, 16*mod.general_bars[a].height*y_multiplier);
 
-<<<<<<< HEAD
-=======
-
->>>>>>> 711620b0f1b245289e0defdc6655a8e853e67792
 		grim->Quads_End();
 
 		//draw number
