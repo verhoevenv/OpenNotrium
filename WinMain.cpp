@@ -14585,7 +14585,7 @@ void game_engine::draw_slider(void){
 	//numbers
 	grim->Quads_SetColor(1,1,1,1);
 	//itoa(slider_point,temprivi,10);
-	sprintf(temprivi,"%d",slider_point);
+	sprintf(temprivi,"%d",int(slider_point));
 	text_manager.write_line(font,slider_x+slider_bar_x-66,slider_y+slider_bar_y+1,temprivi,2);
 	//itoa(slider_maximum,temprivi,10);
 	sprintf(temprivi,"%d",slider_maximum);
