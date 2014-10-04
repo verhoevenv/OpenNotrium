@@ -79,5 +79,7 @@ typedef SDLKey Key;
 #define KEY_LSHIFT SDLK_LSHIFT
 #define KEY_RSHIFT SDLK_RSHIFT
 #define KEY_LCONTROL SDLK_LCTRL
+#define KEY_LALT SDLK_LALT
+#define KEY_RALT SDLK_RALT
 
 #endif

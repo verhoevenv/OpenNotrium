@@ -500,6 +500,7 @@ public:
 	int game_state;//which screen is displayed
 	bool paused;//if the game is paused right now
 	bool focus;//for not drawing while the game is not in focus
+	bool input_grabbed;
 	bool arrange_alphabetically;
 	bool ask_continue_game;//pause after loading
 	//LPDIRECTINPUTDEVICE8	  g_pMouse;

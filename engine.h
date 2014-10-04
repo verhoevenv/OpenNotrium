@@ -104,6 +104,9 @@ public:
 	void System_SetState_ScreenHeight(int h);
 	void System_SetState_ScreenBPP(int bpp);
 	void System_SetState_Title(const char* title);
+	
+	void System_GrabInput();
+	void System_ReleaseInput();
 
 	/**
 	* Initialises the system with the given states, starts engine, etc. Does not enter the main loop yet.

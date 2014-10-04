@@ -138,9 +138,7 @@ void Engine::System_Initiate(const char *argv0){
         exit(1);
     }
 
-    SDL_WM_GrabInput(SDL_GRAB_ON);
-    SDL_WarpMouse(width/2,height/2);
-    SDL_GetRelativeMouseState(NULL,NULL);
+    System_GrabInput();
 
 	PHYSFS_init(argv0);
 	PHYSFS_setSaneConfig("monkkonen","notrium",NULL,0,0); //Perhaps we should allow packages here. Not now.
@@ -299,6 +297,16 @@ void Engine::System_SetState_Title(const char* newtitle){
 
 void Engine::System_Shutdown(){
     SDL_Quit();
+}
+
+void Engine::System_GrabInput(){
+    SDL_WM_GrabInput(SDL_GRAB_ON);
+	SDL_WarpMouse(width/2,height/2);
+    SDL_GetRelativeMouseState(NULL,NULL);
+}
+
+void Engine::System_ReleaseInput(){
+    SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
 bool Engine::System_SetRenderTarget(int tex_id){

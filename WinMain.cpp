@@ -432,6 +432,16 @@ bool game_engine::Frame(void)
 	if (grim->Key_Down(KEY_KP_ADD))
 		debugging=true;
 
+	if ((grim->Key_Down(KEY_LALT) || grim->Key_Down(KEY_RALT)) && grim->Key_Click(KEY_G)) {
+		if(input_grabbed) {
+			grim->System_ReleaseInput();
+			input_grabbed = false;
+		} else {
+			grim->System_GrabInput();
+			input_grabbed = true;
+		}
+	}
+
 
 	//music event
 	if(music_initialized){
@@ -607,6 +617,7 @@ int main(int argc, char* argv[])
 //	engine->g_pMouse=NULL;
 	engine->game_state=1;//load screen
 	engine->focus=true;
+	engine->input_grabbed = true;
 
 	//initiate graphics engine
 	grim->System_Initiate(argv[0]);
