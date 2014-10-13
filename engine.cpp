@@ -301,8 +301,6 @@ void Engine::System_Shutdown(){
 
 void Engine::System_GrabInput(){
     SDL_WM_GrabInput(SDL_GRAB_ON);
-	SDL_WarpMouse(width/2,height/2);
-    SDL_GetRelativeMouseState(NULL,NULL);
 }
 
 void Engine::System_ReleaseInput(){
