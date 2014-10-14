@@ -1075,7 +1075,7 @@ void game_engine::render_map(void){//renders game map
 	if(!paused)
 	if(fabs(time_from_beginning-creatures_checked_on)>check_time)
 	{
-		map_main->check_creatures();//t�t� voi tehd� v�h�n harvemmin jos haluaa
+		map_main->check_creatures();
 		creatures_checked_on=time_from_beginning+randDouble(0,check_time*0.25f);
 
 	}
@@ -9272,7 +9272,7 @@ void game_engine::draw_item_view(void){
 
 
 
-	int mahtuu=13;//montako rivi� mahtuu listaan
+	int mahtuu=13;
 
 
 
@@ -9286,7 +9286,7 @@ void game_engine::draw_item_view(void){
 
 			int rivi=0;
 			int ohirivit=0;
-			int total_items=0;//montako yhteens�
+			int total_items=0;
 
 			grim->System_SetState_Blending(true);
 			grim->System_SetState_BlendSrc(grBLEND_SRCALPHA);
@@ -10468,7 +10468,7 @@ void game_engine::render_credits(void){
 	grim->Quads_SetColor(1,1,1,1);
 	text_manager.write_line(font,147/1024.0f*screen_width,68/768.0f*screen_height,"Notrium "+game_version,3/1024.0f*screen_width);
 
-	string credits("Developed by: Ville M�nkk�nen \\ In association with: Michael Quigley aka Quanrian \\ Music by: Kush Diarra  \\ Based on design by: Mikko Tikkanen \\ Using Grim 2D graphics engine \\ \\ Beta crew: \\ Robbie BT aka ZeXLR8er!! \\ Sergio Enriquez aka Torment aka Casanova \\ Nick Atherley aka Eternal \\ Carl S. aka Click \\ \\ \\ Press enter to continue");
+	string credits("Developed by: Ville M\u00F6nkk\u00F6nen \\ In association with: Michael Quigley aka Quanrian \\ Music by: Kush Diarra  \\ Based on design by: Mikko Tikkanen \\ Using Grim 2D graphics engine \\ \\ Beta crew: \\ Robbie BT aka ZeXLR8er!! \\ Sergio Enriquez aka Torment aka Casanova \\ Nick Atherley aka Eternal \\ Carl S. aka Click \\ \\ \\ Press enter to continue");
 
 
 
@@ -11581,7 +11581,7 @@ void game_engine::render_menu(void){
 	//version
 	grim->System_SetState_Blending(true);
 	grim->Quads_SetColor(1,1,1,1);
-	text_manager.write_line(font,2/1024.0f*screen_width,747/768.0f*screen_height,"Copyright 2005 Ville M�nkk�nen    Version "+game_version,1/1024.0f*screen_width);
+	text_manager.write_line(font,2/1024.0f*screen_width,747/768.0f*screen_height,"Copyright 2005 Ville M\u00F6nkk\u00F6nen    Version "+game_version,1/1024.0f*screen_width);
 
 	//text_manager.write_line(font,13/1024.0f*screen_width,600/768.0f*screen_height,"TEST VERSION - DO NOT DISTRIBUTE",3/1024.0f*screen_width);
 	//text_manager.write_line(font,13/1024.0f*screen_width,650/768.0f*screen_height,"Remember to take screenshots!",3/1024.0f*screen_width);
