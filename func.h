@@ -2,15 +2,15 @@
 #ifndef FUNCTIONS_LIBRARY
 #define FUNCTIONS_LIBRARY
 
-#include <stdio.h>
+#include <cstdio>
 //#include <windows.h>
-#include <math.h>
+#include <cmath>
 #include <string>
 #include <vector>
 
-#include <stdlib.h>
-#include <time.h>
-#include <assert.h>
+#include <cstdlib>
+#include <ctime>
+#include <cassert>
 
 
 //#define SAFE_DELETE(p) { if(p) { delete(p);   (p)=NULL; } }
@@ -18,6 +18,14 @@ template <typename T>
 inline void SAFE_DELETE(T*& p) {
     if (p) {
         delete p;
+        p = NULL;
+    }
+}
+
+template <typename T>
+inline void SAFE_DELETE_ARRAY(T*& p) {
+    if (p) {
+        delete[] p;
         p = NULL;
     }
 }
@@ -40,7 +48,7 @@ float randDouble( float low, float high );
 char *stripped_fgets(char *s, int n, FILE *f);
 bool strtobool(const char* rivi);
 void random_name(const char* creature_name);//give the given monk a random name
-void find_texture_coordinates(int slot,float *x0,float *y0,float *x1,float *y1,int slots_per_texture);
+void find_texture_coordinates(int slot,float& x0,float& y0,float& x1,float& y1,int slots_per_texture);
 string FloatToText(float n, int nNumberOfDecimalPlaces);
 bool isvowel(char character);
 /*float minimum(float a, float b);

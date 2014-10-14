@@ -1,29 +1,11 @@
 //a few fancy functions
 
-
 #include "func.h"
 #include <cstring>
 
-//#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
-template <typename T>
-inline void SAFE_RELEASE(T*& p) {
-    if (p) {
-        p->Release();
-        p = NULL;
-    }
+inline float square( float f ) {
+    return sqr(f);
 }
-//#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
-template <typename T>
-inline void SAFE_DELETE_ARRAY(T*& p) {
-    if (p) {
-        delete[] p;
-        p = NULL;
-    }
-}
-
-
-inline float square( float f ) { return (f*f) ;};
-
 
 /*
  * randInt
@@ -116,133 +98,107 @@ bool strtobool(const char *rivi){
 
 void random_name(char *creature_name){//give a random name
 
-	char konsonantti[20];
-	char vokaali[6];
-	char iso_konsonantti[20];
-	char iso_vokaali[6];
+	char konsonantti[20] = {
+	    'b', 'c',
+	    'd', 'f',
+	    'g', 'h',
+	    'j', 'k',
+	    'l', 'm',
+	    'n', 'p',
+	    'q', 'r',
+	    's', 't',
+	    'v', 'w',
+	    'x', 'z'
+	};
+	const char vokaali[6] = {
+	    'a', 'e',
+	    'i', 'o',
+	    'u', 'y'
+	};
+	const char iso_konsonantti[20] = {
+	    'B', 'C',
+	    'D', 'F',
+	    'G', 'H',
+	    'J', 'K',
+	    'L', 'M',
+	    'N', 'P',
+	    'Q', 'R',
+	    'S', 'T',
+	    'V', 'W',
+	    'X', 'Z'
+	};
+	const char iso_vokaali[6] = {
+	    'A', 'E',
+	    'I', 'O',
+	    'U', 'Y'
+	};
 
-	//kirjaimet
-	vokaali[0]='a';
-	vokaali[1]='e';
-	vokaali[2]='i';
-	vokaali[3]='o';
-	vokaali[4]='u';
-	vokaali[5]='y';
-
-	iso_vokaali[0]='A';
-	iso_vokaali[1]='E';
-	iso_vokaali[2]='I';
-	iso_vokaali[3]='O';
-	iso_vokaali[4]='U';
-	iso_vokaali[5]='Y';
-
-	konsonantti[0]='b';
-	konsonantti[1]='c';
-	konsonantti[2]='d';
-	konsonantti[3]='f';
-	konsonantti[4]='g';
-	konsonantti[5]='h';
-	konsonantti[6]='j';
-	konsonantti[7]='k';
-	konsonantti[8]='l';
-	konsonantti[9]='m';
-	konsonantti[10]='n';
-	konsonantti[11]='p';
-	konsonantti[12]='q';
-	konsonantti[13]='r';
-	konsonantti[14]='s';
-	konsonantti[15]='t';
-	konsonantti[16]='v';
-	konsonantti[17]='w';
-	konsonantti[18]='x';
-	konsonantti[19]='z';
-
-	iso_konsonantti[0]='B';
-	iso_konsonantti[1]='C';
-	iso_konsonantti[2]='D';
-	iso_konsonantti[3]='F';
-	iso_konsonantti[4]='G';
-	iso_konsonantti[5]='H';
-	iso_konsonantti[6]='J';
-	iso_konsonantti[7]='K';
-	iso_konsonantti[8]='L';
-	iso_konsonantti[9]='M';
-	iso_konsonantti[10]='N';
-	iso_konsonantti[11]='P';
-	iso_konsonantti[12]='Q';
-	iso_konsonantti[13]='R';
-	iso_konsonantti[14]='S';
-	iso_konsonantti[15]='T';
-	iso_konsonantti[16]='V';
-	iso_konsonantti[17]='W';
-	iso_konsonantti[18]='X';
-	iso_konsonantti[19]='Z';
-
-			int randomi=randInt(0,6);
-			if(randomi==0){
-				creature_name[0]=iso_konsonantti[randInt(0,20)];
-				creature_name[1]=vokaali[randInt(0,6)];
-				creature_name[2]=konsonantti[randInt(0,20)];
-				creature_name[3]=creature_name[2];
-				creature_name[4]=vokaali[randInt(0,6)];
-				creature_name[5]=konsonantti[randInt(0,20)];
-				creature_name[6]=0;
-			}
-			if(randomi==1){
-				creature_name[0]=iso_konsonantti[randInt(0,20)];
-				creature_name[1]=vokaali[randInt(0,6)];
-				creature_name[2]=konsonantti[randInt(0,20)];
-				creature_name[3]=vokaali[randInt(0,6)];
-				creature_name[4]=konsonantti[randInt(0,20)];
-				creature_name[5]=0;
-			}
-			if(randomi==2){
-				creature_name[0]=iso_konsonantti[randInt(0,20)];
-				creature_name[1]=vokaali[randInt(0,6)];
-				creature_name[2]=konsonantti[randInt(0,20)];
-				creature_name[3]=vokaali[randInt(0,6)];
-				creature_name[4]=konsonantti[randInt(0,20)];
-				creature_name[5]='u';
-				creature_name[6]='s';
-				creature_name[7]=0;
-			}
-			if(randomi==3){
-				creature_name[0]=iso_konsonantti[randInt(0,20)];
-				creature_name[1]=vokaali[randInt(0,6)];
-				creature_name[2]=konsonantti[randInt(0,20)];
-				creature_name[3]=vokaali[randInt(0,6)];
-				creature_name[4]=creature_name[3];
-				creature_name[5]=konsonantti[randInt(0,20)];
-				creature_name[6]=0;
-			}
-			if(randomi==4){
-				creature_name[0]=iso_konsonantti[randInt(0,20)];
-				creature_name[1]=vokaali[randInt(0,6)];
-				creature_name[2]=creature_name[1];
-				creature_name[3]=konsonantti[randInt(0,20)];
-				creature_name[4]=vokaali[randInt(0,6)];
-				creature_name[5]=0;
-			}
-			if(randomi==5){
-				creature_name[0]=iso_vokaali[randInt(0,6)];
-				creature_name[1]=konsonantti[randInt(0,20)];
-				creature_name[2]=creature_name[1];
-				creature_name[3]=vokaali[randInt(0,6)];
-				creature_name[4]=0;
-			}
-
+    int randomi=randInt(0,6);
+    switch (randomi) {
+        case 0:
+        creature_name[0]=iso_konsonantti[randInt(0,20)];
+        creature_name[1]=vokaali[randInt(0,6)];
+        creature_name[2]=konsonantti[randInt(0,20)];
+        creature_name[3]=creature_name[2];
+        creature_name[4]=vokaali[randInt(0,6)];
+        creature_name[5]=konsonantti[randInt(0,20)];
+        creature_name[6]=0;
+        break;
+    case 1:
+        creature_name[0]=iso_konsonantti[randInt(0,20)];
+        creature_name[1]=vokaali[randInt(0,6)];
+        creature_name[2]=konsonantti[randInt(0,20)];
+        creature_name[3]=vokaali[randInt(0,6)];
+        creature_name[4]=konsonantti[randInt(0,20)];
+        creature_name[5]=0;
+        break;
+    case 2:
+        creature_name[0]=iso_konsonantti[randInt(0,20)];
+        creature_name[1]=vokaali[randInt(0,6)];
+        creature_name[2]=konsonantti[randInt(0,20)];
+        creature_name[3]=vokaali[randInt(0,6)];
+        creature_name[4]=konsonantti[randInt(0,20)];
+        creature_name[5]='u';
+        creature_name[6]='s';
+        creature_name[7]=0;
+        break;
+    case 3:
+        creature_name[0]=iso_konsonantti[randInt(0,20)];
+        creature_name[1]=vokaali[randInt(0,6)];
+        creature_name[2]=konsonantti[randInt(0,20)];
+        creature_name[3]=vokaali[randInt(0,6)];
+        creature_name[4]=creature_name[3];
+        creature_name[5]=konsonantti[randInt(0,20)];
+        creature_name[6]=0;
+        break;
+    case 4:
+        creature_name[0]=iso_konsonantti[randInt(0,20)];
+        creature_name[1]=vokaali[randInt(0,6)];
+        creature_name[2]=creature_name[1];
+        creature_name[3]=konsonantti[randInt(0,20)];
+        creature_name[4]=vokaali[randInt(0,6)];
+        creature_name[5]=0;
+        break;
+    case 5:
+        creature_name[0]=iso_vokaali[randInt(0,6)];
+        creature_name[1]=konsonantti[randInt(0,20)];
+        creature_name[2]=creature_name[1];
+        creature_name[3]=vokaali[randInt(0,6)];
+        creature_name[4]=0;
+        break;
+    }
 }
 
-void find_texture_coordinates(int slot,float *x0,float *y0,float *x1,float *y1,int slots_per_texture){
+void find_texture_coordinates(int slot,float& x0,float& y0,float& x1,float& y1,int slots_per_texture){
 	/**x0=(slot % slots_per_texture)/(float)slots_per_texture;
 	*y0=(float)(slot/slots_per_texture);
 	*x1=*x0+1.0f/slots_per_texture;
 	*y1=*y0+1.0f/slots_per_texture;*/
 
-	*x0=((float)slot/(float)slots_per_texture)-(int)(slot/slots_per_texture);
-	*y0=((int)(slot/slots_per_texture))/4.0f;
-	*x1=*x0+1.0f/slots_per_texture;
-	*y1=*y0+1.0f/slots_per_texture;
+	x0=((float)slot/(float)slots_per_texture)-(int)(slot/slots_per_texture);
+	y0=((int)(slot/slots_per_texture))/4.0f;
+	x1=x0+1.0f/slots_per_texture;
+	y1=y0+1.0f/slots_per_texture;
 }
 
 /*char *copy_substring(char *string, int from, int to){
@@ -261,7 +217,6 @@ void find_texture_coordinates(int slot,float *x0,float *y0,float *x1,float *y1,i
 // Converts a floating point number to string
 string FloatToText(float n, int nNumberOfDecimalPlaces)
 {
-
 	char s[200];
 
 	sprintf(s, "%f", n);
