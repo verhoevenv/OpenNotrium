@@ -8,10 +8,10 @@
 #pragma warning(disable: 4018)
 
 //#include <windows.h>
-#include <malloc.h>
+//#include <malloc.h>
 //#include <mmsystem.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <iostream>
 #include <sstream>
 #include <string>

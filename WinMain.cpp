@@ -4,27 +4,11 @@
 
 #include <iostream>
 
-#if !defined(isnan) && defined(_isnan)
-#define isnan(x) _isnan(x)
-#endif
-
-//#define RELEASE(x) {if (x) {(x)->Release(); (x)=NULL;}}
-template<typename T>
-inline void RELEASE(T*& x) {
-    if (x) {
-        x->Release();
-        x = NULL;
-    }
-}
-
-//#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
-template<typename T>
-inline void SAFE_DELETE_ARRAY(T*& p) {
-    if (p) {
-        delete[] p;
-        p = NULL;
-    }
-}
+// NOTE: if Visual Studio fails to compile because it lacks std::isnan,
+// try uncommenting the preprocessor block below (or finding another non-intrusive alternative)
+//#if !defined(isnan) && defined(_isnan)
+//#define isnan(x) _isnan(x)
+//#endif
 
 #define WM_GRAPHNOTIFY  WM_APP + 1
 
@@ -42,9 +26,9 @@ float movement_speed=0.35f;
 int general_creature_size=64;
 int general_object_size=128;
 string game_version="1.3.4.1";
-#define AI_ANGER_REDUCE_SPEED 2.0f
-#define AI_ANGER_INCREASE_SPEED 1.0f
-#define CREATURE_FADE_OUT_SPEED 0.01f
+const float AI_ANGER_REDUCE_SPEED = 2.0f;
+const float AI_ANGER_INCREASE_SPEED = 1.0f;
+const float CREATURE_FADE_OUT_SPEED = 0.01f;
 int climate_override=-1;
 int active_distance=15;
 
