@@ -1937,7 +1937,7 @@ void game_engine::draw_map_creatures(int layer){//draws the creatures
 
 						//draw legs
 						if(map_main->creature[creature].animation[2]>=0){
-							find_texture_coordinates(map_main->creature[creature].animation[2],&x0,&y0,&x1,&y1,4);
+							find_texture_coordinates(map_main->creature[creature].animation[2],x0,y0,x1,y1,4);
 							grim->Quads_SetSubset(x0,y0,x1,y1);
 							grim->Quads_SetRotation(map_main->creature[creature].rotation_legs);
 							grim->Quads_Draw(-camera_x+creature_x,
@@ -1949,7 +1949,7 @@ void game_engine::draw_map_creatures(int layer){//draws the creatures
 						//draw torso
 						if(map_main->creature[creature].animation[1]>=0){
 							int frame=map_main->creature[creature].animation[1];
-							find_texture_coordinates(frame,&x0,&y0,&x1,&y1,4);
+							find_texture_coordinates(frame,x0,y0,x1,y1,4);
 							grim->Quads_SetSubset(x0,y0,x1,y1);
 							grim->Quads_SetRotation(map_main->creature[creature].rotation);
 							grim->Quads_Draw(-camera_x+creature_x,
@@ -1960,7 +1960,7 @@ void game_engine::draw_map_creatures(int layer){//draws the creatures
 						}
 						//draw head
 						if(map_main->creature[creature].animation[0]>=0){
-							find_texture_coordinates(map_main->creature[creature].animation[0],&x0,&y0,&x1,&y1,4);
+							find_texture_coordinates(map_main->creature[creature].animation[0],x0,y0,x1,y1,4);
 							grim->Quads_SetSubset(x0,y0,x1,y1);
 							grim->Quads_SetRotation(map_main->creature[creature].rotation_head);
 							grim->Quads_Draw(-camera_x+creature_x,
@@ -1979,7 +1979,7 @@ void game_engine::draw_map_creatures(int layer){//draws the creatures
 						resources.Texture_Set(mod.general_creatures[map_main->creature[creature].type].texture);
 						grim->Quads_Begin();
 						if(map_main->creature[creature].animation[2]>=0){
-							find_texture_coordinates(map_main->creature[creature].animation[2]-4,&x0,&y0,&x1,&y1,4);
+							find_texture_coordinates(map_main->creature[creature].animation[2]-4,x0,y0,x1,y1,4);
 							grim->Quads_SetSubset(x0,y0,x1,y1);
 							grim->Quads_SetRotation(map_main->creature[creature].rotation_legs);
 							grim->Quads_Draw(-camera_x+creature_x,
@@ -2001,7 +2001,7 @@ void game_engine::draw_map_creatures(int layer){//draws the creatures
 						}
 						resources.Texture_Set(texture);
 						grim->Quads_Begin();
-							find_texture_coordinates(frame,&x0,&y0,&x1,&y1,4);
+							find_texture_coordinates(frame,x0,y0,x1,y1,4);
 							grim->Quads_SetSubset(x0,y0,x1,y1);
 							grim->Quads_SetRotation(map_main->creature[creature].rotation+(map_main->creature[creature].animation[2]-7)*0.04f);
 							grim->Quads_Draw(-camera_x+creature_x,
@@ -2015,7 +2015,7 @@ void game_engine::draw_map_creatures(int layer){//draws the creatures
 						resources.Texture_Set(mod.general_creatures[map_main->creature[creature].type].texture);
 						grim->Quads_Begin();
 						if(map_main->creature[creature].animation[0]>=0){
-							find_texture_coordinates(map_main->creature[creature].animation[0],&x0,&y0,&x1,&y1,4);
+							find_texture_coordinates(map_main->creature[creature].animation[0],x0,y0,x1,y1,4);
 							grim->Quads_SetSubset(x0,y0,x1,y1);
 							grim->Quads_SetRotation(map_main->creature[creature].rotation_head);
 							grim->Quads_Draw(-camera_x+creature_x,

@@ -942,15 +942,15 @@ void Editor::object_draw(Mod::terrain_map_base::editor_object_base *object, floa
 			y=object->y*zoom-camera_y-0.5f*size;
 			float x0,x1,y0,y1;
 			//draw legs
-				find_texture_coordinates(7,&x0,&y0,&x1,&y1,4);
+				find_texture_coordinates(7,x0,y0,x1,y1,4);
 				grim->Quads_SetSubset(x0,y0,x1,y1);
 				grim->Quads_Draw(x, y, size, size);
 			//draw torso
-				find_texture_coordinates(1,&x0,&y0,&x1,&y1,4);
+				find_texture_coordinates(1,x0,y0,x1,y1,4);
 				grim->Quads_SetSubset(x0,y0,x1,y1);
 				grim->Quads_Draw(x, y, size, size);
 			//draw head
-				find_texture_coordinates(0,&x0,&y0,&x1,&y1,4);
+				find_texture_coordinates(0,x0,y0,x1,y1,4);
 				grim->Quads_SetSubset(x0,y0,x1,y1);
 				grim->Quads_Draw(x, y, size, size);
 			grim->Quads_End();
