@@ -13,11 +13,26 @@
 #include <assert.h>
 
 
-//#define SAFE_DELETE(p) { if(p) { delete(p);   (p)=NULL; } }
 template <typename T>
 inline void SAFE_DELETE(T*& p) {
     if (p) {
         delete p;
+        p = NULL;
+    }
+}
+
+template <typename T>
+inline void SAFE_DELETE_ARRAY(T*& p) {
+    if (p) {
+        delete[] p;
+        p = NULL;
+    }
+}
+
+template <typename T>
+inline void RELEASE(T*& p) {
+    if (p) {
+        p->Release();
         p = NULL;
     }
 }
