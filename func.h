@@ -37,7 +37,6 @@ inline void RELEASE(T*& p) {
     }
 }
 
-//#define sqr(p) ((p)*(p))
 template <typename T>
 inline T sqr(const T& p) { return p*p; }
 
