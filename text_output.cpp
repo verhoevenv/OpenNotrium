@@ -62,19 +62,16 @@ void text_output::write(int font, const string& text, float size, float x0,float
 	int rivi=0;
 	int a=0;
 
-	//kirjain kerrallaan kunnes tulee loppu tai väli
 	while(true){
 		if(a>=teksti_pituus)break;
-			//väli
 			if((text[a]==' ')||(a==teksti_pituus-1)){
-				if(rivi*rivi_korkeus>y1-y0)return;//alareuna tuli vastaan, lopetetaan
+				if(rivi*rivi_korkeus>y1-y0)return;//lower edge, stop
 
-				if(x_cursor>rivin_pituus){//on menty rivin reunan yli, vaihdetaan riviä
+				if(x_cursor>rivin_pituus){//gone over end of line, change line
 					x_cursor=0;
 					rivi++;
 				}
 
-				//tulostetaan sana tähän
 				sana_loppu=a+1;
 				for(int b=sana_alku;b<sana_loppu;b++){
 					find_letter_width(text[b],&nume,&kirjainleveys);
@@ -88,13 +85,12 @@ void text_output::write(int font, const string& text, float size, float x0,float
 						grim->Quads_Draw(x0+x_cursor, y0+rivi*rivi_korkeus, letter_width*size, letter_height*size);
 					}
 
-					//rivinvaihto
+					//newline
 					if(kirjainleveys==-1)x_cursor=rivin_pituus;
 
 
 					x_cursor+=(kirjainleveys+3)*size*0.5f;
 				}
-				//seuraavan sanan alku on tämän loppu
 				sana_alku=a+1;
 				sana_loppu=a+1;
 
@@ -138,9 +134,9 @@ void text_output::find_letter_width(char kirjain, int *nume, int *kirjainleveys)
 			case 'x':{*kirjainleveys=16;*nume=53;break;}
 			case 'y':{*kirjainleveys=16;*nume=54;break;}
 			case 'z':{*kirjainleveys=16;*nume=55;break;}
-			case 'å':{*kirjainleveys=16;*nume=56;break;}
-			case 'ä':{*kirjainleveys=16;*nume=57;break;}
-			case 'ö':{*kirjainleveys=16;*nume=58;break;}
+			case '\u00E5':{*kirjainleveys=16;*nume=56;break;} //lowercase a with ring
+			case '\u00E4':{*kirjainleveys=16;*nume=57;break;} //lowercase a diaeresis
+			case '\u00F6':{*kirjainleveys=16;*nume=58;break;} //lowercase o diaeresis
 			case '0':{*kirjainleveys=16;*nume=59;break;}
 			case '1':{*kirjainleveys=8;*nume=60;break;}
 			case '2':{*kirjainleveys=16;*nume=61;break;}
@@ -155,7 +151,7 @@ void text_output::find_letter_width(char kirjain, int *nume, int *kirjainleveys)
 			case '.':{*kirjainleveys=8;*nume=70;break;}
 			case '/':{*kirjainleveys=14;*nume=71;break;}
 			case ':':{*kirjainleveys=8;*nume=72;break;}
-			case '´':{*kirjainleveys=6;*nume=73;break;}
+			case '\'':{*kirjainleveys=6;*nume=73;break;}
 			case 0x27:{*kirjainleveys=6;*nume=73;break;}
 			case '?':{*kirjainleveys=16;*nume=74;break;}
 			case ',':{*kirjainleveys=8;*nume=75;break;}
@@ -192,9 +188,9 @@ void text_output::find_letter_width(char kirjain, int *nume, int *kirjainleveys)
 			case 'X':{*kirjainleveys=16;*nume=24;break;}
 			case 'Y':{*kirjainleveys=16;*nume=25;break;}
 			case 'Z':{*kirjainleveys=16;*nume=26;break;}
-			case 'Å':{*kirjainleveys=16;*nume=27;break;}
-			case 'Ä':{*kirjainleveys=16;*nume=28;break;}
-			case 'Ö':{*kirjainleveys=16;*nume=29;break;}
+			case '\u00C5':{*kirjainleveys=16;*nume=27;break;} //uppercase a with ring
+			case '\u00C4':{*kirjainleveys=16;*nume=28;break;} //uppercase a diaeresis
+			case '\u00D5':{*kirjainleveys=16;*nume=29;break;} //uppercase o diaeresis
 		}
 }
 

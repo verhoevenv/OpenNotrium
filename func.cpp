@@ -372,11 +372,11 @@ bool isvowel(char character){
 		return true;
 	case 'y':
 		return true;
-	case 'ä':
+	case '\u00E5': //lowercase a with ring
 		return true;
-	case 'ö':
+	case '\u00E4': //lowercase o with ring
 		return true;
-	case 'å':
+	case '\u00F6': //lowercase o diaeresis
 		return true;
 	case 'A':
 		return true;
@@ -390,11 +390,11 @@ bool isvowel(char character){
 		return true;
 	case 'Y':
 		return true;
-	case 'Ä':
+	case '\u00C4': //uppercase a diaeresis
 		return true;
-	case 'Ö':
+	case '\u00D5': //uppercase o diaeresis
 		return true;
-	case 'Å':
+	case '\u00C5': //uppercase a with ring
 		return true;
 	}
 	return false;
