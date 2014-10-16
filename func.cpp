@@ -1,29 +1,9 @@
 //a few fancy functions
 
-
 #include "func.h"
 #include <cstring>
 
-//#define SAFE_RELEASE(p) { if(p) { (p)->Release(); (p)=NULL; } }
-template <typename T>
-inline void SAFE_RELEASE(T*& p) {
-    if (p) {
-        p->Release();
-        p = NULL;
-    }
-}
-//#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
-template <typename T>
-inline void SAFE_DELETE_ARRAY(T*& p) {
-    if (p) {
-        delete[] p;
-        p = NULL;
-    }
-}
-
-
-inline float square( float f ) { return (f*f) ;};
-
+inline float square(float f) { return sqr(f); };
 
 /*
  * randInt

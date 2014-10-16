@@ -8,24 +8,6 @@
 #define isnan(x) _isnan(x)
 #endif
 
-//#define RELEASE(x) {if (x) {(x)->Release(); (x)=NULL;}}
-template<typename T>
-inline void RELEASE(T*& x) {
-    if (x) {
-        x->Release();
-        x = NULL;
-    }
-}
-
-//#define SAFE_DELETE_ARRAY(p) { if(p) { delete[] (p);   (p)=NULL; } }
-template<typename T>
-inline void SAFE_DELETE_ARRAY(T*& p) {
-    if (p) {
-        delete[] p;
-        p = NULL;
-    }
-}
-
 #define WM_GRAPHNOTIFY  WM_APP + 1
 
 using namespace std;

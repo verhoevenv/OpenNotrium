@@ -13,7 +13,6 @@
 #include <assert.h>
 
 
-//#define SAFE_DELETE(p) { if(p) { delete(p);   (p)=NULL; } }
 template <typename T>
 inline void SAFE_DELETE(T*& p) {
     if (p) {
@@ -22,7 +21,22 @@ inline void SAFE_DELETE(T*& p) {
     }
 }
 
-//#define sqr(p) ((p)*(p))
+template <typename T>
+inline void SAFE_DELETE_ARRAY(T*& p) {
+    if (p) {
+        delete[] p;
+        p = NULL;
+    }
+}
+
+template <typename T>
+inline void RELEASE(T*& p) {
+    if (p) {
+        p->Release();
+        p = NULL;
+    }
+}
+
 template <typename T>
 inline T sqr(const T& p) { return p*p; }
 
