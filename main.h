@@ -18,6 +18,7 @@
 #include <vector>
 #include <list>
 #include <algorithm>
+#include <cmath>
 
 #include "resource_handler.h"
 #include "entities.h"
