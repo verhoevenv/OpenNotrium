@@ -2,6 +2,7 @@
 
 #include "func.h"
 #include <cstring>
+#include <algorithm>
 
 inline float square(float f) { return sqr(f); };
 
