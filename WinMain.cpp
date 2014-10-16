@@ -4,9 +4,12 @@
 
 #include <iostream>
 
-#ifndef isnan
-#define isnan(x) _isnan(x)
-#endif
+// In C++11, isnan is a function, not a macro.
+// If your compiler fails to find std::isnan, try
+// uncommenting this or writing a less intrusive solution.
+//#if !defined(isnan) && defined(_isnan)
+//#define isnan(x) _isnan(x)
+//#endif
 
 //#define RELEASE(x) {if (x) {(x)->Release(); (x)=NULL;}}
 template<typename T>
