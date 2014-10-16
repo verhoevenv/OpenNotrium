@@ -152,7 +152,6 @@ void text_output::find_letter_width(char kirjain, int *nume, int *kirjainleveys)
 			case '/':{*kirjainleveys=14;*nume=71;break;}
 			case ':':{*kirjainleveys=8;*nume=72;break;}
 			case '\'':{*kirjainleveys=6;*nume=73;break;}
-			case 0x27:{*kirjainleveys=6;*nume=73;break;}
 			case '?':{*kirjainleveys=16;*nume=74;break;}
 			case ',':{*kirjainleveys=8;*nume=75;break;}
 			case '!':{*kirjainleveys=8;*nume=76;break;}
