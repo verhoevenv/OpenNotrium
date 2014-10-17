@@ -3,13 +3,15 @@
 #include "entities.h"
 #include "func.h"
 #include <cstring>
+#include <cmath>
 
 //#include "dxutil.h"
+
+using namespace std;
 
 //normal constructor
 map::map(int sizex,int sizey, float amount_multiplier, int climate, vector <int> terrain_types, vector <bool> no_random_terrain_types, vector <bool> do_not_place_on_map_edges, vector <bool> terrain_is_hazardous, vector <int> prop_amounts, vector <int> prop_objects, vector <int> alien_types, vector <int> alien_amounts, vector <int> alien_sides, int items_amount)
 {
-
 	int i,j;
 
 	//DXUtil_Timer(TIMER_START);

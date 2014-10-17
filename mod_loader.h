@@ -6,9 +6,6 @@
 #include <string>
 #include <vector>
 #include "resource_handler.h"
-#include "func.h"
-
-using namespace std;
 
 class Mod
 {
@@ -33,7 +30,7 @@ public:
 	};
 
 	struct object_animation_frame_base{
-		string texture_name;
+		std::string texture_name;
 		int texture;
 		float time;
 	};
@@ -41,12 +38,12 @@ public:
 	//base structure for loading object info
 	struct general_objects_base{
 		bool dead;
-		string name;
+		std::string name;
 		int identifier;
 		float vary_size;
 		//string texture_name;
 		//int texture;
-		vector <object_animation_frame_base> animation_frames;
+		std::vector <object_animation_frame_base> animation_frames;
 		float base_size;
 		int transparent;// 0,1 whether it should be transparent or not
 		int layer;//0 is below player, 2 is on top of player
@@ -67,13 +64,13 @@ public:
 		bool dead;
 
 		int identifier;
-		string name;
+		std::string name;
 		bool close_combat;
 		int particle_on_radar;
 		int AI_tactics[2];
 		int footsteps;
-		vector <int> footstep_sounds;
-		vector <string> footstep_sound_names;
+		std::vector <int> footstep_sounds;
+		std::vector <std::string> footstep_sound_names;
 		int die_after_seconds;
 		int spawn_creature;
 		int spawn_interval;
@@ -81,7 +78,7 @@ public:
 		int eat_event;//eat event -1=nothing, 0=increase health by parameter0, 1=die when eaten amount parameter0, 2=spawn new creature when eaten amount parameter0
 		float eat_parameter0;//eat parameter0
 		int texture;
-		string texture_name;
+		std::string texture_name;
 		int corpse_item;
 		int corpse_item_amount;
 		bool hide_behind_walls;
@@ -89,7 +86,7 @@ public:
 		float weight;
 		float movement_speed, minimum_movement_speed, turn_speed;
 		float leg_animation_speed;
-		//vector <int> weapons;
+		//std::vector <int> weapons;
 		int weapon;
 		//float health;
 		float weapon_x,weapon_y;//offset of weapon
@@ -104,54 +101,54 @@ public:
 		float AI_see_range;
 		float AI_see_angle;
 
-		vector <int> hit_sound;
-		vector <string> hit_sound_names;
-		vector <int> die_sound;
-		vector <string> die_sound_names;
+		std::vector <int> hit_sound;
+		std::vector <std::string> hit_sound_names;
+		std::vector <int> die_sound;
+		std::vector <std::string> die_sound_names;
 
 		struct effect_block{
-			vector <effect> effects;
-			vector <condition> conditions;
+			std::vector <effect> effects;
+			std::vector <condition> conditions;
 		};
-		vector <effect_block> eat_block;
-		vector <effect_block> hit_block;
+		std::vector <effect_block> eat_block;
+		std::vector <effect_block> hit_block;
 
 		struct death_effect_block{
 			int death_type;
-			vector <effect> effects;
-			vector <condition> conditions;
+			std::vector <effect> effects;
+			std::vector <condition> conditions;
 		};
-		vector <death_effect_block> death_block;
+		std::vector <death_effect_block> death_block;
 
 		struct timed_effect_block{
 			int interval;
-			vector <effect> effects;
-			vector <condition> conditions;
+			std::vector <effect> effects;
+			std::vector <condition> conditions;
 		};
-		vector <timed_effect_block> timed_block;
+		std::vector <timed_effect_block> timed_block;
 
-		//vector <int> immune_weapon_classes;
+		//std::vector <int> immune_weapon_classes;
 
 		//specialties
 		struct creature_specialty{
-			string description;
+			std::string description;
 			int number;
 			float parameter0;
 			float parameter1;
 			float parameter2;
 			float parameter3;
 		};
-		vector <creature_specialty> specialties;
+		std::vector <creature_specialty> specialties;
 	};
 
 	//base structure for loading weapon info
 	struct general_weapons_base{
 		bool dead;
-		string name;
+		std::string name;
 		int identifier;
 		int weapon_class;
 		int texture;
-		string texture_name;
+		std::string texture_name;
 		int bullets_at_once;
 		int stop_on_hit;
 		float size;
@@ -169,33 +166,32 @@ public:
 		int special_effect_visual_color;
 		int special_effect_visual_particle;
 		int special_effect_sound;
-		string special_effect_sound_name;
+		std::string special_effect_sound_name;
 		float spread;
 		int sound_fire;
-		string sound_fire_name;
+		std::string sound_fire_name;
 		int sound_hit;
-		string sound_hit_name;
+		std::string sound_hit_name;
 		float AI_hear_volume;
 
-		vector<condition> wield_conditions;
-		vector<effect> fire_effects;
-		vector<effect> hit_effects;
+		std::vector<condition> wield_conditions;
+		std::vector<effect> fire_effects;
+		std::vector<effect> hit_effects;
 	};
 
 
 	//for effects
 	struct effect_base{
 
-		string event_text;
-		string event_failure_text;
+		std::string event_text;
+		std::string event_failure_text;
 		int vanish_after_used;
 		int sound;
-		string sound_name;
+		std::string sound_name;
 
-		vector <effect> effects;
-		vector <condition> conditions;
+		std::vector <effect> effects;
+		std::vector <condition> conditions;
 	};
-
 
 	//base structure for loading ground info
 	struct general_climate_base{
@@ -208,14 +204,14 @@ public:
 		bool dead;
 		int identifier;
 		bool can_be_random;
-		vector<int> terrain_types;
+		std::vector<int> terrain_types;
 		float temperature[2];//0=night temperature, 1=day temperature
-		vector<int> prop_object_definition_number;
-		vector<int> prop_amount;
-		vector<int> night_sounds;
-		vector<int> day_sounds;
+		std::vector<int> prop_object_definition_number;
+		std::vector<int> prop_amount;
+		std::vector<int> night_sounds;
+		std::vector<int> day_sounds;
 		float maximum_wind_speed;
-		vector <rain_effect_base> rain_effects;
+		std::vector <rain_effect_base> rain_effects;
 		int rain_particle;
 		float rain_probability;
 		float rain_length_min,rain_length_max;
@@ -232,28 +228,25 @@ public:
 		float rain_parameter2;
 		int rain_particle_type;
 		string rain_warning;*/
-
 	};
 
 	//base structure for loading area info
 	struct general_area_special_base{
 		int identifier;
 		int area_class;
-		string name;
+		std::string name;
 		bool dead;
 		int climate_override;//-1=random climate
 		float random_item_density;
 		int wrap_type;
 		//int sizex,sizey;
 		int terrain_map_number;
-		vector<int> alien_type;
-		vector<int> alien_amount;
-		vector<int> alien_sides;
-		string on_enter_text;
-		vector<int> exclude_plot_objects;
+		std::vector<int> alien_type;
+		std::vector<int> alien_amount;
+		std::vector<int> alien_sides;
+		std::string on_enter_text;
+		std::vector<int> exclude_plot_objects;
 	};
-
-
 
 	//to load item effects
 	struct item_effect_base{
@@ -274,7 +267,7 @@ public:
 			int combines_to;
 			int combines_amount;
 		};
-		vector <combine_results_base> combine_results;
+		std::vector <combine_results_base> combine_results;
 	};
 
 	//base structure for loading item info
@@ -284,10 +277,10 @@ public:
 		int identifier;
 		int item_class;
 		float weight;
-		string texture_name;
-		string name;
-		string description;
-		string event_text;
+		std::string texture_name;
+		std::string name;
+		std::string description;
+		std::string event_text;
 		float size;
 		int show_on_radar;
 		int show_on_radar_particle;
@@ -296,19 +289,16 @@ public:
 		int wielded_script;
 		int wielded_disabling_script;
 		bool show_condition_help;
-		vector <int> wield_slots;
-		vector <item_effect_base> effects;
-		vector <combines> combinations;
+		std::vector <int> wield_slots;
+		std::vector <item_effect_base> effects;
+		std::vector <combines> combinations;
 	};
-
-
-
 
 	//base structure for loading light info
 	struct general_light_base{
 		bool dead;
 		int identifier;
-		string name;
+		std::string name;
 		int texture;
 		int type;//0=flashlight,1=omni
 		float pulsating;
@@ -318,15 +308,12 @@ public:
 		//float particle_size;
 		float particle_time;
 		float intensity;
-
-
 	};
-
 
 	//base structure for loading plot object info
 	struct plot_objects_base{
 		bool dead;
-		string name;
+		std::string name;
 		int identifier;
 		int map_type_to_place;//which map type to place to
 		int plot_object_class;
@@ -340,21 +327,19 @@ public:
 		//int clear_area;//area of no trees and rocks around this one
 		int show_on_radar;
 		int show_on_radar_particle;
-		string sound_name;
+		std::string sound_name;
 		int sound;
 		float live_time;
 		bool show_condition_help;
 
 		int trigger_event_by;
 		int trigger_event_parameter1;
-		vector <effect_base> effects;
-
-
+		std::vector <effect_base> effects;
 	};
 
 	//animation frame
 	struct animation_frame_base{
-		string text;
+		std::string text;
 		int start_x;
 		int start_y;
 		int end_x;
@@ -374,7 +359,7 @@ public:
 	struct specialty{
 		int number;
 		bool difficulty[3];
-		string message;
+		std::string message;
 		float parameter0;
 		float parameter1;
 		float parameter2;
@@ -387,14 +372,14 @@ public:
 		bool visible_in_start_menu;
 		int side;
 		int start_area;
-		string name;
-		string journal_name;
+		std::string name;
+		std::string journal_name;
 		int identifier;
 		int rag_doll;//texture for paper doll
 		float day_speed;
 		float temperature_multiplier;
 
-		string description;//description in start menu
+		std::string description;//description in start menu
 		int creature_number;//creature number in creatures.dat
 		int start_animation;//start animation number in animation.dat
 		int interface_texture;
@@ -403,12 +388,12 @@ public:
 		float maximum_carry_weight;//maximum carry weight
 		//float maximum_battery;//maximum battery
 		//float weather_damage_multiplier;//weather damage multiplier
-		vector <specialty> specialties;
+		std::vector <specialty> specialties;
 
-		vector <int> disabled_endings;
+		std::vector <int> disabled_endings;
 
-		vector <int> disabled_item_classes;
-		vector <string> disabled_item_classes_text;
+		std::vector <int> disabled_item_classes;
+		std::vector <std::string> disabled_item_classes_text;
 
 
 		struct weapon_class{
@@ -417,14 +402,14 @@ public:
 			float x, y;
 			int can_use;
 		};
-		vector <weapon_class> weapon_classes;
+		std::vector <weapon_class> weapon_classes;
 
 		struct slot_base{
 			bool active;
 			int texture;
 			float x, y;
 		};
-		vector <slot_base> slots;
+		std::vector <slot_base> slots;
 	};
 
 
@@ -439,21 +424,20 @@ public:
 			bool can_eat;
 		};
 
-		string name;
+		std::string name;
 		int identifier;
-		vector <anger_level> levels;
-
+		std::vector <anger_level> levels;
 	};
 
 	//base structure for loading side info
 	struct AI_side{
-		string name;
-		vector <bool> friend_with_side;
+		std::string name;
+		std::vector <bool> friend_with_side;
 	};
 
 	//base structure for loading bar info
 	struct bar_base{
-		string name;
+		std::string name;
 		bool dead;
 		int identifier;
 		int bar_type;
@@ -490,38 +474,35 @@ public:
 		int identifier;
 
 		int interval;
-		string name;
-		string message;
+		std::string name;
+		std::string message;
 		int message_type;
-		string sound_name;
+		std::string sound_name;
 		int sound;
 		int disable_after_first_use;
 		float delay;
 		//float timer;
 
-		vector <condition> conditions;
-		vector <effect> effects;
+		std::vector <condition> conditions;
+		std::vector <effect> effects;
 	};
-
 
 	//collision polygons
 	struct polygon_base{
-		string name;
+		std::string name;
 		int identifier;
 
-
-		vector <point2d> points;
-		vector <point2d> grown_points;
-
+		std::vector <point2d> points;
+		std::vector <point2d> grown_points;
 	};
 
 	//terrain type
 	struct terrain_type_base{
-		string name;
+		std::string name;
 		bool dead;
 		int identifier;
 
-		vector <object_animation_frame_base> terrain_frames;
+		std::vector <object_animation_frame_base> terrain_frames;
 		bool AI_avoid;
 		bool do_not_place_on_map_edges;
 		float base_r,base_g,base_b;
@@ -529,25 +510,19 @@ public:
 		float footstep_particle_time;
 		int override_footstep_particle;
 		int override_footstep_sound;
-		string override_footstep_sound_name;
+		std::string override_footstep_sound_name;
 
 		struct terrain_effect_base{
 			effect_base effect;
 			float interval;
 		};
 
-		vector <terrain_effect_base> effects;
-
-
+		std::vector <terrain_effect_base> effects;
 	};
-
-
-
-
 
 	//terrain map
 	struct terrain_map_base{
-		string name;
+		std::string name;
 		bool dead;
 		int identifier;
 
@@ -560,7 +535,7 @@ public:
 		};
 		//terrain grid
 		struct terrain_grid_row_base{
-			vector <terrain_grid_base> terrain_blocks;
+			std::vector <terrain_grid_base> terrain_blocks;
 		};
 
 		//editor placed objects
@@ -574,17 +549,17 @@ public:
 			float size;//for lights, plot_objects
 		};
 
-		vector <terrain_grid_row_base> terrain_grid;
-		vector <editor_object_base> map_objects;
+		std::vector <terrain_grid_row_base> terrain_grid;
+		std::vector <editor_object_base> map_objects;
 
 	};
 
 	//dialogs
 	struct dialog_base{
-		string name;
+		std::string name;
 		bool dead;
 		int identifier;
-		string text;
+		std::string text;
 		float duration;
 		int next_line;
 		float r,g,b;
@@ -592,65 +567,62 @@ public:
 
 	//music
 	struct music_base{
-		string name;
+		std::string name;
 		bool dead;
 		int identifier;
 		bool can_be_random;
 	};
 
+	std::vector <general_race_base> general_races;//race info from file
+	std::vector <std::string> difficulty_level_descriptions;
+	std::vector <animation_base> animations;
+	std::vector <general_light_base> general_lights;//light info from file
+	std::vector <std::string> plot_object_classes;
+	std::vector <plot_objects_base> general_plot_objects;//plot object info from file
+	std::vector <general_area_special_base> general_areas;//stores area info
+	std::vector <general_climate_base> general_climates;//area info from file
+	std::vector <general_weapons_base> general_weapons;//weapon info from file
+	std::vector <general_creatures_base> general_creatures;//creature info from file
+	std::vector <general_objects_base> general_objects;//object (trees, houses) info from file
+	std::vector <general_item_base> general_items;//item info from file
+	std::vector <AI_tactic_base> AI_tactics;//AI info from file
+	std::vector <AI_side> AI_sides;
+	std::vector <bar_base> general_bars;
+	std::vector <script> scripts;
+	std::vector <polygon_base> polygons;
+	std::vector <terrain_type_base> terrain_types;
+	std::vector <terrain_map_base> terrain_maps;
+	std::vector <dialog_base> dialogs;
+	std::vector <music_base> music;
 
-
-
-	vector <general_race_base> general_races;//race info from file
-	vector <string> difficulty_level_descriptions;
-	vector <animation_base> animations;
-	vector <general_light_base> general_lights;//light info from file
-	vector <string> plot_object_classes;
-	vector <plot_objects_base> general_plot_objects;//plot object info from file
-	vector <general_area_special_base> general_areas;//stores area info
-	vector <general_climate_base> general_climates;//area info from file
-	vector <general_weapons_base> general_weapons;//weapon info from file
-	vector <general_creatures_base> general_creatures;//creature info from file
-	vector <general_objects_base> general_objects;//object (trees, houses) info from file
-	vector <general_item_base> general_items;//item info from file
-	vector <AI_tactic_base> AI_tactics;//AI info from file
-	vector <AI_side> AI_sides;
-	vector <bar_base> general_bars;
-	vector <script> scripts;
-	vector <polygon_base> polygons;
-	vector <terrain_type_base> terrain_types;
-	vector <terrain_map_base> terrain_maps;
-	vector <dialog_base> dialogs;
-	vector <music_base> music;
-
-	string mod_name;
+	std::string mod_name;
 	debugger *debug;
 	resource_handler *resources;
 
 	void print_effect_numbers(FILE *fil);
-	void load_animation_info(const string& filename);//loads item info from file
-	void load_light_info(const string& filename);//loads light info from file
-	void load_plot_object_info(const string& filename);//loads plot object info from file
-	void load_area_info(const string& filename);//loads area info from file
-	void load_climate_info(const string& filename);//loads climate info from file
-	void load_creature_info(const string& filename);//loads creature info from file
-	void load_item_info(const string& filename);//loads object info from file
-	void load_object_info(const string& filename);//loads object info from file
-	void load_weapon_info(const string& filename);//loads weapon info from file
-	void load_race_info(const string& filename);//loads race info from file
-	void load_polygons(const string& filename);
+	void load_animation_info(const std::string& filename);//loads item info from file
+	void load_light_info(const std::string& filename);//loads light info from file
+	void load_plot_object_info(const std::string& filename);//loads plot object info from file
+	void load_area_info(const std::string& filename);//loads area info from file
+	void load_climate_info(const std::string& filename);//loads climate info from file
+	void load_creature_info(const std::string& filename);//loads creature info from file
+	void load_item_info(const std::string& filename);//loads object info from file
+	void load_object_info(const std::string& filename);//loads object info from file
+	void load_weapon_info(const std::string& filename);//loads weapon info from file
+	void load_race_info(const std::string& filename);//loads race info from file
+	void load_polygons(const std::string& filename);
 	void grow_polygon(polygon_base *temp_polygon);
-	void load_scripts(const string& filename);
-	void load_AI_info(const string& filename);//loads AI info from file
-	void load_AI_side(const string& filename);
-	void load_bars(const string& filename);
-	void load_terrain_types(const string& filename);
-	void load_terrain_maps(const string& filename);
-	void save_terrain_maps(string filename);
-	void load_dialogs(const string& filename);
-	void load_music(const string& filename);
+	void load_scripts(const std::string& filename);
+	void load_AI_info(const std::string& filename);//loads AI info from file
+	void load_AI_side(const std::string& filename);
+	void load_bars(const std::string& filename);
+	void load_terrain_types(const std::string& filename);
+	void load_terrain_maps(const std::string& filename);
+	void save_terrain_maps(std::string filename);
+	void load_dialogs(const std::string& filename);
+	void load_music(const std::string& filename);
 
-	void load_mod(const string& mod, debugger *debugger, resource_handler *resources);
+	void load_mod(const std::string& mod, debugger *debugger, resource_handler *resources);
 
     //editor();//constructor
     //~light();//destructor

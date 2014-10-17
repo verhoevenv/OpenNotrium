@@ -1,17 +1,17 @@
 #include "text_output.h"
 
+#include <cmath>
+using namespace std;
+
 void text_output::initialize_text_output(Engine *grim, resource_handler *resources, float screen_width, float screen_height){
 	this->grim=grim;
 	this->screen_width=screen_width;
 	this->screen_height=screen_height;
 	this->resources=resources;
 
-
-	message_timer[0]=0;
-	message_timer[1]=0;
-	message_timer[2]=0;
-	message_timer[3]=0;
-	message_timer[4]=0;
+	for (auto& timer : message_timer) {
+		timer=0;
+	}
 }
 
 
@@ -27,10 +27,7 @@ void text_output::write(int font, const string& text, float size, float x0,float
 
 	int rivi_korkeus=20*size;
 
-
 	if(font==-1)font=default_font;
-
-
 
 	grim->System_SetState_Blending(true);
 	if(inverse_color){
@@ -88,18 +85,15 @@ void text_output::write(int font, const string& text, float size, float x0,float
 					//newline
 					if(kirjainleveys==-1)x_cursor=rivin_pituus;
 
-
 					x_cursor+=(kirjainleveys+3)*size*0.5f;
 				}
 				sana_alku=a+1;
 				sana_loppu=a+1;
-
 			}
 		a++;
 	}
 
 	grim->Quads_End();
-
 }
 
 
@@ -199,9 +193,7 @@ int text_output::write_line(int font, float x, float y, const string& text, floa
 	float letter_width=16;
 	float letter_height=16;
 	float x_cursor=0;
-	int kirjainleveys=0;
 	float letter_x,letter_y;
-	int nume=0;
 
 	if(font==-1)font=default_font;
 
@@ -212,9 +204,10 @@ int text_output::write_line(int font, float x, float y, const string& text, floa
 	//draw the letters
 	int text_length=text.length();
 	for(int a=0;a<text_length;a++){
+		int nume=0;
+		int kirjainleveys=0;
 
 		find_letter_width(text[a],&nume,&kirjainleveys);
-
 
 		letter_x=((nume%16)*0.0625f);
 		letter_y=((int)(nume/16)*0.125f);
@@ -223,23 +216,19 @@ int text_output::write_line(int font, float x, float y, const string& text, floa
 		grim->Quads_Draw(x+x_cursor, y, letter_width*size, letter_height*size);
 
 		x_cursor+=(kirjainleveys+3)*size*0.5f;
-
 	}
 	grim->Quads_End();
 
 	return x_cursor;
-
 }
 
 
 void text_output::message(float timer, float fade_time, const string& message){
 
-	int a;
-
 	if(!accept_messages)return;
 
 	//find if this message is already in the queue
-	for(a=0;a<5;a++){
+	for(int a=0;a<5;a++){
 		//if it is, just set the time for it
 		if(message_timer[a]>0)
 		if(message==message_text[a]){
@@ -250,7 +239,7 @@ void text_output::message(float timer, float fade_time, const string& message){
 	}
 
 	//find the first free slot
-	for(a=0;a<5;a++){
+	for(int a=0;a<5;a++){
 		//put the message there
 		if(message_timer[a]<=0){
 			message_timer[a]=timer;
@@ -264,7 +253,7 @@ void text_output::message(float timer, float fade_time, const string& message){
 	//no free slot found, find slot with lowest time
 	int lowest=0;
 	float lowest_time=message_timer[0];
-	for(a=1;a<5;a++){
+	for(int a=1;a<5;a++){
 		if(message_timer[a]<lowest_time){
 			lowest_time=message_timer[a];
 			lowest=a;
@@ -274,7 +263,6 @@ void text_output::message(float timer, float fade_time, const string& message){
 	message_timer[lowest]=timer;
 	message_fade_time[lowest]=fade_time;
 	message_text[lowest]=message;
-
 }
 
 void text_output::draw_messages(float elapsed){

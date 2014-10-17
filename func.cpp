@@ -3,6 +3,9 @@
 #include "func.h"
 #include <cstring>
 #include <algorithm>
+#include <cmath>
+
+using namespace std;
 
 inline float square(float f) { return sqr(f); };
 

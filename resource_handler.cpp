@@ -1,5 +1,6 @@
 #include "resource_handler.h"
 
+using namespace std;
 
 int resource_handler::load_texture(const string& name, const string& mod_name){//loads the texture if it's unique
 
