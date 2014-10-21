@@ -1,5 +1,7 @@
 #include "editor.h"
 
+using namespace std;
+
 bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 	bool quit_editor=false;
 	grim->System_ClearScreen(0,0,0,1);

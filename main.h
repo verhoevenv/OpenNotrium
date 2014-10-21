@@ -8,10 +8,10 @@
 #pragma warning(disable: 4018)
 
 //#include <windows.h>
-#include <malloc.h>
+//#include <malloc.h>
 //#include <mmsystem.h>
-#include <stdlib.h>
-#include <stdio.h>
+#include <cstdlib>
+#include <cstdio>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -79,8 +79,8 @@ protected:
 		bool dead;
 		int identifier;
 
-		string name;
-		string texture_name;
+		std::string name;
+		std::string texture_name;
 		int texture;
 		float size;
 		float r,g,b,alpha;
@@ -89,7 +89,7 @@ protected:
 		int stop_when_hit_ground;
 		int blend_type;
 
-		list <particle> particles_list[3];
+		std::list <particle> particles_list[3];
 	};
 
 	//collision_base
@@ -100,26 +100,26 @@ protected:
 	};
 
 	//object bases
-	vector <script_info_base> script_info;//at which time the scripts were last calculated
-	vector <particle_base> particles;
+	std::vector <script_info_base> script_info;//at which time the scripts were last calculated
+	std::vector <particle_base> particles;
 
 	//name vector
 	struct name_vector{
-		vector <string> names;
-		vector <string> description;
-		vector <string> difficulty_level_descriptions;
-		vector <bool> visible;
-		vector <int> picture;
+		std::vector <std::string> names;
+		std::vector <std::string> description;
+		std::vector <std::string> difficulty_level_descriptions;
+		std::vector <bool> visible;
+		std::vector <int> picture;
 
 	};
-	vector <name_vector> race_names;
+	std::vector <name_vector> race_names;
 
 	//terrain timers
 	struct timer_base{
-		vector <float> subtype;
+		std::vector <float> subtype;
 	};
-	vector <timer_base> terrain_timers;
-	vector <timer_base> rain_effect_timers;
+	std::vector <timer_base> terrain_timers;
+	std::vector <timer_base> rain_effect_timers;
 
 	float elapsed,elapsed2,elapsed3[31];//timer for fps
 	bool perf_flag;        // Timer Selection Flag
@@ -127,9 +127,9 @@ protected:
 	long last_time;    // Previous timer value
 	float game_speed,temp_speed;
 	char temprivi[2000];//temporary char table
-	string tempstring;
+	std::string tempstring;
 	map *map_main;
-	vector <map*> map_storage;
+	std::vector <map*> map_storage;
 	float real_camera_x,real_camera_y;
 	float camera_x,camera_y;
 	bool border_visible;
@@ -145,7 +145,7 @@ protected:
 	int screen_start_x,screen_start_y,screen_end_x,screen_end_y;//which parts of the map are drawn
 	//int creature_think_distance;//how far the creatures can be until they don't think
 	//float screenshot_timer;//timer for screenshot taken text
-	string screenshot_name;//stores name for screenshot
+	std::string screenshot_name;//stores name for screenshot
 	bool quit_game;//if the game should exit on next frame
 	float creatures_checked_on;//at what time the creatures were last checked
 	float creature_visibility_checked_on;
@@ -158,7 +158,7 @@ protected:
 	bool play_sound,play_music;
 	bool can_draw_map;
 	//int closest_creatures[10];
-	vector<int> AI_thinkers;
+	std::vector<int> AI_thinkers;
 	float wind_direction_cos,wind_direction_sin;
 	int change_map_to;
 	bool transfer_enemies_when_changing_map;
@@ -170,13 +170,12 @@ protected:
 	bool show_journals;
 	bool mouse_visible;
 	int last_saved_game;
-	string last_played_mod;
-	string save_game_name;
+	std::string last_played_mod;
+	std::string save_game_name;
 	int proposed_save_game;
 	int creature_nearest_to_the_mouse;
 	bool mouse_on_item;
 	bool can_view_inventory;
-
 
 	//for collision detection
 	struct jump_point{
@@ -187,7 +186,7 @@ protected:
 
 	//mod
 	Mod mod;
-	string mod_names[20];
+	std::string mod_names[20];
 	int mods;
 	int selected_mod;
 	//string mod_name;//which one for this game
@@ -195,8 +194,8 @@ protected:
 	//menu
 	//menu item
 	struct menu_item{
-		string text;
-		string help;
+		std::string text;
+		std::string help;
 		int effect;
 		float effect_parameter;
 		float height;
@@ -225,7 +224,7 @@ protected:
 
 
 	//text viewing
-	string log_text;//stores the journal text
+	std::string log_text;//stores the journal text
 	int current_showing_entry;
 	void show_text_window(int entry_number);
 	//message recorder
@@ -235,7 +234,7 @@ protected:
 		int record_parameter0;//which day, which item
 		int record_parameter1;//which race
 	};
-	vector <journal_record> journal_records;
+	std::vector <journal_record> journal_records;
 	bool record_message(int type, int parameter0);
 
 
@@ -288,7 +287,7 @@ protected:
 		char key;
 		int item_type;
 	};
-	vector <quick_uses> quick_keys;
+	std::vector <quick_uses> quick_keys;
 	bool key_down[100];
 	bool key_down2[100];
 	bool key_clicked[100];
@@ -359,9 +358,9 @@ protected:
 	float volume_slider[2];//volumes for music and samples
 	void sound_init(void);
 	void playsound(int sample_number,float volume,float sound_x,float sound_y,float listener_x,float listener_y);//plays a sound
-	//int load_sample(string name, int samples);//loads the sample if it's unique
+	//int load_sample(std::string name, int samples);//loads the sample if it's unique
 
-	vector <int> preloaded_sounds;
+	std::vector <int> preloaded_sounds;
 	int UI_menu_click[3];
 	int UI_game_click[3];
 	//int footstep[3];
@@ -412,14 +411,14 @@ protected:
 	//int i_c(int i);//map coordinate checker
 	//int j_c(int j);//map coordinate checker
 	void fix_coordinates(float *c_x, float *c_y);//map coordinate checker
-	//void message(float timer, float fade_time, string message);//puts a message to queue
+	//void message(float timer, float fade_time, std::string message);//puts a message to queue
 	void draw_item_view(void);//draws the item view
 	void draw_text_view(void);//draws the text view
 	bool show_journal(int day, int race);
 	void draw_targeting_beam(void);
 	void arrange_item_list(bool frame_start);
 	//void AI_alien(int target, float creature_x, float creature_y, float target_x, float target_y, float distance, int creature);
-	vector<int> AI_list_thinkers(void);
+	std::vector<int> AI_list_thinkers(void);
 	void AI_find_target(int index,int *enemy_index,float *enemy_distance, int *friend_index,float *friend_distance);
 	void AI_find_behavior_model(int creature, int *behavior, float *behavior_parameter0, bool *can_shoot, bool *can_eat);
 	void AI_act_behavior_model(int creature, int behavior, float parameter0, int enemy_index, float enemy_distance, float enemy_angle, int friend_index, float friend_distance);
@@ -430,7 +429,7 @@ protected:
 	void AI_initiate_behavior_parameters(creature_base* creature);
 	void save_game(int slot);
 	void load_game(int slot);
-	void load_mod(const string& mod_name);
+	void load_mod(const std::string& mod_name);
 	void new_game(void);
 	void read_saves(void);
 	void calculate_body_temperature(void);
@@ -438,13 +437,13 @@ protected:
 	void handle_map_changed(void);
 	bool creature_will_collide(map *new_map, creature_base *creature);
 	void change_map(int move, float new_x, float new_y, bool move_enemies);
-	void combine_items(int a,int combine_item, const vector<Mod::combines::combine_results_base>& combine_results, bool discard_this, bool discard_that);
+	void combine_items(int a,int combine_item, const std::vector<Mod::combines::combine_results_base>& combine_results, bool discard_this, bool discard_that);
 	void create_maps(void);
 	//bool init_mouse(void);
 	//void deinit_mouse(void);
 	//void calculate_endings(void);
 	void calculate_weather(void);
-	void load_mod_names(const string& StartingPath);
+	void load_mod_names(const std::string& StartingPath);
 	void spawn_creature(int side, int tactic, int tactic2, float x, float y, float angle, int type, map *map);
 	void set_edges(void);
 	static int arrange_item_list_callback(const void *c, const void *d);
@@ -455,7 +454,7 @@ protected:
 	void draw_slider(void);
 	void disable_input_override(void);
 	bool race_specialty(int find_specialty, Mod::specialty *specialty);
-	vector <collision_base> list_collisions(float x1,float y1, float x2, float y2, bool only_visible_area);
+	std::vector <collision_base> list_collisions(float x1,float y1, float x2, float y2, bool only_visible_area);
 	void draw_line_map(int x1, int y1, int width, int height, const map* map_draw);
 	bool has_terrain_effect(map *map_to_edit, int terrain_type, int search_effect, Mod::effect *effect);
 	bool use_item(int general_item_number,int *item_number_in_list, Mod::effect_base effect, bool unuse, bool output, bool just_asking, bool check_slots);
@@ -468,7 +467,7 @@ protected:
 	bool check_condition(const Mod::condition& condition, const creature_base *creature, int creature_number, float x, float y, bool show_message);
 	void draw_bars(void);
 	void count_bars(void);
-	//void debug_output(string rivi, int level);
+	//void debug_output(std::string rivi, int level);
 	void calculate_scripts(void);
 	void run_script(int script_number, bool check_conditions, bool check_time);
 	void set_bar(creature_base *creature, unsigned int bar, float value);
@@ -477,9 +476,9 @@ protected:
 	bool run_plot_object(int item);
 	bool creature_collision_detection(creature_base *creature, const map_object *object, bool correct_place);
 	bool point_will_collide(map *new_map, float x, float y, bool only_ones_that_stop_bullets);
-	vector <point2d> line_will_collide(float x1, float y1, float x2, float y2, bool return_on_first, bool avoid_terrain, bool only_ones_that_hinder_visibility, bool only_ones_that_stop_bullets, int check_area, bool check_props, bool check_plot_objects);
-	vector <point2d> line_hazardous_terrain(float x1, float y1, float x2, float y2);
-	vector <point2d> line_collision_detection(float x1, float y1, float x2, float y2,map_object *object,bool return_on_first);
+	std::vector <point2d> line_will_collide(float x1, float y1, float x2, float y2, bool return_on_first, bool avoid_terrain, bool only_ones_that_hinder_visibility, bool only_ones_that_stop_bullets, int check_area, bool check_props, bool check_plot_objects);
+	std::vector <point2d> line_hazardous_terrain(float x1, float y1, float x2, float y2);
+	std::vector <point2d> line_collision_detection(float x1, float y1, float x2, float y2,map_object *object,bool return_on_first);
 	bool creature_in_object(const creature_base *creature, const map_object *object);
 	bool point_in_object(float x, float y, const map_object *object);
 	void start_map_editor(void);
@@ -508,22 +507,22 @@ public:
 	//HINSTANCE hInst;
 
 	struct inventory_base{
-		vector <item_list_object> player_items;
-		vector <int> slot_used_by;
+		std::vector <item_list_object> player_items;
+		std::vector <int> slot_used_by;
 	};
-	vector <inventory_base> inventory;
+	std::vector <inventory_base> inventory;
 	int active_inventory;
-	vector <bool> seen_item_text;//if the player has already seen the text associated with an object
-	vector <bool> seen_plot_object_text;//if the player has already seen the text associated with an object
+	std::vector <bool> seen_item_text;//if the player has already seen the text associated with an object
+	std::vector <bool> seen_plot_object_text;//if the player has already seen the text associated with an object
 
     game_engine();
     ~game_engine();
 
 	//void print_effect_numbers(FILE *fil);
-	//void load_item_info(string filename);//loads item info from file
+	//void load_item_info(std::string filename);//loads item info from file
 
-	void load_particles(const string& filename);
-	void load_sounds(const string& filename);
+	void load_particles(const std::string& filename);
+	void load_sounds(const std::string& filename);
 
 	bool cfg_load(void);
 	void initialize_game(void);//initialize game variables
@@ -551,10 +550,10 @@ public:
 	void calculate_particles(void);
 	void draw_particles(int layer);//draws particles
 	void draw_mouse(int cursor, float hot_spot_x, float hot_spot_y, float r, float g, float b);//draws mouse
-	void Screenshot(string& screenshot_name);
-	void GetScreenshotFileName(string& FileName);
+	void Screenshot(std::string& screenshot_name);
+	void GetScreenshotFileName(std::string& FileName);
 	//void kirjain(char kirjain, int *nume, int *kirjainleveys);
-	//int tekstaa(float x, float y, string text,float size);
+	//int tekstaa(float x, float y, std::string text,float size);
 	bool give_item(int item_number, int amount, float time, bool arrange);
 
 };

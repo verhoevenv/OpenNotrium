@@ -2,16 +2,14 @@
 #ifndef FUNCTIONS_LIBRARY
 #define FUNCTIONS_LIBRARY
 
-#include <stdio.h>
+#include <cstdio>
 //#include <windows.h>
-#include <math.h>
 #include <string>
 #include <vector>
 
-#include <stdlib.h>
-#include <time.h>
-#include <assert.h>
-
+#include <cstdlib>
+#include <ctime>
+#include <cassert>
 
 template <typename T>
 inline void SAFE_DELETE(T*& p) {
@@ -40,8 +38,6 @@ inline void RELEASE(T*& p) {
 template <typename T>
 inline T sqr(const T& p) { return p*p; }
 
-using namespace std;
-
 class debugger;
 
 const float pi = 3.1415926535897932384626433832795f;
@@ -55,31 +51,31 @@ char *stripped_fgets(char *s, int n, FILE *f);
 bool strtobool(const char* rivi);
 void random_name(const char* creature_name);//give the given monk a random name
 void find_texture_coordinates(int slot,float *x0,float *y0,float *x1,float *y1,int slots_per_texture);
-string FloatToText(float n, int nNumberOfDecimalPlaces);
+std::string FloatToText(float n, int nNumberOfDecimalPlaces);
 bool isvowel(char character);
 /*float minimum(float a, float b);
 float maximum(float a, float b);*/
 
 //string tokenizer
 template <typename Container>
-void stringtok (Container &container, const string& in,
+void stringtok (Container &container, const std::string& in,
            const char * const delimiters = " \t\n")
 {
-    const string::size_type len = in.length();
-          string::size_type i = 0;
+    const std::string::size_type len = in.length();
+          std::string::size_type i = 0;
 
     while ( i < len )
     {
         // eat leading whitespace
         i = in.find_first_not_of (delimiters, i);
-        if (i == string::npos)
+        if (i == std::string::npos)
             return;   // nothing left but white space
 
         // find the end of the token
-        string::size_type j = in.find_first_of (delimiters, i);
+        std::string::size_type j = in.find_first_of (delimiters, i);
 
         // push token
-        if (j == string::npos) {
+        if (j == std::string::npos) {
             container.push_back (in.substr(i));
             return;
         } else
@@ -100,15 +96,13 @@ float x1, float y1 ,
 float x2, float y2 ,
 float x3, float y3 , float r );
 
-
-
 class debugger
 {
     protected:
         int debug_level[2];
     public:
         int debug_state[2];
-        void debug_output(const string& rivi, int level, int type);
+        void debug_output(const std::string& rivi, int level, int type);
         debugger();
 };
 
