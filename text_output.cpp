@@ -128,9 +128,9 @@ void text_output::find_letter_width(char kirjain, int *nume, int *kirjainleveys)
 			case 'x':{*kirjainleveys=16;*nume=53;break;}
 			case 'y':{*kirjainleveys=16;*nume=54;break;}
 			case 'z':{*kirjainleveys=16;*nume=55;break;}
-			case '\u00E5':{*kirjainleveys=16;*nume=56;break;} //lowercase a with ring
-			case '\u00E4':{*kirjainleveys=16;*nume=57;break;} //lowercase a diaeresis
-			case '\u00F6':{*kirjainleveys=16;*nume=58;break;} //lowercase o diaeresis
+			case '\xE5':{*kirjainleveys=16;*nume=56;break;} //lowercase a with ring
+			case '\xE4':{*kirjainleveys=16;*nume=57;break;} //lowercase a diaeresis
+			case '\xF6':{*kirjainleveys=16;*nume=58;break;} //lowercase o diaeresis
 			case '0':{*kirjainleveys=16;*nume=59;break;}
 			case '1':{*kirjainleveys=8;*nume=60;break;}
 			case '2':{*kirjainleveys=16;*nume=61;break;}
@@ -181,9 +181,9 @@ void text_output::find_letter_width(char kirjain, int *nume, int *kirjainleveys)
 			case 'X':{*kirjainleveys=16;*nume=24;break;}
 			case 'Y':{*kirjainleveys=16;*nume=25;break;}
 			case 'Z':{*kirjainleveys=16;*nume=26;break;}
-			case '\u00C5':{*kirjainleveys=16;*nume=27;break;} //uppercase a with ring
-			case '\u00C4':{*kirjainleveys=16;*nume=28;break;} //uppercase a diaeresis
-			case '\u00D5':{*kirjainleveys=16;*nume=29;break;} //uppercase o diaeresis
+			case '\xC5':{*kirjainleveys=16;*nume=27;break;} //uppercase a with ring
+			case '\xC4':{*kirjainleveys=16;*nume=28;break;} //uppercase a diaeresis
+			case '\xD5':{*kirjainleveys=16;*nume=29;break;} //uppercase o diaeresis
 		}
 }
 
