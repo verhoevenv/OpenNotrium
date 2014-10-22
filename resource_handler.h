@@ -10,20 +10,17 @@
 #include <vector>
 //#include "DSUtil.h"
 #include "soundmanager.h"
-using namespace std;
-
 
 #define maximum_samples 200//how many samples can be loaded
 
 class resource_handler;
 
-
 class resource_handler
 {
 protected:
 	struct texture_handling_primitive_base{
-		string texture_name;
-		string mod_name;
+		std::string texture_name;
+		std::string mod_name;
 		int texture_handle_in_grim;
 		float last_used;
 	};
@@ -35,11 +32,11 @@ protected:
 	int high_texture_count;
 	int textures_count;
 
-	vector <texture_handling_primitive_base> textures;
-	int load_texture_in_grim(const char* name, const string& mod_name);
+	std::vector <texture_handling_primitive_base> textures;
+	int load_texture_in_grim(const char* name, const std::string& mod_name);
 	SoundManager* g_pSoundManager;
-	string sample_name[maximum_samples];
-	string sample_name_mod[maximum_samples];
+	std::string sample_name[maximum_samples];
+	std::string sample_name_mod[maximum_samples];
 	bool play_sound;
 	bool sound_initialized;
 
@@ -49,8 +46,8 @@ public:
 	SoundSample*        sample[maximum_samples];
 	float system_time;
 
-	int load_texture(const string& name, const string& mod_name);
-	int load_sample(const string& name, int samples, const string& mod_name);//loads the sample if it's unique
+	int load_texture(const std::string& name, const std::string& mod_name);
+	int load_sample(const std::string& name, int samples, const std::string& mod_name);//loads the sample if it's unique
 	void unload_unneeded_textures(bool unload_all);
 
 	void Texture_Set(int number);

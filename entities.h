@@ -5,7 +5,6 @@
 //#include <windows.h>
 #include <vector>
 #include <list>
-using namespace std;
 
 class map;
 class map_object;
@@ -48,7 +47,7 @@ public:
 	int from_creature;//which creature shot this
 
     bullet();//constructor
-    //~light();//destructor
+    ~bullet() = default;//destructor
 };
 
 //map
@@ -59,8 +58,8 @@ protected:
 	struct grid_point{
 		int terrain_type;//terrain type
 		//int total_objects;//how many objects are on this grid
-		vector <int> objects;//list the objects that are here
-		vector <int> items;//list the items that are here
+		std::vector <int> objects;//list the objects that are here
+		std::vector <int> items;//list the items that are here
 		int total_creatures;//how many objects are on this grid
 		float light_rgb[3];//light, r g b
 		int creatures[20];//list the creatures that are here
@@ -76,17 +75,17 @@ protected:
 
 
 public:
-	map(int sizex,int sizey, float amount_multiplier, int climate, vector <int> terrain_types, vector <bool> no_random_terrain_types, vector <bool> do_not_place_on_map_edges, vector <bool> terrain_is_hazardous, vector <int> prop_amounts, vector <int> prop_objects, vector <int> alien_types, vector <int> alien_amounts, vector <int> alien_sides,int items_amount);//constructor
+	map(int sizex,int sizey, float amount_multiplier, int climate, std::vector <int> terrain_types, std::vector <bool> no_random_terrain_types, std::vector <bool> do_not_place_on_map_edges, std::vector <bool> terrain_is_hazardous, std::vector <int> prop_amounts, std::vector <int> prop_objects, std::vector <int> alien_types, std::vector <int> alien_amounts, std::vector <int> alien_sides,int items_amount);//constructor
     map(int sizex,int sizey, int creatures_amount, int objects_amount, int items_amount, int climate);//constructor for loading
     ~map();//destructor
 
 	int sizex,sizey;//map size
 	row *grid;//map tiles
-	vector <map_object> object;//map objects
-	vector <creature_base> creature;//creatures
-	vector <light> lights;//lighting effects
-	list <bullet> bullets;//bullets
-	vector <item> items;
+	std::vector <map_object> object;//map objects
+	std::vector <creature_base> creature;//creatures
+	std::vector <light> lights;//lighting effects
+	std::list <bullet> bullets;//bullets
+	std::vector <item> items;
 	int climate_number;//what climate type this map has
 	int area_type;
 	float wind_speed;
@@ -101,9 +100,9 @@ public:
 	float time1;
 	float time2;
 
-	void generate_map(float amount_multiplier, const vector<int>& terrain_types, const vector<bool>& no_random_terrain_types,
-                   const vector<bool>& do_not_place_on_map_edges, const vector<bool>& terrain_is_hazardous, const vector<int>& prop_amounts,
-                   const vector<int>& prop_objects, const vector<int>& alien_types, const vector<int>& alien_amounts, const vector<int>& alien_sides);//generates the map
+	void generate_map(float amount_multiplier, const std::vector<int>& terrain_types, const std::vector<bool>& no_random_terrain_types,
+                   const std::vector<bool>& do_not_place_on_map_edges, const std::vector<bool>& terrain_is_hazardous, const std::vector<int>& prop_amounts,
+                   const std::vector<int>& prop_objects, const std::vector<int>& alien_types, const std::vector<int>& alien_amounts, const std::vector<int>& alien_sides);//generates the map
 	void check_creatures(void);//checks on which squares the creatures are on
 	int create_light(float x, float y, int type, float size, float r, float g, float b, float a, float time);//sets in a light
 	void initialize_items(void);//initializes the map
@@ -143,7 +142,6 @@ class creature_base
 protected:
 
 public:
-
 
 	float x,y,x2,y2;
 	float vx,vy;//for pushing
@@ -229,7 +227,6 @@ public:
 	float backward_forward_speed,turn_speed;//movement
 	//bool sneak;//move slower
 
-
 	void die(void);
 
     creature_base();//constructor
@@ -277,7 +274,6 @@ public:
 	//int type;//which type it is
 	float rotate;
 	//int layer;
-
 };
 
 //item

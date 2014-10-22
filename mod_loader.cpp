@@ -1,8 +1,11 @@
 #include "mod_loader.h"
 
+#include <cmath>
+#include "func.h"
+
+using namespace std;
 
 void Mod::print_effect_numbers(FILE *fil){
-
 
 	fprintf(fil, "//effect numbers:\n");
 	fprintf(fil, "0=nothing\n");
@@ -120,7 +123,6 @@ void Mod::load_item_info(const string& filename){//loads object info from file
 
 	FILE *fil;
 	char rivi[2000];
-
 
 	general_items.clear();
 	//seen_item_text.clear();
