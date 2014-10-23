@@ -184,6 +184,7 @@ void text_output::find_letter_width(char kirjain, int *nume, int *kirjainleveys)
 			case '\xC5':{*kirjainleveys=16;*nume=27;break;} //uppercase a with ring
 			case '\xC4':{*kirjainleveys=16;*nume=28;break;} //uppercase a diaeresis
 			case '\xD5':{*kirjainleveys=16;*nume=29;break;} //uppercase o diaeresis
+			default: find_letter_width('?', nume, kirjainleveys);
 		}
 }
 
