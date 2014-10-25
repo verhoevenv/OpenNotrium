@@ -6418,7 +6418,7 @@ void game_engine::draw_pop_up(void){
 	pop_up_y=(768-256)*y_multiplier;
 
 	bool accept_mouse_input=true;//for disabling the right button when the mode changes
-	
+
 	//int mahtuu=6; // (unused)
 
 	//additional info box
@@ -10453,7 +10453,7 @@ void game_engine::render_credits(void){
 	grim->Quads_SetColor(1,1,1,1);
 	text_manager.write_line(font,147/1024.0f*screen_width,68/768.0f*screen_height,"Notrium "+game_version,3/1024.0f*screen_width);
 
-	string credits("Developed by: Ville M\u00F6nkk\u00F6nen \\ In association with: Michael Quigley aka Quanrian \\ Music by: Kush Diarra  \\ Based on design by: Mikko Tikkanen \\ Using Grim 2D graphics engine \\ \\ Beta crew: \\ Robbie BT aka ZeXLR8er!! \\ Sergio Enriquez aka Torment aka Casanova \\ Nick Atherley aka Eternal \\ Carl S. aka Click \\ \\ \\ Press enter to continue");
+	string credits("Developed by: Ville M\xF6nkk\xF6nen \\ In association with: Michael Quigley aka Quanrian \\ Music by: Kush Diarra  \\ Based on design by: Mikko Tikkanen \\ Using Grim 2D graphics engine \\ \\ Beta crew: \\ Robbie BT aka ZeXLR8er!! \\ Sergio Enriquez aka Torment aka Casanova \\ Nick Atherley aka Eternal \\ Carl S. aka Click \\ \\ \\ Press enter to continue");
 
 
 
@@ -11566,7 +11566,7 @@ void game_engine::render_menu(void){
 	//version
 	grim->System_SetState_Blending(true);
 	grim->Quads_SetColor(1,1,1,1);
-	text_manager.write_line(font,2/1024.0f*screen_width,747/768.0f*screen_height,"Copyright 2005 Ville M\u00F6nkk\u00F6nen    Version "+game_version,1/1024.0f*screen_width);
+	text_manager.write_line(font,2/1024.0f*screen_width,747/768.0f*screen_height,"Copyright 2005 Ville M\xF6nkk\xF6nen    Version "+game_version,1/1024.0f*screen_width);
 
 	//text_manager.write_line(font,13/1024.0f*screen_width,600/768.0f*screen_height,"TEST VERSION - DO NOT DISTRIBUTE",3/1024.0f*screen_width);
 	//text_manager.write_line(font,13/1024.0f*screen_width,650/768.0f*screen_height,"Remember to take screenshots!",3/1024.0f*screen_width);
