@@ -137,7 +137,6 @@ void Engine::System_Initiate(const char *argv0){
                           SDL_WINDOWPOS_UNDEFINED,
                           width, height,
                           flags);
-    //System_SetState_Title(title); // WAT
 
     if( window == nullptr ) {
         exit(1);
@@ -311,12 +310,10 @@ void Engine::System_Shutdown(){
 
 void Engine::System_GrabInput(){
     SDL_SetRelativeMouseMode(SDL_TRUE);
-    //SDL_WM_GrabInput(SDL_GRAB_ON);
 }
 
 void Engine::System_ReleaseInput(){
     SDL_SetRelativeMouseMode(SDL_FALSE);
-    //SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
 bool Engine::System_SetRenderTarget(int tex_id){
@@ -497,11 +494,10 @@ void Engine::Quads_SetSubset(float tl_u, float tl_v, float br_u, float br_v){
 }
 
 void Engine::Quads_Begin(){
-    //nothing? Perhaps reinit of stuff or something?
+    // nop
 }
 void Engine::Quads_End(){
-    // glFlush only has to be called once per frame
-    //glFlush();
+    // nop
 }
 
 void Engine::Quads_Draw(float x, float y, float width, float height){
