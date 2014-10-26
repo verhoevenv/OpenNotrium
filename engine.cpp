@@ -314,18 +314,21 @@ bool Engine::System_SetRenderTarget(int tex_id){
     //copy the current buffer to the previous render target
     EngineTexture* tex = &textures[render_target];
     glBindTexture( GL_TEXTURE_2D, tex->opengl_id );
-    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 0, 0, tex->width, tex->height, 0);
+    glCopyTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 0, 0, tex->width, tex->height, 0);
     tex->draw_flipped = true;
 
     //set up the correct stuff for rendering to the new target
     tex = &textures[tex_id];
+	glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0,0,tex->width,tex->height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glOrtho(0, tex->width, tex->height, 0, -2, 2);
     glMatrixMode(GL_MODELVIEW);
 
+
     //restore state?
+	System_SetState_Blending(false);
     Texture_Set(tex_id);
     Quads_SetColor(1,1,1,1);
     Quads_Begin();
