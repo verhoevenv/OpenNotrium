@@ -10458,7 +10458,7 @@ void game_engine::render_credits(void){
 
 
 	grim->Quads_SetColor(1,1,1,1);
-	text_manager.write(font,credits,1.6f/1024.0f*screen_width,263/1024.0f*screen_width,(193)/768.0f*screen_height,screen_width,screen_height,true,1,1,1,1);
+	text_manager.write(font,credits,1.6f/1024.0f*screen_width,263/1024.0f*screen_width,(193)/768.0f*screen_height,screen_width,screen_height,false,0,0,0,1);
 	text_manager.write(font,credits,1.6f/1024.0f*screen_width,266/1024.0f*screen_width,(196)/768.0f*screen_height,screen_width,screen_height,false,1,1,1,1);
 
 
