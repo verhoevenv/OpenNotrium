@@ -2,29 +2,28 @@ cmake_minimum_required(VERSION 2.6)
 
 project(OpenNotrium)
 
+set(CMAKE_MODULE_PATH "${CMAKE_MODULE_PATH};${CMAKE_SOURCE_DIR}")
+
 find_package(OpenGL REQUIRED)
+find_package(SDL2 2.0 REQUIRED)
+find_package(SDL2_mixer 2.0 REQUIRED)
+find_package(SDL2_image 2.0 REQUIRED)
 find_package(PhysFS REQUIRED)
-
-INCLUDE(FindPkgConfig)
-PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
-
-PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
-PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
-PKG_SEARCH_MODULE(SDL2MIXER REQUIRED SDL2_mixer>=2.0.0)
+find_package(PhysFS REQUIRED)
 
 file(GLOB OpenNotrium_sources *.cpp)
 
 include_directories(
-    ${SDL2_INCLUDE_DIRS}
-    ${SDL2MIXER_INCLUDE_DIRS}
-    ${SDL2IMAGE_INCLUDE_DIRS}
+    ${SDL2_INCLUDE_DIR}
+    ${SDL2_MIXER_INCLUDE_DIRS}
+    ${SDL2_IMAGE_INCLUDE_DIRS}
     ${PHYSFS_INCLUDE_DIR})
 
 link_libraries(
     ${OPENGL_LIBRARY}
-    ${SDL2_LIBRARIES}
-    ${SDL2MIXER_LIBRARIES}
-    ${SDL2IMAGE_LIBRARIES}
+    ${SDL2_LIBRARY}
+    ${SDL2_MIXER_LIBRARIES}
+    ${SDL2_IMAGE_LIBRARIES}
     ${PHYSFS_LIBRARY})
 
 # Add C++11 support flags to GCC
