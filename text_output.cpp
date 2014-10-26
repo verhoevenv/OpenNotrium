@@ -16,7 +16,7 @@ void text_output::initialize_text_output(Engine *grim, resource_handler *resourc
 
 
 //renders text
-void text_output::write(int font, const string& text, float size, float x0,float y0, float x1, float y1, bool inverse_color, float r, float g, float b, float alpha){
+void text_output::write(int font, const string& text, float size, float x0,float y0, float x1, float y1, float r, float g, float b, float alpha){
 
 	float letter_width=16;
 	float letter_height=16;
@@ -30,14 +30,8 @@ void text_output::write(int font, const string& text, float size, float x0,float
 	if(font==-1)font=default_font;
 
 	grim->System_SetState_Blending(true);
-	if(inverse_color){
-		grim->System_SetState_BlendSrc(grBLEND_INVSRCALPHA);
-		grim->System_SetState_BlendDst(grBLEND_INVSRCALPHA);
-	}
-	else{
-		grim->System_SetState_BlendSrc(grBLEND_SRCALPHA);
-		grim->System_SetState_BlendDst(grBLEND_INVSRCALPHA);
-	}
+	grim->System_SetState_BlendSrc(grBLEND_SRCALPHA);
+	grim->System_SetState_BlendDst(grBLEND_INVSRCALPHA);
 
 	grim->Quads_SetColor(r,g,b,alpha);
 
@@ -277,7 +271,7 @@ void text_output::draw_messages(float elapsed){
 			float fade=message_timer[a]/message_fade_time[a];
 			if(fade>1)fade=1;
 			if(fade<0)fade=0;
-			write(default_font,message_text[a],1.3f,20, 20+rivi*20,screen_width-60,screen_height,false,1,1,1,fade);
+			write(default_font,message_text[a],1.3f,20, 20+rivi*20,screen_width-60,screen_height,1,1,1,fade);
 			rivi++;
 		}
 	}
