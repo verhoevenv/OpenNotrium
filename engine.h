@@ -36,7 +36,8 @@ public:
 
 class Engine
 {
-    const char* title;
+    SDL_Window* window;
+    SDL_GLContext glcontext;
     int width,height,bpp;
     bool fullscreen;
     float clear_r,clear_g,clear_b,clear_a;
@@ -78,6 +79,9 @@ class Engine
 public:
     Engine();
 
+    /// no engine copying
+    Engine(const Engine& other) = delete;
+
     /**
     * Save a screenshot in BMP format, under the given filename.
     * I think it's supposed to be a relative pathname
@@ -104,7 +108,7 @@ public:
 	void System_SetState_ScreenHeight(int h);
 	void System_SetState_ScreenBPP(int bpp);
 	void System_SetState_Title(const char* title);
-	
+
 	void System_GrabInput();
 	void System_ReleaseInput();
 

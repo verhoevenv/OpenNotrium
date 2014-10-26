@@ -1,23 +1,22 @@
 #include "engine.h"
-#include "SDL_opengl.h"
-#include "SDL_image.h"
-
+#include <SDL.h>
+#include <SDL_image.h>
+#include "func.h"
 #include "physfs.h"
 
-Engine::Engine() {
-    ignoreMouseMotion = 2; //blergh
+Engine::Engine()
+:   window(nullptr)
+,   glcontext(0)
+,   width(640), height(480), bpp(32)
+,   fullscreen(false)
+,   ignoreMouseMotion(2) // ...
+,   clear_a(0), clear_r(0), clear_g(0), clear_b(0)
+,   blend_src(grBLEND_SRCALPHA)
+,   blend_dst(grBLEND_INVSRCALPHA)
+,   freeSlotInList(false)
+,   currtexture(0) {
 
-    width = 640;
-    height = 480;
-    bpp = 32;
-    fullscreen = false;
-
-    freeSlotInList = false;
     //perhaps this stuff should go into startframe?
-    currtexture = 0;
-    clear_a = clear_r = clear_g = clear_b = 0;
-    blend_src = grBLEND_SRCALPHA;
-    blend_dst = grBLEND_INVSRCALPHA;
     for(int i=0;i<4;i++){
         vertex_r[i] = 1;
         vertex_g[i] = 1;
@@ -41,7 +40,8 @@ void Engine::System_Start(){
     while(running) {
         startFrame();
         running = (*framefunc)();
-        SDL_GL_SwapBuffers();
+        glFlush();
+        SDL_GL_SwapWindow(window);
 
         //mousewheel is a bit weird
         mousestate.lZ = 0;
@@ -55,6 +55,7 @@ void Engine::System_Start(){
             switch( event.type ) {
             case SDL_QUIT:
                 running = false;
+                break;
             case SDL_KEYDOWN:
                 //key = event.key.keysym.sym;
                 keys_clicked.insert(event.key.keysym.sym);
@@ -71,12 +72,6 @@ void Engine::System_Start(){
                 case SDL_BUTTON_MIDDLE:
                     mousestate.btn_middle = true;
                     break;
-                case SDL_BUTTON_WHEELDOWN:
-                    mousestate.lZ += -1;
-                    break;
-                case SDL_BUTTON_WHEELUP:
-                    mousestate.lZ += 1;
-                    break;
                 }
                 break;
             case SDL_MOUSEBUTTONUP:
@@ -92,6 +87,13 @@ void Engine::System_Start(){
                     break;
                 }
                 break;
+            case SDL_MOUSEWHEEL:
+                if (event.wheel.y > 0) { // wheel up
+                    mousestate.lZ += 1;
+                } else if (event.wheel.y < 0) { // wheel down
+                    mousestate.lZ -= 1;
+                }
+                break;
             case SDL_MOUSEMOTION:
                 if(ignoreMouseMotion > 0){
                     ignoreMouseMotion--;
@@ -100,16 +102,13 @@ void Engine::System_Start(){
                     mousestate.lY = event.motion.yrel;
                 }
                 break;
-            case SDL_ACTIVEEVENT:
-                if(event.active.state & SDL_APPINPUTFOCUS){
-                    //might need to recreate opengl context here?
-                    if(event.active.gain){
-                        if(focusgainedfunc)
-                            (*focusgainedfunc)();
-                    } else {
-                        if(focuslostfunc)
-                            (*focuslostfunc)();
-                    }
+            case SDL_WINDOWEVENT:
+                if (event.window.event == SDL_WINDOWEVENT_FOCUS_GAINED) {
+                    if (focusgainedfunc)
+                        (*focusgainedfunc)();
+                } else if (event.window.event == SDL_WINDOWEVENT_FOCUS_LOST) {
+                    if (focuslostfunc)
+                        (*focuslostfunc)();
                 }
                 break;
             }
@@ -121,7 +120,6 @@ void Engine::System_Initiate(const char *argv0){
     if ( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) < 0 ) {
         exit(1);
     }
-    System_SetState_Title(title);
 
     /* Set the minimum requirements for the OpenGL window */
     SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 5 );
@@ -130,18 +128,27 @@ void Engine::System_Initiate(const char *argv0){
     SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, 16 );
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 
-    Uint32 flags = SDL_OPENGL;
+    Uint32 flags = SDL_WINDOW_OPENGL;
     if(fullscreen)
-        flags |= SDL_FULLSCREEN;
+        flags |= SDL_WINDOW_FULLSCREEN;
 
-    if( SDL_SetVideoMode( width, height, bpp, flags ) == 0 ) {
+    this->window = SDL_CreateWindow("Notrium",
+                          SDL_WINDOWPOS_UNDEFINED,
+                          SDL_WINDOWPOS_UNDEFINED,
+                          width, height,
+                          flags);
+    //System_SetState_Title(title); // WAT
+
+    if( window == nullptr ) {
         exit(1);
     }
+
+    this->glcontext = SDL_GL_CreateContext(window);
 
     System_GrabInput();
 
 	PHYSFS_init(argv0);
-	PHYSFS_setSaneConfig("monkkonen","notrium",NULL,0,0); //Perhaps we should allow packages here. Not now.
+	PHYSFS_setSaneConfig("monkkonen","notrium",nullptr,0,0); //Perhaps we should allow packages here. Not now.
 
     setup_opengl();
     startFrame();
@@ -169,7 +176,6 @@ void Engine::setup_opengl()
     glEnable(GL_TEXTURE_2D);
 
     //TODO: probably need to recreate textures here and do other context recreation stuff
-
 
     if(Texture_Create("EngineMainTarget",width,height))
         mainTarget = Texture_Get("EngineMainTarget");
@@ -236,9 +242,12 @@ void Engine::ShowCursor(bool state){
 }
 
 bool Engine::Key_Down(Key key){
-    Uint8* keys = SDL_GetKeyState(NULL);
-    return keys[key];
+    // Note: SDL_GetKeyboardState provides scan code indexed state,
+    // rather than keycode indexed (hence the conversion)
+    const Uint8* keys = SDL_GetKeyboardState(NULL);
+    return keys[SDL_GetScancodeFromKey(key)];
 }
+
 bool Engine::Key_Click(Key key){
     std::set<Key>::iterator it = keys_clicked.find(key);
     return it != keys_clicked.end();
@@ -257,6 +266,7 @@ void Engine::System_SetState_BlendSrc(BlendState state){
     blend_src = state;
     glBlendFunc(blend_src, blend_dst);
 }
+
 void Engine::System_SetState_BlendDst(BlendState state){
     blend_dst = state;
     glBlendFunc(blend_src, blend_dst);
@@ -291,20 +301,22 @@ void Engine::System_SetState_ScreenBPP(int bits){
 }
 
 void Engine::System_SetState_Title(const char* newtitle){
-    title = newtitle;
-    SDL_WM_SetCaption(title, NULL);
+    SDL_SetWindowTitle(this->window, newtitle);
 }
 
 void Engine::System_Shutdown(){
+    SDL_GL_DeleteContext(glcontext);
     SDL_Quit();
 }
 
 void Engine::System_GrabInput(){
-    SDL_WM_GrabInput(SDL_GRAB_ON);
+    SDL_SetRelativeMouseMode(SDL_TRUE);
+    //SDL_WM_GrabInput(SDL_GRAB_ON);
 }
 
 void Engine::System_ReleaseInput(){
-    SDL_WM_GrabInput(SDL_GRAB_OFF);
+    SDL_SetRelativeMouseMode(SDL_FALSE);
+    //SDL_WM_GrabInput(SDL_GRAB_OFF);
 }
 
 bool Engine::System_SetRenderTarget(int tex_id){
@@ -469,7 +481,7 @@ int Engine::createNewTexture(const std::string& name, int width, int height){
 
 void Engine::Quads_SetRotation(float angle){
     //glRotate needs to be called after glTranslate to define local rotation, so store it for now.
-    rotate_angle = angle * 180 / 3.14159265358979323846f;
+    rotate_angle = angle * 180 / pi;
 }
 
 void Engine::Quads_SetColor(float r, float g, float b, float a){
@@ -488,7 +500,8 @@ void Engine::Quads_Begin(){
     //nothing? Perhaps reinit of stuff or something?
 }
 void Engine::Quads_End(){
-    glFlush();
+    // glFlush only has to be called once per frame
+    //glFlush();
 }
 
 void Engine::Quads_Draw(float x, float y, float width, float height){

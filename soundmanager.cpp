@@ -1,5 +1,7 @@
 #include "soundmanager.h"
 
+#include <SDL.h>
+
 bool SoundManager::Create(SoundSample** dest, const char *filename)
 {
     *dest = new SoundSample(filename, samplefreq, bytespersample);
