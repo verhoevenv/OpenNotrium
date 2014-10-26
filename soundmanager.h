@@ -1,8 +1,7 @@
 #ifndef __SOUNDMANAGER_H__
 #define __SOUNDMANAGER_H__
 
-#include "SDL.h"
-#include "SDL_mixer.h"
+#include <SDL_mixer.h>
 
 class SoundSample
 {

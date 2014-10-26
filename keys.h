@@ -3,7 +3,7 @@
 
 #include "SDL.h"
 
-typedef SDLKey Key;
+typedef SDL_Keycode Key;
 
 #define KEY_ESCAPE SDLK_ESCAPE
 #define KEY_RETURN SDLK_RETURN
@@ -70,7 +70,7 @@ typedef SDLKey Key;
 #define KEY_F10 SDLK_F10
 #define KEY_F11 SDLK_F11
 #define KEY_F12 SDLK_F12
-#define KEY_PRINT SDLK_PRINT
+#define KEY_PRINT SDLK_PRINTSCREEN
 
 #define KEY_KP_ADD SDLK_KP_PLUS
 #define KEY_KP_SUBTRACT SDLK_KP_MINUS
