@@ -1,6 +1,7 @@
 //1433
 //#include "..\grim_api\grim.h"
 #include "main.h"
+#include "credits.h"
 
 #include <iostream>
 
@@ -26,7 +27,7 @@ float movement_speed=0.35f;
 
 int general_creature_size=64;
 int general_object_size=128;
-string game_version="1.3.4.1";
+const string game_version= GAME_VERSION; //"1.3.4.1";
 #define AI_ANGER_REDUCE_SPEED 2.0f
 #define AI_ANGER_INCREASE_SPEED 1.0f
 #define CREATURE_FADE_OUT_SPEED 0.01f
@@ -10449,18 +10450,29 @@ void game_engine::render_credits(void){
 
 	grim->System_SetState_Blending(true);
 	grim->Quads_SetColor(0,0,0,1);
-	text_manager.write_line(font,144/1024.0f*screen_width,65/768.0f*screen_height,"Notrium "+game_version,3/1024.0f*screen_width);
+	const auto title = "Open Notrium " GAME_VERSION;
+	text_manager.write_line(font,144/1024.0f*screen_width,49/768.0f*screen_height, title, 3/1024.0f*screen_width);
 	grim->Quads_SetColor(1,1,1,1);
-	text_manager.write_line(font,147/1024.0f*screen_width,68/768.0f*screen_height,"Notrium "+game_version,3/1024.0f*screen_width);
+	text_manager.write_line(font,147/1024.0f*screen_width,52/768.0f*screen_height, title, 3/1024.0f*screen_width);
 
-	string credits("Developed by: Ville M\xF6nkk\xF6nen \\ In association with: Michael Quigley aka Quanrian \\ Music by: Kush Diarra  \\ Based on design by: Mikko Tikkanen \\ Using Grim 2D graphics engine \\ \\ Beta crew: \\ Robbie BT aka ZeXLR8er!! \\ Sergio Enriquez aka Torment aka Casanova \\ Nick Atherley aka Eternal \\ Carl S. aka Click \\ \\ \\ Press enter to continue");
-
-
+	const string credits("\\ Contributors: \\"
+                CONTRIBUTORS " \\"
+                " \\ Based on Notrium " GAME_ORIGINAL_VERSION " \\"
+                " Developed by: Ville M\xF6nkk\xF6nen \\"
+                " In association with: Michael Quigley aka Quanrian \\"
+                " Music by: Kush Diarra  \\"
+                " Based on design by: Mikko Tikkanen \\"
+                " Using Simple Directmedia Layer graphics engine \\"
+                " \\ Beta crew: \\"
+                " Robbie BT aka ZeXLR8er!! \\"
+                " Sergio Enriquez aka Torment aka Casanova \\"
+                " Nick Atherley aka Eternal \\"
+                " Carl S. aka Click \\ \\"
+                " Press enter to continue");
 
 	grim->Quads_SetColor(1,1,1,1);
-	text_manager.write(font,credits,1.6f/1024.0f*screen_width,263/1024.0f*screen_width,(193)/768.0f*screen_height,screen_width,screen_height,0,0,0,1);
-	text_manager.write(font,credits,1.6f/1024.0f*screen_width,266/1024.0f*screen_width,(196)/768.0f*screen_height,screen_width,screen_height,1,1,1,1);
-
+	text_manager.write(font,credits,1.5f/1024.0f*screen_width,263/1024.0f*screen_width,100.f/768.0f*screen_height,screen_width,screen_height,0,0,0,1);
+	text_manager.write(font,credits,1.5f/1024.0f*screen_width,266/1024.0f*screen_width,103.f/768.0f*screen_height,screen_width,screen_height,1,1,1,1);
 
 
 	//return to menu
@@ -11566,7 +11578,7 @@ void game_engine::render_menu(void){
 	//version
 	grim->System_SetState_Blending(true);
 	grim->Quads_SetColor(1,1,1,1);
-	text_manager.write_line(font,2/1024.0f*screen_width,747/768.0f*screen_height,"Copyright 2005 Ville M\xF6nkk\xF6nen    Version "+game_version,1/1024.0f*screen_width);
+	text_manager.write_line(font,2/1024.0f*screen_width,747/768.0f*screen_height, COPYRIGHT " Version "+game_version,1/1024.0f*screen_width);
 
 	//text_manager.write_line(font,13/1024.0f*screen_width,600/768.0f*screen_height,"TEST VERSION - DO NOT DISTRIBUTE",3/1024.0f*screen_width);
 	//text_manager.write_line(font,13/1024.0f*screen_width,650/768.0f*screen_height,"Remember to take screenshots!",3/1024.0f*screen_width);
