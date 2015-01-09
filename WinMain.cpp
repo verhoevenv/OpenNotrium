@@ -10450,7 +10450,7 @@ void game_engine::render_credits(void){
 
 	grim->System_SetState_Blending(true);
 	grim->Quads_SetColor(0,0,0,1);
-	const auto title = "Open Notrium " GAME_VERSION;
+	const auto title = "OpenNotrium " GAME_VERSION;
 	text_manager.write_line(font,144/1024.0f*screen_width,49/768.0f*screen_height, title, 3/1024.0f*screen_width);
 	grim->Quads_SetColor(1,1,1,1);
 	text_manager.write_line(font,147/1024.0f*screen_width,52/768.0f*screen_height, title, 3/1024.0f*screen_width);
