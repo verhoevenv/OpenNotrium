@@ -4,6 +4,7 @@
 #include "func.h"
 
 using namespace std;
+using namespace Debugger;
 
 void Mod::print_effect_numbers(FILE *fil){
 
@@ -119,7 +120,7 @@ void Mod::print_effect_numbers(FILE *fil){
 
 
 void Mod::load_item_info(const string& filename){//loads object info from file
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -134,7 +135,7 @@ void Mod::load_item_info(const string& filename){//loads object info from file
 		general_item_base temp_item;
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//object name
 			temp_item.name=rivi;
-			debug->debug_output("Load "+temp_item.name,1,0);
+			debug->debug_output("Load "+temp_item.name,Action::START,Logfile::STARTUP);
 
 			temp_item.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));//identifier
 			temp_item.item_class=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
@@ -256,14 +257,14 @@ void Mod::load_item_info(const string& filename){//loads object info from file
 
 
 
-			debug->debug_output("Load "+temp_item.name,0,0);
+			debug->debug_output("Load "+temp_item.name,Action::END,Logfile::STARTUP);
 		}
 	}
 
 	fclose(fil);
 
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 
 
 	//save
@@ -366,7 +367,7 @@ void Mod::load_item_info(const string& filename){//loads object info from file
 
 
 void Mod::load_object_info(const string& filename){//loads object info from file
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[800];
@@ -462,7 +463,7 @@ void Mod::load_object_info(const string& filename){//loads object info from file
 	}
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 
 
 
@@ -514,7 +515,7 @@ void Mod::load_object_info(const string& filename){//loads object info from file
 
 
 void Mod::load_creature_info(const string& filename){//loads object info from file
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -527,7 +528,7 @@ void Mod::load_creature_info(const string& filename){//loads object info from fi
 		general_creatures_base temp_creature;
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//object name
 			temp_creature.name=rivi;
-			debug->debug_output("Load "+temp_creature.name,1,0);
+			debug->debug_output("Load "+temp_creature.name,Action::START,Logfile::STARTUP);
 
 			temp_creature.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_creature.creature_class=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
@@ -768,13 +769,13 @@ void Mod::load_creature_info(const string& filename){//loads object info from fi
 			general_creatures[temp_creature.identifier]=temp_creature;
 
 
-			debug->debug_output("Load "+temp_creature.name,0,0);
+			debug->debug_output("Load "+temp_creature.name,Action::END,Logfile::STARTUP);
 		}
 	}
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,false,0);
+	debug->debug_output("Load file " + filename,Action::END,Logfile::STARTUP);
 
 
 	//save
@@ -1021,7 +1022,7 @@ void Mod::load_creature_info(const string& filename){//loads object info from fi
 
 
 void Mod::load_weapon_info(const string& filename){//loads object info from file
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -1035,7 +1036,7 @@ void Mod::load_weapon_info(const string& filename){//loads object info from file
 		weapon_class_names=stripped_fgets(rivi,sizeof(rivi),fil);
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//object name
 			temp_weapon.name=rivi;
-			debug->debug_output("Load "+temp_weapon.name,1,0);
+			debug->debug_output("Load "+temp_weapon.name,Action::START,Logfile::STARTUP);
 
 			temp_weapon.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_weapon.weapon_class=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
@@ -1129,14 +1130,14 @@ void Mod::load_weapon_info(const string& filename){//loads object info from file
 			temp_weapon.dead=false;
 			general_weapons[temp_weapon.identifier]=temp_weapon;
 
-			debug->debug_output("Load "+temp_weapon.name,0,0);
+			debug->debug_output("Load "+temp_weapon.name,Action::END,Logfile::STARTUP);
 
 		}
 	}
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 
 
 
@@ -1233,7 +1234,7 @@ void Mod::load_weapon_info(const string& filename){//loads object info from file
 
 
 void Mod::load_climate_info(const string& filename){//loads climate info from file
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -1249,7 +1250,7 @@ void Mod::load_climate_info(const string& filename){//loads climate info from fi
 			//tempstring+=itoa(temp_climate.identifier,temprivi,10);
 			sprintf(temprivi,"%d",temp_climate.identifier);
 			tempstring += temprivi;
-			debug->debug_output(tempstring,1,0);
+			debug->debug_output(tempstring,Action::START,Logfile::STARTUP);
 
 			temp_climate.can_be_random=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
 
@@ -1362,18 +1363,18 @@ void Mod::load_climate_info(const string& filename){//loads climate info from fi
 			//tempstring+=itoa(temp_climate.identifier,temprivi,10);
 			sprintf(temprivi,"%d",temp_climate.identifier);
 			tempstring+=temprivi;
-			debug->debug_output(tempstring,0,0);
+			debug->debug_output(tempstring,Action::END,Logfile::STARTUP);
 		}
 	}
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 
 void Mod::load_area_info(const string& filename){//loads area info from file
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -1387,7 +1388,7 @@ void Mod::load_area_info(const string& filename){//loads area info from file
 
 			temp_area.identifier=atoi(rivi);
 			temp_area.name=stripped_fgets(rivi,sizeof(rivi),fil);
-			debug->debug_output("Load "+temp_area.name,1,0);
+			debug->debug_output("Load "+temp_area.name,Action::START,Logfile::STARTUP);
 			temp_area.area_class=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 
 
@@ -1430,19 +1431,19 @@ void Mod::load_area_info(const string& filename){//loads area info from file
 			temp_area.dead=false;
 			general_areas[temp_area.identifier]=temp_area;
 
-			debug->debug_output("Load "+temp_area.name,0,0);
+			debug->debug_output("Load "+temp_area.name,Action::END,Logfile::STARTUP);
 
 		}
 	}
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 
 void Mod::load_light_info(const string& filename){//loads light info from file
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[800];
@@ -1487,11 +1488,11 @@ void Mod::load_light_info(const string& filename){//loads light info from file
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 void Mod::load_plot_object_info(const string& filename){//loads object info from file
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -1513,7 +1514,7 @@ void Mod::load_plot_object_info(const string& filename){//loads object info from
 		plot_objects_base temp_object;
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//object name
 			temp_object.name=rivi;
-			debug->debug_output("Load "+temp_object.name,1,0);
+			debug->debug_output("Load "+temp_object.name,Action::START,Logfile::STARTUP);
 
 			temp_object.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_object.map_type_to_place=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
@@ -1590,7 +1591,7 @@ void Mod::load_plot_object_info(const string& filename){//loads object info from
 			general_plot_objects[temp_object.identifier]=temp_object;
 			//seen_plot_object_text[temp_object.identifier]=false;
 
-			debug->debug_output("Load "+temp_object.name,0,0);
+			debug->debug_output("Load "+temp_object.name,Action::END,Logfile::STARTUP);
 		}
 	}
 
@@ -1598,7 +1599,7 @@ void Mod::load_plot_object_info(const string& filename){//loads object info from
 	fclose(fil);
 
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 
 
 	//save
@@ -1688,7 +1689,7 @@ void Mod::load_plot_object_info(const string& filename){//loads object info from
 
 
 void Mod::load_animation_info(const string& filename){//loads object info from file
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -1728,13 +1729,13 @@ void Mod::load_animation_info(const string& filename){//loads object info from f
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 
 
 void Mod::load_race_info(const string& filename){//loads race info from file
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -1753,7 +1754,7 @@ void Mod::load_race_info(const string& filename){//loads race info from file
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//name
 
 			temp_race.name=rivi;
-			debug->debug_output("Load "+temp_race.name,1,0);
+			debug->debug_output("Load "+temp_race.name,Action::START,Logfile::STARTUP);
 
 			temp_race.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_race.visible_in_start_menu=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
@@ -1879,17 +1880,17 @@ void Mod::load_race_info(const string& filename){//loads race info from file
 			temp_race.dead=false;
 			general_races[temp_race.identifier]=temp_race;
 
-			debug->debug_output("Load "+temp_race.name,0,0);
+			debug->debug_output("Load "+temp_race.name,Action::END,Logfile::STARTUP);
 		}
 	}
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 void Mod::load_polygons(const string& filename){//loads polygon info from file
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -1901,7 +1902,7 @@ void Mod::load_polygons(const string& filename){//loads polygon info from file
 		polygon_base temp_polygon;
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//name
 			temp_polygon.name=rivi;
-			debug->debug_output("Load "+temp_polygon.name,1,0);
+			debug->debug_output("Load "+temp_polygon.name,Action::START,Logfile::STARTUP);
 			temp_polygon.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 
 			//points
@@ -1924,13 +1925,13 @@ void Mod::load_polygons(const string& filename){//loads polygon info from file
 			}
 			polygons[temp_polygon.identifier]=temp_polygon;
 
-			debug->debug_output("Load "+temp_polygon.name,0,0);
+			debug->debug_output("Load "+temp_polygon.name,Action::END,Logfile::STARTUP);
 		}
 	}
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 void Mod::grow_polygon(polygon_base *temp_polygon){
@@ -1969,7 +1970,7 @@ void Mod::grow_polygon(polygon_base *temp_polygon){
 
 
 void Mod::load_scripts(const string& filename){
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -1982,7 +1983,7 @@ void Mod::load_scripts(const string& filename){
 		script temp_script;
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//object name
 			temp_script.name=rivi;
-			debug->debug_output("Load "+temp_script.name,1,0);
+			debug->debug_output("Load "+temp_script.name,Action::START,Logfile::STARTUP);
 
 			temp_script.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_script.run_without_calling=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
@@ -2039,18 +2040,18 @@ void Mod::load_scripts(const string& filename){
 			scripts[temp_script.identifier]=temp_script;
 			//scripts_calculated_on[temp_script.identifier]=randDouble(0,temp_script.interval*0.001f);
 
-			debug->debug_output("Load "+temp_script.name,0,0);
+			debug->debug_output("Load "+temp_script.name,Action::END,Logfile::STARTUP);
 		}
 	}
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 
 }
 
 void Mod::load_AI_side(const string& filename){//loads AI info from file
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -2105,12 +2106,12 @@ void Mod::load_AI_side(const string& filename){//loads AI info from file
 	}
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 
 void Mod::load_bars(const string& filename){//loads bar info from file
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -2124,7 +2125,7 @@ void Mod::load_bars(const string& filename){//loads bar info from file
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//name
 			temp_bar.name=rivi;
 
-			debug->debug_output("Load "+temp_bar.name,1,0);
+			debug->debug_output("Load "+temp_bar.name,Action::START,Logfile::STARTUP);
 
 			temp_bar.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_bar.bar_type=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
@@ -2164,21 +2165,21 @@ void Mod::load_bars(const string& filename){//loads bar info from file
 			general_bars[temp_bar.identifier]=temp_bar;
 
 
-			debug->debug_output("Load "+temp_bar.name,0,0);
+			debug->debug_output("Load "+temp_bar.name,Action::END,Logfile::STARTUP);
 
 		}
 	}
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 
 
 
 void Mod::load_AI_info(const string& filename){//loads AI info from file
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -2190,7 +2191,7 @@ void Mod::load_AI_info(const string& filename){//loads AI info from file
 		AI_tactic_base temp_tactic;
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//name
 			temp_tactic.name=rivi;
-			debug->debug_output("Load "+temp_tactic.name,1,0);
+			debug->debug_output("Load "+temp_tactic.name,Action::START,Logfile::STARTUP);
 
 			temp_tactic.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 
@@ -2219,18 +2220,18 @@ void Mod::load_AI_info(const string& filename){//loads AI info from file
 
 			AI_tactics.push_back(temp_tactic);
 
-			debug->debug_output("Load "+temp_tactic.name,0,0);
+			debug->debug_output("Load "+temp_tactic.name,Action::END,Logfile::STARTUP);
 		}
 	}
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 
 void Mod::load_terrain_types(const string& filename){
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -2242,7 +2243,7 @@ void Mod::load_terrain_types(const string& filename){
 		terrain_type_base temp_terrain;
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//name
 			temp_terrain.name=rivi;
-			debug->debug_output("Load "+temp_terrain.name,1,0);
+			debug->debug_output("Load "+temp_terrain.name,Action::START,Logfile::STARTUP);
 
 			temp_terrain.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_terrain.AI_avoid=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
@@ -2324,13 +2325,13 @@ void Mod::load_terrain_types(const string& filename){
 
 			//terrain_types.push_back(temp_terrain);
 
-			debug->debug_output("Load "+temp_terrain.name,0,0);
+			debug->debug_output("Load "+temp_terrain.name,Action::END,Logfile::STARTUP);
 		}
 	}
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 
 
 
@@ -2415,7 +2416,7 @@ void Mod::load_terrain_types(const string& filename){
 
 
 void Mod::load_terrain_maps(const string& filename){
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -2427,7 +2428,7 @@ void Mod::load_terrain_maps(const string& filename){
 		terrain_map_base temp_map;
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//name
 			temp_map.name=rivi;
-			debug->debug_output("Load "+temp_map.name,1,0);
+			debug->debug_output("Load "+temp_map.name,Action::START,Logfile::STARTUP);
 
 			temp_map.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			/* int x = */ atoi(stripped_fgets(rivi,sizeof(rivi),fil));
@@ -2488,13 +2489,13 @@ void Mod::load_terrain_maps(const string& filename){
 			terrain_maps[temp_map.identifier]=temp_map;
 
 
-			debug->debug_output("Load "+temp_map.name,0,0);
+			debug->debug_output("Load "+temp_map.name,Action::END,Logfile::STARTUP);
 		}
 	}
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 
@@ -2502,7 +2503,7 @@ void Mod::save_terrain_maps(string filename){
 
 	if(filename=="")filename="data/"+mod_name+"/terrain_maps.dat";
 
-	debug->debug_output("Save file "+filename,1,0);
+	debug->debug_output("Save file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 
@@ -2567,12 +2568,12 @@ void Mod::save_terrain_maps(string filename){
 
 	fclose(fil);
 
-	debug->debug_output("Save file "+filename,0,0);
+	debug->debug_output("Save file "+filename,Action::END,Logfile::STARTUP);
 }
 
 
 void Mod::load_dialogs(const string& filename){
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -2584,7 +2585,7 @@ void Mod::load_dialogs(const string& filename){
 		dialog_base temp_dialog;
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//name
 			temp_dialog.name=rivi;
-			debug->debug_output("Load "+temp_dialog.name,1,0);
+			debug->debug_output("Load "+temp_dialog.name,Action::START,Logfile::STARTUP);
 
 			temp_dialog.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_dialog.text=stripped_fgets(rivi,sizeof(rivi),fil);
@@ -2603,18 +2604,18 @@ void Mod::load_dialogs(const string& filename){
 			temp_dialog.dead=false;
 			dialogs[temp_dialog.identifier]=temp_dialog;
 
-			debug->debug_output("Load "+temp_dialog.name,0,0);
+			debug->debug_output("Load "+temp_dialog.name,Action::END,Logfile::STARTUP);
 		}
 	}
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 
 void Mod::load_music(const string& filename){
-	debug->debug_output("Load file "+filename,1,0);
+	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -2625,8 +2626,6 @@ void Mod::load_music(const string& filename){
 	if(fil){
 		music_base temp_music;
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//name
-
-			//debug->debug_output("Load "+temp_dialog.name,1,0);
 
 			temp_music.identifier=atoi(rivi);
 			temp_music.name=stripped_fgets(rivi,sizeof(rivi),fil);
@@ -2640,14 +2639,12 @@ void Mod::load_music(const string& filename){
 			}
 			temp_music.dead=false;
 			music[temp_music.identifier]=temp_music;
-
-			//debug->debug_output("Load "+temp_dialog.name,0,0);
 		}
 	}
 
 	fclose(fil);
 
-	debug->debug_output("Load file "+filename,0,0);
+	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 void Mod::load_mod(const string& mod, debugger *debugger, resource_handler *resources){
