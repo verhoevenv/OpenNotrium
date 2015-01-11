@@ -132,7 +132,7 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 			//itoa((int)(mouse_controls.mousey+camera_y)/grid_size_zoom,temprivi,10);
 			sprintf(temprivi,"%d",static_cast<int>((mouse_controls.mousey+camera_y)/grid_size_zoom));
 			coordinates+=temprivi;
-			text_manager->write(-1,coordinates,1,20,screen_height-100+60,screen_width,screen_height,false,1,1,1,1);
+			text_manager->write(-1,coordinates,1,20,screen_height-100+60,screen_width,screen_height,1,1,1,1);
 
 			//clone map
 			if(grim->Key_Click(KEY_F8)){
@@ -258,7 +258,7 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 	}
 	//show help text
 	else if(show_help){
-		text_manager->write(-1,"F1=help \\ F2=show terrain palette \\ F3=show item palette \\ F4=show plot_object palette \\ F5=show creature palette \\ F6=show light palette \\ F7=show props palette \\ F8=clone map \\ F9=clear map \\ F11=new map \\ F12=save changes \\ Z,X=change edited map \\ A,D=rotate object (slow turn=left shift, fast turn=left control) \\ W,S=change object's parameter \\ HOME/END=change map size \\ DELETE/PAGEDOWN=change map size / delete selected objects \\ Right mouse button=pick up object \\ Left mouse button=drop object / select multiple \\ F=flood fill terrain / bring object to front",1,20,20,screen_width,screen_height,false,1,1,1,1);
+		text_manager->write(-1,"F1=help \\ F2=show terrain palette \\ F3=show item palette \\ F4=show plot_object palette \\ F5=show creature palette \\ F6=show light palette \\ F7=show props palette \\ F8=clone map \\ F9=clear map \\ F11=new map \\ F12=save changes \\ Z,X=change edited map \\ A,D=rotate object (slow turn=left shift, fast turn=left control) \\ W,S=change object's parameter \\ HOME/END=change map size \\ DELETE/PAGEDOWN=change map size / delete selected objects \\ Right mouse button=pick up object \\ Left mouse button=drop object / select multiple \\ F=flood fill terrain / bring object to front",1,20,20,screen_width,screen_height,1,1,1,1);
 	}
 
 	if(quit_editor) return false;
@@ -645,7 +645,7 @@ void Editor::draw_selector(float elapsed, mouse_control_base mouse_controls){//r
 	if(name_info!=""){
 		float x=mouse_controls.mousex+20;
 		if(x>screen_width-256)x=screen_width-256;
-		text_manager->write(-1,name_info,1,x,mouse_controls.mousey,screen_width,screen_height,false,1,1,1,1);
+		text_manager->write(-1,name_info,1,x,mouse_controls.mousey,screen_width,screen_height,1,1,1,1);
 	}
 
 	if(grim->Key_Down(KEY_UP)||(mouse_controls.mousey<=1)||(mouse_controls.mouse_wheel>0)){
@@ -1059,8 +1059,8 @@ void Editor::object_draw(Mod::terrain_map_base::editor_object_base *object, floa
 	//info text
 	if(text_info){
 		grim->Quads_SetRotation(0);
-		text_manager->write(-1,name,1,text_x,text_y,screen_width,screen_height,false,1,1,1,1);
-		text_manager->write(-1,info,1,text_x,text_y+20,screen_width,screen_height,false,1,1,1,1);
+		text_manager->write(-1,name,1,text_x,text_y,screen_width,screen_height,1,1,1,1);
+		text_manager->write(-1,info,1,text_x,text_y+20,screen_width,screen_height,1,1,1,1);
 
 		float turn_speed=0.002f;
 		if(grim->Key_Down(KEY_LSHIFT))

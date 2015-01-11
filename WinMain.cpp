@@ -1,6 +1,7 @@
 //1433
 //#include "..\grim_api\grim.h"
 #include "main.h"
+#include "credits.h"
 
 #include <iostream>
 
@@ -26,7 +27,7 @@ float movement_speed=0.35f;
 
 int general_creature_size=64;
 int general_object_size=128;
-string game_version="1.3.4.1";
+const string game_version= GAME_VERSION; //"1.3.4.1";
 #define AI_ANGER_REDUCE_SPEED 2.0f
 #define AI_ANGER_INCREASE_SPEED 1.0f
 #define CREATURE_FADE_OUT_SPEED 0.01f
@@ -312,7 +313,7 @@ bool game_engine::Frame(void)
 
 
 
-			text_manager.write(font,"Loading...",1.7f,20, 20,0,0,false,1,1,1,1);
+			text_manager.write(font,"Loading...",1.7f,20, 20,0,0,1,1,1,1);
 			game_state=2;
 			return true;
 			break;
@@ -919,7 +920,7 @@ void game_engine::render_map(void){//renders game map
 	if(key_f9&&!key_f92)
 		if(pop_up_mode==1){
 			draw_loading_screen();
-			text_manager.write(font,"Loading game...",1.7f,20, 20,0,0,false,1,1,1,1);
+			text_manager.write(font,"Loading game...",1.7f,20, 20,0,0,1,1,1,1);
 			game_state=6;
 			load_slot=0;
 			return;
@@ -2145,7 +2146,7 @@ void game_engine::draw_map_creatures(int layer){//draws the creatures
 						grim->Quads_SetRotation(0);
 						float text_x=-camera_x+creature_x+size*0.8f+5;
 						float text_y=-camera_y+creature_y+size*0.5f-6;
-						text_manager.write(-1,mod.dialogs[map_main->creature[creature].dialog].text,1,text_x,text_y,text_x+300,screen_height-10,false,mod.dialogs[map_main->creature[creature].dialog].r,mod.dialogs[map_main->creature[creature].dialog].g,mod.dialogs[map_main->creature[creature].dialog].b,1);
+						text_manager.write(-1,mod.dialogs[map_main->creature[creature].dialog].text,1,text_x,text_y,text_x+300,screen_height-10,mod.dialogs[map_main->creature[creature].dialog].r,mod.dialogs[map_main->creature[creature].dialog].g,mod.dialogs[map_main->creature[creature].dialog].b,1);
 					}
 				}
 			}
@@ -6810,7 +6811,7 @@ void game_engine::draw_pop_up(void){
 
 			//map name
 			if(show_map_name!=""){
-				text_manager.write(font,show_map_name,1*x_multiplier,pop_up_x+(24+3)*x_multiplier, pop_up_y+(32+3)*y_multiplier,screen_width,screen_height,false,0.8f,1.0f,0.8f,0.9f);
+				text_manager.write(font,show_map_name,1*x_multiplier,pop_up_x+(24+3)*x_multiplier, pop_up_y+(32+3)*y_multiplier,screen_width,screen_height,0.8f,1.0f,0.8f,0.9f);
 			}
 		}
 	}
@@ -6884,7 +6885,7 @@ void game_engine::draw_pop_up(void){
 		}
 		grim->Quads_End();
 
-		text_manager.write(font,add_info,1*x_multiplier,pop_up_x+(teksti_alku_x)*x_multiplier,pop_up_y+(teksti_alku_y-183)*y_multiplier,pop_up_x+(teksti_loppu_x-15)*x_multiplier,pop_up_y+(teksti_loppu_y-183-30)*y_multiplier,false,0.8f,1.0f,0.8f,1);
+		text_manager.write(font,add_info,1*x_multiplier,pop_up_x+(teksti_alku_x)*x_multiplier,pop_up_y+(teksti_alku_y-183)*y_multiplier,pop_up_x+(teksti_loppu_x-15)*x_multiplier,pop_up_y+(teksti_loppu_y-183-30)*y_multiplier,0.8f,1.0f,0.8f,1);
 		//text_manager.write(font,"aaaa fawe fwe ",0.7f,pop_up_x+teksti_alku_x,pop_up_y+teksti_alku_y+50,pop_up_x+teksti_loppu_x,pop_up_y+teksti_loppu_y,true,1,1,1);
 	}
 }
@@ -9463,7 +9464,7 @@ void game_engine::draw_item_view(void){
 				/*grim->Quads_SetColor(0.8f,1,0.8f,1);
 				text_manager.write_line(font,item_dialog_x+250, item_dialog_y+55, "Inventory:",1.5f);*/
 				grim->Quads_SetColor(1,1,1,1);
-				text_manager.write(font,"To use an item, select it, then press the U-key. \\   To combine an item with another item, click the item from the list, then click on the item you want to combine it with. \\   To break down an item, select it from the list and press B-key. \\   To drop an item, select it from the list, then press D-key.",1,item_dialog_x+250+right_line,item_dialog_y+55,screen_width-130,screen_height,false,1,1,1,0.8f);
+				text_manager.write(font,"To use an item, select it, then press the U-key. \\   To combine an item with another item, click the item from the list, then click on the item you want to combine it with. \\   To break down an item, select it from the list and press B-key. \\   To drop an item, select it from the list, then press D-key.",1,item_dialog_x+250+right_line,item_dialog_y+55,screen_width-130,screen_height,1,1,1,0.8f);
 			}
 
 
@@ -9622,7 +9623,7 @@ void game_engine::draw_item_view(void){
 						grim->Quads_Draw(item_dialog_x+410, item_dialog_y+300, 100, 100);
 					grim->Quads_End();
 
-					text_manager.write(font,mod.general_items[item_description].description,1,item_dialog_x+250+right_line,item_dialog_y+85+30,screen_width-130,screen_height,false,1,1,1,0.8f);
+					text_manager.write(font,mod.general_items[item_description].description,1,item_dialog_x+250+right_line,item_dialog_y+85+30,screen_width-130,screen_height,1,1,1,0.8f);
 				}
 			}
 
@@ -9943,7 +9944,7 @@ void game_engine::draw_text_view(void){
 		vertical_place=50;
 
 	//draw the text
-	text_manager.write(font,log_text,1,item_dialog_x+80, item_dialog_y+vertical_place,screen_width-120,screen_height,false,1,1,1,1);
+	text_manager.write(font,log_text,1,item_dialog_x+80, item_dialog_y+vertical_place,screen_width-120,screen_height,1,1,1,1);
 
 
 	//log entry number
@@ -10383,7 +10384,7 @@ void game_engine::render_animation(void){
 	grim->Quads_End();
 
 
-	text_manager.write(font,mod.animations[animation_playing_number].frame[animation_frame_current-1].text,1.7f/1024.0f*screen_width,100/1024.0f*screen_width,mod.animations[animation_playing_number].frame[animation_frame_current-1].text_y/768.0f*screen_height,800/1024.0f*screen_width,screen_height,false,1,1,1,1);
+	text_manager.write(font,mod.animations[animation_playing_number].frame[animation_frame_current-1].text,1.7f/1024.0f*screen_width,100/1024.0f*screen_width,mod.animations[animation_playing_number].frame[animation_frame_current-1].text_y/768.0f*screen_height,800/1024.0f*screen_width,screen_height,1,1,1,1);
 
 
 	//advance frames
@@ -10449,18 +10450,29 @@ void game_engine::render_credits(void){
 
 	grim->System_SetState_Blending(true);
 	grim->Quads_SetColor(0,0,0,1);
-	text_manager.write_line(font,144/1024.0f*screen_width,65/768.0f*screen_height,"Notrium "+game_version,3/1024.0f*screen_width);
+	const auto title = "OpenNotrium " GAME_VERSION;
+	text_manager.write_line(font,144/1024.0f*screen_width,49/768.0f*screen_height, title, 3/1024.0f*screen_width);
 	grim->Quads_SetColor(1,1,1,1);
-	text_manager.write_line(font,147/1024.0f*screen_width,68/768.0f*screen_height,"Notrium "+game_version,3/1024.0f*screen_width);
+	text_manager.write_line(font,147/1024.0f*screen_width,52/768.0f*screen_height, title, 3/1024.0f*screen_width);
 
-	string credits("Developed by: Ville M\xF6nkk\xF6nen \\ In association with: Michael Quigley aka Quanrian \\ Music by: Kush Diarra  \\ Based on design by: Mikko Tikkanen \\ Using Grim 2D graphics engine \\ \\ Beta crew: \\ Robbie BT aka ZeXLR8er!! \\ Sergio Enriquez aka Torment aka Casanova \\ Nick Atherley aka Eternal \\ Carl S. aka Click \\ \\ \\ Press enter to continue");
-
-
+	const string credits("\\ Contributors: \\"
+                CONTRIBUTORS " \\"
+                " \\ Based on Notrium " GAME_ORIGINAL_VERSION " \\"
+                " Developed by: Ville M\xF6nkk\xF6nen \\"
+                " In association with: Michael Quigley aka Quanrian \\"
+                " Music by: Kush Diarra  \\"
+                " Based on design by: Mikko Tikkanen \\"
+                " Using Simple Directmedia Layer graphics engine \\"
+                " \\ Beta crew: \\"
+                " Robbie BT aka ZeXLR8er!! \\"
+                " Sergio Enriquez aka Torment aka Casanova \\"
+                " Nick Atherley aka Eternal \\"
+                " Carl S. aka Click \\ \\"
+                " Press enter to continue");
 
 	grim->Quads_SetColor(1,1,1,1);
-	text_manager.write(font,credits,1.6f/1024.0f*screen_width,263/1024.0f*screen_width,(193)/768.0f*screen_height,screen_width,screen_height,true,1,1,1,1);
-	text_manager.write(font,credits,1.6f/1024.0f*screen_width,266/1024.0f*screen_width,(196)/768.0f*screen_height,screen_width,screen_height,false,1,1,1,1);
-
+	text_manager.write(font,credits,1.5f/1024.0f*screen_width,263/1024.0f*screen_width,100.f/768.0f*screen_height,screen_width,screen_height,0,0,0,1);
+	text_manager.write(font,credits,1.5f/1024.0f*screen_width,266/1024.0f*screen_width,103.f/768.0f*screen_height,screen_width,screen_height,1,1,1,1);
 
 
 	//return to menu
@@ -11566,7 +11578,7 @@ void game_engine::render_menu(void){
 	//version
 	grim->System_SetState_Blending(true);
 	grim->Quads_SetColor(1,1,1,1);
-	text_manager.write_line(font,2/1024.0f*screen_width,747/768.0f*screen_height,"Copyright 2005 Ville M\xF6nkk\xF6nen    Version "+game_version,1/1024.0f*screen_width);
+	text_manager.write_line(font,2/1024.0f*screen_width,747/768.0f*screen_height, COPYRIGHT " Version "+game_version,1/1024.0f*screen_width);
 
 	//text_manager.write_line(font,13/1024.0f*screen_width,600/768.0f*screen_height,"TEST VERSION - DO NOT DISTRIBUTE",3/1024.0f*screen_width);
 	//text_manager.write_line(font,13/1024.0f*screen_width,650/768.0f*screen_height,"Remember to take screenshots!",3/1024.0f*screen_width);
@@ -11661,7 +11673,7 @@ void game_engine::render_menu(void){
 					grim->Quads_End();
 				}
 
-				text_manager.write(font,menu_system[submenu].item[a].help,1.5f/1024.0f*screen_width,520/1024.0f*screen_width,270/768.0f*screen_height,730/1024.0f*screen_width,768/768.0f*screen_height,false,1,1,1,1);
+				text_manager.write(font,menu_system[submenu].item[a].help,1.5f/1024.0f*screen_width,520/1024.0f*screen_width,270/768.0f*screen_height,730/1024.0f*screen_width,768/768.0f*screen_height,1,1,1,1);
 			}
 
 
@@ -11678,7 +11690,7 @@ void game_engine::render_menu(void){
 					case 0:
 						//new_game();
 						draw_loading_screen();
-						text_manager.write(font,"Generating new game...",1.7f,20, 20,0,0,false,1,1,1,1);
+						text_manager.write(font,"Generating new game...",1.7f,20, 20,0,0,1,1,1,1);
 						game_state=7;
 						return;
 						break;
@@ -11705,7 +11717,7 @@ void game_engine::render_menu(void){
 					case 5:
 						//load_game(menu_system[submenu].item[a].effect_parameter);
 						draw_loading_screen();
-						text_manager.write(font,"Loading game...",1.7f,20, 20,0,0,false,1,1,1,1);
+						text_manager.write(font,"Loading game...",1.7f,20, 20,0,0,1,1,1,1);
 						game_state=6;
 						load_slot=menu_system[submenu].item[a].effect_parameter;
 						return;
@@ -11850,7 +11862,7 @@ void game_engine::render_menu(void){
 						game_difficulty_level=1;
 						proposed_player_race=0;
 						draw_loading_screen();
-						text_manager.write(font,"Loading tutorial...",1.7f,20, 20,0,0,false,1,1,1,1);
+						text_manager.write(font,"Loading tutorial...",1.7f,20, 20,0,0,1,1,1,1);
 						game_state=7;
 						return;
 						break;
@@ -11873,7 +11885,7 @@ void game_engine::render_menu(void){
 					//load last saved game
 					case 24:
 						draw_loading_screen();
-						text_manager.write(font,"Loading game...",1.7f,20, 20,0,0,false,1,1,1,1);
+						text_manager.write(font,"Loading game...",1.7f,20, 20,0,0,1,1,1,1);
 						game_state=6;
 						load_slot=last_saved_game;
 						return;
@@ -16198,7 +16210,7 @@ void game_engine::draw_bars(void){
 		if(mod.general_bars[a].show_number){
 			//itoa(map_main->creature[0].bars[a].value,temprivi,10)
 			sprintf(temprivi,"%d",(int)(map_main->creature[0].bars[a].value));
-			text_manager.write(font,temprivi,1.0f*x_multiplier,left_side, y ,0,0,false,1.0f,1.0f,1.0f,1);
+			text_manager.write(font,temprivi,1.0f*x_multiplier,left_side, y ,0,0,1.0f,1.0f,1.0f,1);
 		}
 
 		//mouse on, show name
@@ -16213,7 +16225,7 @@ void game_engine::draw_bars(void){
 		float x=mousex+20;
 		float y=mousey-8;
 		if(x+mod.general_bars[show_name].name.length()*10>screen_width)x=screen_width-mod.general_bars[show_name].name.length()*10;
-		text_manager.write(font,mod.general_bars[show_name].name,1.0f,x, y ,screen_width,screen_height,false,1.0f,1.0f,1.0f,1);
+		text_manager.write(font,mod.general_bars[show_name].name,1.0f,x, y ,screen_width,screen_height,1.0f,1.0f,1.0f,1);
 	}
 
 }

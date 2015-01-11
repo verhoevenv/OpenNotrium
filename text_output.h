@@ -26,7 +26,7 @@ public:
 	int default_font;
 	int line_texture;
 	void initialize_text_output(Engine *engine, resource_handler *resources, float screen_width, float screen_height);
-	void write(int font, const std::string& text, float size, float x0,float y0, float x1, float y1, bool inverse_color, float r, float g, float b, float alpha);
+	void write(int font, const std::string& text, float size, float x0,float y0, float x1, float y1, float r, float g, float b, float alpha);
 	void find_letter_width(char kirjain, int *nume, int *kirjainleveys);
 	int write_line(int font, float x, float y, const std::string& text, float size);
 	bool accept_messages;
