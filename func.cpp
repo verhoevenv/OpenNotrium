@@ -488,9 +488,9 @@ void debugger::restart_log(Logfile type){
 string debugger::type2file(Logfile type) {
 	switch (type)
 	{
-	case STARTUP:
+	case Logfile::STARTUP:
 		return "debug_start.txt";
-	case FRAME:
+	case Logfile::FRAME:
 		return "debug_frame.txt";
 	}
 	throw "Searching for non-existant log file";

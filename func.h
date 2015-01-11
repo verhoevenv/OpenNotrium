@@ -98,8 +98,8 @@ float x2, float y2 ,
 float x3, float y3 , float r );
 
 namespace Debugger {
-	enum Action { START, END, FAIL_AND_END, LOG };
-	enum Logfile { STARTUP, FRAME };
+	enum class Action { START, END, FAIL_AND_END, LOG };
+	enum class Logfile { STARTUP, FRAME };
 }
 
 class debugger
