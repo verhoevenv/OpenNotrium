@@ -447,34 +447,58 @@ int lines_intersect(float x1,float y1,float x2,float y2,float x3,float y3,float 
 
 }
 
+using namespace Debugger;
 
-void debugger::debug_output(const string& rivi, int level, int type){
+void debugger::debug_output(const string& rivi, Action level, Logfile type){
 
 	if(debug_state[type]==1){
 
-		if(level==1)debug_level[type]++;
+		if (level == Action::START) {
+			debug_level[type]++;
+		}
 
-		FILE *fil;
-		if(type==0)
-			fil = fopen("debug_start.txt","at");
-		else if(type==1)
-			fil = fopen("debug_frame.txt","at");
+		FILE *fil = fopen(type2file(type).c_str(), "at");
+
 		if(fil){
 			for(int a=0;a<debug_level[type];a++)fprintf(fil, "  ");
-			if(level==1)fprintf(fil, "Starting ");
-			if(level==0)fprintf(fil, "Finished ");
-			if(level==2)fprintf(fil, "ERROR ");
+			if (level == Action::START)fprintf(fil, "Starting ");
+			if (level == Action::END)fprintf(fil, "Finished ");
+			if (level == Action::FAIL_AND_END)fprintf(fil, "ERROR ");
 			fprintf(fil, "%s\n", rivi.c_str());
 			fclose(fil);
-			if((level==0)||(level==2)) debug_level[type]--;
+		}
+		if ((level == Action::END) || (level == Action::FAIL_AND_END)){
+			debug_level[type]--;
 		}
 	}
 }
 
 
+void debugger::restart_log(Logfile type){
+	if (debug_state[type] == 1){
+		string filename = type2file(type);
+		FILE *fil;
+		fil = fopen(filename.c_str(), "wt");
+		if (fil){
+			fclose(fil);
+		}
+	}
+}
+
+string debugger::type2file(Logfile type) {
+	switch (type)
+	{
+	case STARTUP:
+		return "debug_start.txt";
+	case FRAME:
+		return "debug_frame.txt";
+	}
+	throw "Searching for non-existant log file";
+}
+
 debugger::debugger(){
-	debug_state[0]=0;
-	debug_state[1]=0;
-	debug_level[0]=0;
-	debug_level[1]=0;
+	debug_state[Logfile::STARTUP] = 0;
+	debug_state[Logfile::FRAME] = 0;
+	debug_level[Logfile::STARTUP] = 0;
+	debug_level[Logfile::FRAME] = 0;
 }

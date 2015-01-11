@@ -1,6 +1,7 @@
 #include "resource_handler.h"
 
 using namespace std;
+using namespace Debugger;
 
 int resource_handler::load_texture(const string& name, const string& mod_name){//loads the texture if it's unique
 
@@ -18,7 +19,7 @@ int resource_handler::load_texture(const string& name, const string& mod_name){/
 
 	std::string tempstring="Load Texture ";
 	tempstring+=name;
-	debug->debug_output(tempstring,1,0);
+	debug->debug_output(tempstring,Action::START,Logfile::STARTUP);
 
 	//create new texture loading primitive
 	texture_handling_primitive_base temp_load;
@@ -42,13 +43,13 @@ int resource_handler::load_texture(const string& name, const string& mod_name){/
 		OK=grim->File_Exists(temprivi);
 	}
 	if(!OK){
-		debug->debug_output("Loading Texture!",2,0);
+		debug->debug_output("Loading Texture!",Action::FAIL_AND_END,Logfile::STARTUP);
 		return -1;
 	}
 
 
 
-	debug->debug_output(tempstring,0,0);
+	debug->debug_output(tempstring, Action::END, Logfile::STARTUP);
 
 	textures.push_back(temp_load);
 	return textures.size()-1;
@@ -82,7 +83,7 @@ int resource_handler::load_sample(const string& name, int samples, const string&
 
 		std::string tempstring="Load Sample ";
 		tempstring+=name;
-		debug->debug_output(tempstring,1,0);
+		debug->debug_output(tempstring,Action::START,Logfile::STARTUP);
 
 		if(samples==-1)samples=2;
 
@@ -109,13 +110,13 @@ int resource_handler::load_sample(const string& name, int samples, const string&
 			sample_name[samples_loaded]=name;
 			sample_name_mod[samples_loaded]=mod_name;
 
-			debug->debug_output(tempstring,0,0);
+			debug->debug_output(tempstring,Action::END, Logfile::STARTUP);
 
 			samples_loaded++;
 			return samples_loaded-1;
 		}
 
-		debug->debug_output("Loading Sample",2,0);
+		debug->debug_output("Loading Sample",Action::FAIL_AND_END,Logfile::STARTUP);
 		return -1;
 	}
 

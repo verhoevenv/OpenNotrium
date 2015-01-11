@@ -15,6 +15,7 @@
 #define WM_GRAPHNOTIFY  WM_APP + 1
 
 using namespace std;
+using namespace Debugger;
 
 Engine *grim = NULL;
 game_engine *engine;
@@ -102,15 +103,8 @@ bool game_engine::Frame(void)
 
 	bool draw_messages=true;
 
-	if(debug.debug_state[1]==1){
-		FILE *fil;
-		fil = fopen("debug_frame.txt","wt");
-		if(fil){
-			fclose(fil);
-		}
-	}
-
-	debug.debug_output("Frame",1,1);
+	debug.restart_log(Logfile::FRAME);
+	debug.debug_output("Frame",Action::START,Logfile::FRAME);
 
 	/*//find frame time average
 	float elapsed2=0;
@@ -254,12 +248,12 @@ bool game_engine::Frame(void)
 	switch (game_state){
 		case 0://game
 	//_CrtSetDbgFlag (_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF |_CRTDBG_CHECK_ALWAYS_DF);
-			debug.debug_output("Render Map",1,1);
+			debug.debug_output("Render Map",Action::START,Logfile::FRAME);
 			render_map();
 			//make sure we don't draw messages if we are going to load the game
 			if(game_state!=0)
 				draw_messages=false;
-			debug.debug_output("Render Map",0,1);
+			debug.debug_output("Render Map",Action::END,Logfile::FRAME);
 			break;
 		case 1://start window
 			//grim->System_ClearScreen(0,0,0,1);
@@ -339,9 +333,9 @@ bool game_engine::Frame(void)
 
 		case 5://main menu
 			draw_messages=false;
-			debug.debug_output("Render Menu",1,1);
+			debug.debug_output("Render Menu",Action::START,Logfile::FRAME);
 			render_menu();
-			debug.debug_output("Render Menu",0,1);
+			debug.debug_output("Render Menu",Action::END, Logfile::FRAME);
 			break;
 		case 6://load game screen
 			draw_messages=false;
@@ -434,12 +428,12 @@ bool game_engine::Frame(void)
 		HandleGraphEvent();
 	}
 
-	debug.debug_output("Frame",0,1);
+	debug.debug_output("Frame",Action::END,Logfile::FRAME);
 
 	//quit game
 	if(quit_game){
-		debug.debug_output("Game",0,0);
-		debug.debug_output("Release Graphics Engine", 1,0);
+		debug.debug_output("Game",Action::END,Logfile::STARTUP);
+		debug.debug_output("Release Graphics Engine", Action::START, Logfile::STARTUP);
 		return false;
 	}
 
@@ -456,7 +450,7 @@ bool FrameFunc()
 bool focuslost()
 {
 
-	engine->debug.debug_output("Focus Lost", 3,0);
+	engine->debug.debug_output("Focus Lost", Action::LOG, Logfile::STARTUP);
 	engine->focus=false;
 	return true;
 }
@@ -464,7 +458,7 @@ bool focuslost()
 bool focusgained()
 {
 
-	engine->debug.debug_output("Focus Gained", 3,0);
+	engine->debug.debug_output("Focus Gained", Action::LOG, Logfile::STARTUP);
 //	if (engine->g_pMouse)
 //		{
 //		engine->g_pMouse->Acquire();
@@ -685,15 +679,8 @@ void game_engine::initialize_game(void){//initialize game variables
 	//load setup
 	load_setup("data/setup.dat");
 
-	if(debug.debug_state[0]==1){
-		FILE *fil;
-		fil = fopen("debug_start.txt","wt");
-		if(fil){
-			fprintf(fil, "Initializing Game\n");
-			fclose(fil);
-		}
-	}
-
+	debug.restart_log(Logfile::STARTUP);
+	debug.debug_output("Initializing Game", Action::LOG, Logfile::STARTUP);
 
 	//browse all mods
 	mod.debug=&debug;
@@ -781,68 +768,39 @@ void game_engine::initialize_game(void){//initialize game variables
 
 void game_engine::uninitialize_game(void){//uninitialize game
 
-	debug.debug_output("Release Graphics Engine", 0,0);
+	debug.debug_output("Release Graphics Engine", Action::END,Logfile::STARTUP);
 
-	debug.debug_output("Uninitializing game", 1,0);
+	debug.debug_output("Uninitializing game", Action::START, Logfile::STARTUP);
 
 
-	debug.debug_output("Saving setup", 1,0);
+	debug.debug_output("Saving setup", Action::START, Logfile::STARTUP);
 	save_setup("data/setup.dat");
-	debug.debug_output("Saving setup", 0,0);
+	debug.debug_output("Saving setup", Action::END, Logfile::STARTUP);
 
 
 	//SAFE_DELETE(m_pGA);
 
 
-	debug.debug_output("Clearing maps", 1,0);
+	debug.debug_output("Clearing maps", Action::START, Logfile::STARTUP);
 	for(unsigned int a=0;a<map_storage.size();a++){
 		SAFE_DELETE(map_storage[a]);
 	}
 
 	map_storage.clear();
-	debug.debug_output("Clearing maps", 0,0);
-	//SAFE_DELETE_ARRAY(*map_storage);
-	//SAFE_DELETE(map_main);
-
-//	debug.debug_output("Freeing mouse", 1,0);
-//	deinit_mouse();
-//	debug.debug_output("Freeing mouse", 0,0);
-
+	debug.debug_output("Clearing maps", Action::END, Logfile::STARTUP);
 
 	if(sound_initialized){
-		debug.debug_output("Uninitializing sounds", 1,0);
+		debug.debug_output("Uninitializing sounds", Action::START, Logfile::STARTUP);
 		resources.uninitialize();
 
 		//SAFE_DELETE_ARRAY(*sample);
 		SAFE_DELETE( g_pSoundManager );
-		debug.debug_output("Uninitializing sounds", 0,0);
+		debug.debug_output("Uninitializing sounds", Action::END, Logfile::STARTUP);
 
 	}
-//
-//	if(play_music){
-//		debug.debug_output("Uninitializing music", 1,0);
-//		if (music)
-//			music->Stop();
-//
-//        SAFE_DELETE( music );
-//		// Release all remaining pointers
-////		RELEASE( g_pSourceNext);
-////		RELEASE( g_pSourceCurrent);
-////		RELEASE( g_pMediaSeeking);
-////		RELEASE( g_pMediaControl);
-////		RELEASE( g_pGraphBuilder);
-////		RELEASE( pEvent);
-//
-//		// Clean up COM
-//		//CoUninitialize();
-//		debug.debug_output("Uninitializing music", 0,0);
-//	}
 
 
-	debug.debug_output("Uninitializing game", 0,0);
-
-
-
+	debug.debug_output("Uninitializing game", Action::END, Logfile::STARTUP);
 
 }
 
@@ -865,9 +823,9 @@ void game_engine::render_map(void){//renders game map
 //	playsound(footstep[randInt(0,3)],1,player_middle_x+mousex-screen_width/2,player_middle_y+mousey-screen_height/2,player_middle_x,player_middle_y);
 
 	//rearrange the item list
-	debug.debug_output("Handle Item List",1,1);
+	debug.debug_output("Handle Item List",Action::START,Logfile::FRAME);
 	arrange_item_list(true);
-	debug.debug_output("Handle Item List",0,1);
+	debug.debug_output("Handle Item List",Action::END,Logfile::FRAME);
 
 	paused=false;
 	if(ask_quit)paused=true;//game paused by p
@@ -936,9 +894,9 @@ void game_engine::render_map(void){//renders game map
 	if(!paused)
 	//if(time_from_beginning-scripts_calculated_on>0.5f)
 	{
-		debug.debug_output("Calculate Scripts",1,1);
+		debug.debug_output("Calculate Scripts",Action::START,Logfile::FRAME);
 		calculate_scripts();
-		debug.debug_output("Calculate Scripts",0,1);
+		debug.debug_output("Calculate Scripts",Action::END,Logfile::FRAME);
 		//scripts_calculated_on=time_from_beginning;
 	}
 
@@ -1024,10 +982,10 @@ void game_engine::render_map(void){//renders game map
 
 	//control input
 	if(!paused){
-		debug.debug_output("Player Controls",1,1);
+		debug.debug_output("Player Controls",Action::START,Logfile::FRAME);
 		player_controls(player_control_type);
 		calculate_quick_keys(false);
-		debug.debug_output("Player Controls",0,1);
+		debug.debug_output("Player Controls",Action::END,Logfile::FRAME);
 	}
 	//flash_light();
 
@@ -1098,18 +1056,18 @@ void game_engine::render_map(void){//renders game map
 
 	//AI
 	if(!paused){
-		debug.debug_output("AI",1,1);
+		debug.debug_output("AI",Action::START,Logfile::FRAME);
 		creature_AI();
-		debug.debug_output("AI",0,1);
+		debug.debug_output("AI",Action::END,Logfile::FRAME);
 	}
 
 	//grim->System_ClearScreen(1,1,1,1);
 
 	//creature actions and animation
 	if(!paused){
-		debug.debug_output("Calculate Creatures",1,1);
+		debug.debug_output("Calculate Creatures",Action::START,Logfile::FRAME);
 		creature_actions_loop();
-		debug.debug_output("Calculate Creatures",0,1);
+		debug.debug_output("Calculate Creatures",Action::END,Logfile::FRAME);
 	}
 
 	//terrain timers
@@ -1126,17 +1084,10 @@ void game_engine::render_map(void){//renders game map
 
 	//bullets/attacks
 	if(!paused){
-		debug.debug_output("Calculate Bullets",1,1);
+		debug.debug_output("Calculate Bullets",Action::START,Logfile::FRAME);
 		calculate_bullets();
-		debug.debug_output("Calculate Bullets",0,1);
+		debug.debug_output("Calculate Bullets",Action::END,Logfile::FRAME);
 	}
-
-
-	/*//calculate map lighting
-	debug.debug_output("Calculate Lights",1,1);
-	calculate_lights();
-	debug.debug_output("Calculate Lights",0,1);*/
-
 
 
 	if(!paused){
@@ -1164,19 +1115,19 @@ void game_engine::render_map(void){//renders game map
 
 	//calculate particles
 	if(!paused){
-		debug.debug_output("Calculate Particles",1,1);
+		debug.debug_output("Calculate Particles",Action::START,Logfile::FRAME);
 		calculate_particles();
-		debug.debug_output("Calculate Particles",0,1);
+		debug.debug_output("Calculate Particles",Action::END,Logfile::FRAME);
 	}
 
 	//check items and objects
 	mouse_on_item=false;
 	if(!paused){
-		debug.debug_output("Calculate Items",1,1);
+		debug.debug_output("Calculate Items",Action::START,Logfile::FRAME);
 		calculate_items();
 		creature_nearest_to_the_mouse=-1;
 		calculate_mouse_on_creatures();
-		debug.debug_output("Calculate Items",0,1);
+		debug.debug_output("Calculate Items",Action::END,Logfile::FRAME);
 	}
 
 
@@ -1199,41 +1150,41 @@ void game_engine::render_map(void){//renders game map
 
 
 	//calculate map lighting
-	debug.debug_output("Calculate Lights",1,1);
+	debug.debug_output("Calculate Lights",Action::START,Logfile::FRAME);
 	calculate_lights();
-	debug.debug_output("Calculate Lights",0,1);
+	debug.debug_output("Calculate Lights",Action::END,Logfile::FRAME);
 
 
 	//draw map grid
-	debug.debug_output("Draw Map Grid",1,1);
+	debug.debug_output("Draw Map Grid",Action::START,Logfile::FRAME);
 	draw_map_grid();
-	debug.debug_output("Draw Map Grid",0,1);
+	debug.debug_output("Draw Map Grid",Action::END,Logfile::FRAME);
 
 	//particles below creatures - footsteps
-	debug.debug_output("Draw Particles level 0",1,1);
+	debug.debug_output("Draw Particles level 0",Action::START,Logfile::FRAME);
 	draw_particles(0);
-	debug.debug_output("Draw Particles level 0",0,1);
+	debug.debug_output("Draw Particles level 0",Action::END,Logfile::FRAME);
 
 	//draw objects below creatures-rocks
-	debug.debug_output("Draw Map Objects level 0",1,1);
+	debug.debug_output("Draw Map Objects level 0",Action::START,Logfile::FRAME);
 	draw_map_objects(0);
-	debug.debug_output("Draw Map Objects level 0",0,1);
+	debug.debug_output("Draw Map Objects level 0",Action::END,Logfile::FRAME);
 
 	//draw objects on top of rocks
-	debug.debug_output("Draw Map Objects level 1",1,1);
+	debug.debug_output("Draw Map Objects level 1",Action::START,Logfile::FRAME);
 	draw_map_objects(1);
-	debug.debug_output("Draw Map Objects level 1",0,1);
+	debug.debug_output("Draw Map Objects level 1",Action::END,Logfile::FRAME);
 
 	//lighting effects
-	debug.debug_output("Draw Map Lights level 1",1,1);
+	debug.debug_output("Draw Map Lights level 1",Action::START,Logfile::FRAME);
 	draw_lights(0);
-	debug.debug_output("Draw Map Lights level 1",0,1);
+	debug.debug_output("Draw Map Lights level 1",Action::END,Logfile::FRAME);
 
 	//draw creatures
-	debug.debug_output("Draw Map Creatures layers 0 and 1",1,1);
+	debug.debug_output("Draw Map Creatures layers 0 and 1",Action::START,Logfile::FRAME);
 	draw_map_creatures(0);//the dead
 	draw_map_creatures(1);//living ones
-	debug.debug_output("Draw Map Creatures layers 0 and 1",0,1);
+	debug.debug_output("Draw Map Creatures layers 0 and 1",Action::END,Logfile::FRAME);
 
 
 	//draw targeting beam
@@ -1242,41 +1193,41 @@ void game_engine::render_map(void){//renders game map
 
 
 	//draw bullets
-	debug.debug_output("Draw Bullets",1,1);
+	debug.debug_output("Draw Bullets",Action::START,Logfile::FRAME);
 	draw_bullets();
-	debug.debug_output("Draw Bullets",0,1);
+	debug.debug_output("Draw Bullets",Action::END,Logfile::FRAME);
 
 	//particles on top of creatures
-	debug.debug_output("Draw Particles level 1",1,1);
+	debug.debug_output("Draw Particles level 1",Action::START,Logfile::FRAME);
 	draw_particles(1);
-	debug.debug_output("Draw Particles level 1",0,1);
+	debug.debug_output("Draw Particles level 1",Action::END,Logfile::FRAME);
 
 	//draw objects on top of creatures - trees
-	debug.debug_output("Draw Map Objects level 2",1,1);
+	debug.debug_output("Draw Map Objects level 2",Action::START,Logfile::FRAME);
 	draw_map_objects(2);
-	debug.debug_output("Draw Map Objects level 2",0,1);
+	debug.debug_output("Draw Map Objects level 2",Action::END,Logfile::FRAME);
 	//draw objects on top everything - big stuff
-	debug.debug_output("Draw Map Objects level 3",1,1);
+	debug.debug_output("Draw Map Objects level 3",Action::START,Logfile::FRAME);
 	draw_map_objects(3);
-	debug.debug_output("Draw Map Objects level 3",0,1);
+	debug.debug_output("Draw Map Objects level 3",Action::END,Logfile::FRAME);
 
 
-	debug.debug_output("Draw Map Creatures layer 2",1,1);
+	debug.debug_output("Draw Map Creatures layer 2",Action::START,Logfile::FRAME);
 	draw_map_creatures(2);//flying ones
-	debug.debug_output("Draw Map Creatures layer 2",0,1);
+	debug.debug_output("Draw Map Creatures layer 2",Action::END,Logfile::FRAME);
 
 	//rain particles
-	debug.debug_output("Draw particles level 2",1,1);
+	debug.debug_output("Draw particles level 2",Action::START,Logfile::FRAME);
 	draw_particles(2);
-	debug.debug_output("Draw particles level 2",0,1);
+	debug.debug_output("Draw particles level 2",Action::END,Logfile::FRAME);
 
 
 	//draw pop-up text
-	debug.debug_output("Draw Interface",1,1);
+	debug.debug_output("Draw Interface",Action::START,Logfile::FRAME);
 	if(!ask_quit)
 	if(!ask_continue_game)
 	draw_pop_up();
-	debug.debug_output("Draw Interface",0,1);
+	debug.debug_output("Draw Interface",Action::END,Logfile::FRAME);
 
 	//draw bars
 	if(!ask_quit)
@@ -1740,7 +1691,7 @@ bool game_engine::draw_item(map_object *object, int layer,float object_x, float 
 }
 
 void game_engine::load_particles(const string& filename){
-	debug.debug_output("Load file "+filename,1,0);
+	debug.debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[800];
@@ -1757,7 +1708,7 @@ void game_engine::load_particles(const string& filename){
 			}
 
 			temp_particle.name=rivi;
-			debug.debug_output("Load "+temp_particle.name,1,0);
+			debug.debug_output("Load "+temp_particle.name,Action::START,Logfile::STARTUP);
 			temp_particle.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 
 			//load texture if it's not loaded
@@ -1786,18 +1737,18 @@ void game_engine::load_particles(const string& filename){
 			temp_particle.dead=false;
 			particles[temp_particle.identifier]=temp_particle;
 
-			debug.debug_output("Load "+temp_particle.name,0,0);
+			debug.debug_output("Load "+temp_particle.name,Action::END,Logfile::STARTUP);
 
 		}
 	}
 
 	fclose(fil);
 
-	debug.debug_output("Load file "+filename,0,0);
+	debug.debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 void game_engine::load_sounds(const string& filename){
-	debug.debug_output("Load file "+filename,1,0);
+	debug.debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
 	char rivi[2000];
@@ -1808,7 +1759,7 @@ void game_engine::load_sounds(const string& filename){
 	if(fil){
 		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//name
 			tempstring=rivi;
-			debug.debug_output("Load "+tempstring,1,0);
+			debug.debug_output("Load "+tempstring,Action::START,Logfile::STARTUP);
 
 			int index=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			int sound_number=resources.load_sample(stripped_fgets(rivi,sizeof(rivi),fil),3,mod.mod_name);
@@ -1820,13 +1771,13 @@ void game_engine::load_sounds(const string& filename){
 			}
 			preloaded_sounds[index]=sound_number;
 
-			debug.debug_output("Load "+tempstring,0,0);
+			debug.debug_output("Load "+tempstring,Action::END,Logfile::STARTUP);
 		}
 	}
 
 	fclose(fil);
 
-	debug.debug_output("Load file "+filename,0,0);
+	debug.debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 
@@ -4889,8 +4840,6 @@ void game_engine::load_setup(const char *filename){//loads setup from file
 	if(fil){
 		stripped_fgets(rivi,sizeof(rivi),fil);
 
-			debug.debug_state[0]=1;
-			debug.debug_state[1]=0;
 			random_seed=randInt(0,10000);
 			pop_up_x=768;
 			pop_up_y=512;
@@ -4909,8 +4858,8 @@ void game_engine::load_setup(const char *filename){//loads setup from file
 			return;
 		}
 
-		debug.debug_state[0]=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-		debug.debug_state[1]=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
+		debug.debug_state[Logfile::STARTUP]=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
+		debug.debug_state[Logfile::FRAME] = atoi(stripped_fgets(rivi, sizeof(rivi), fil));
 		random_seed=atoi(stripped_fgets(rivi,sizeof(rivi),fil));//random seed
 		pop_up_x=atof(stripped_fgets(rivi,sizeof(rivi),fil));//pop_up_x
 		pop_up_y=atof(stripped_fgets(rivi,sizeof(rivi),fil));//pop_up_y
@@ -4939,8 +4888,8 @@ void game_engine::save_setup(const char *filename){//saves setup to file
 	if(mouse_speed>0)
 	if(fil){
 		fprintf(fil, "%s\n", "-");//OK line
-		fprintf(fil, "%d;//create game initialization debug file\n", debug.debug_state[0]);
-		fprintf(fil, "%d;//create game running debug file\n", debug.debug_state[1]);
+		fprintf(fil, "%d;//create game initialization debug file\n", debug.debug_state[Logfile::STARTUP]);
+		fprintf(fil, "%d;//create game running debug file\n", debug.debug_state[Logfile::FRAME]);
 		fprintf(fil, "%d\n", random_seed);//random seed
 		fprintf(fil, "%d\n", (int)pop_up_x);//pop_up_x
 		fprintf(fil, "%d\n", (int)pop_up_y);//pop_up_y
@@ -5018,9 +4967,6 @@ bullet game_engine::shoot(int from_creature, int side,int type, float startx,flo
 			}
 			if(!OK)return temp_bullet;
 
-
-			//debug.debug_output("shoot1",3);
-
 			//run fire effects
 			bool effect_ran=true;
 			for(b=0;b<mod.general_weapons[type].fire_effects.size();b++){
@@ -5032,8 +4978,6 @@ bullet game_engine::shoot(int from_creature, int side,int type, float startx,flo
 			}
 			if(!effect_ran)
 				return temp_bullet;
-
-			//debug.debug_output("shoot2",3);
 
 		//}
 
@@ -6115,10 +6059,6 @@ void game_engine::create_plot_object(map* map_to_edit, int general_item_class, f
 	//effect effect;
 	temp_item.base_type=0;
 	//temp_item.base_type=plot_object_has_effect(a,3,&effect);//if it's an item or a plot_object
-
-/*	tempstring="Initializing Plot Object ";
-	tempstring+=itoa(general_item_class,temprivi,10);
-	debug.debug_output(tempstring,1);*/
 
 
 	//plot_objects
@@ -11195,19 +11135,6 @@ void game_engine::load_game(int slot){
 		fclose(fil);
 
 
-	//calculate places
-	/*map_main->check_creatures();
-	map_main->initialize_items();
-	map_main->initialize_objects();*/
-	//flash_light();
-//	calculate_lights();
-
-
-
-
-
-
-
 	creatures_checked_on=time_from_beginning;
 	creature_visibility_checked_on=time_from_beginning+randDouble(0,1);
 	//scripts_calculated_on=time_from_beginning+0.5f;
@@ -11243,7 +11170,7 @@ void game_engine::load_mod(const string& mod_name){
 	//a good time to unload all textures
 	resources.unload_unneeded_textures(true);
 
-	debug.debug_output("Mod Loading", 1,0);
+	debug.debug_output("Mod Loading", Action::START, Logfile::STARTUP);
 
 	//combine_screen=resources.load_texture("combine.jpg");
 	//detector_display=resources.load_texture("detector2.png");
@@ -11275,7 +11202,7 @@ void game_engine::load_mod(const string& mod_name){
 	load_particles("data/"+mod_name+"/particles.dat");
 	load_sounds("data/"+mod_name+"/sounds.dat");
 
-	debug.debug_output("Mod Loading", 0,0);
+	debug.debug_output("Mod Loading", Action::END, Logfile::STARTUP);
 
 
 	mod.load_mod(mod_name,&debug,&resources);
@@ -11349,7 +11276,7 @@ void game_engine::new_game(void){
 	float sound_volume=volume_slider[0];
 	volume_slider[0]=0;
 
-	debug.debug_output("New Game Initialization", 1,0);
+	debug.debug_output("New Game Initialization", Action::START, Logfile::STARTUP);
 
 	game_running=true;
 
@@ -11480,7 +11407,7 @@ void game_engine::new_game(void){
 	mod.general_creatures[map_main->creature[0].type].weapon=-1;
 
 	//start specialties
-	debug.debug_output("Race Specialties Initialization", 1,0);
+	debug.debug_output("Race Specialties Initialization", Action::START, Logfile::STARTUP);
 	for(a=0;a<mod.general_races[player_race].specialties.size();a++){
 
 		if(!mod.general_races[player_race].specialties[a].difficulty[game_difficulty_level])continue;
@@ -11507,7 +11434,7 @@ void game_engine::new_game(void){
 			give_item(mod.general_races[player_race].specialties[a].parameter0,mod.general_races[player_race].specialties[a].parameter1,inventory[active_inventory].player_items.size(),false);
 		}
 	}
-	debug.debug_output("Race Specialties Initialization", 0,0);
+	debug.debug_output("Race Specialties Initialization", Action::END, Logfile::STARTUP);
 
 
 
@@ -11549,7 +11476,7 @@ void game_engine::new_game(void){
 	text_manager.accept_messages=true;
 
 
-	debug.debug_output("New Game Initialization", 0,0);
+	debug.debug_output("New Game Initialization", Action::END, Logfile::STARTUP);
 
 
 }
@@ -11840,7 +11767,7 @@ void game_engine::render_menu(void){
 						if(selected_mod>=mods)
 							selected_mod=0;
 						//tempstring=mod_names[selected_mod];
-						if(debug.debug_state[0]==0){
+						if (debug.debug_state[Logfile::STARTUP] == 0){
 							if(mod_names[selected_mod]=="Tutorial"){
 								selected_mod++;
 								if(selected_mod>=mods)
@@ -12324,7 +12251,7 @@ void game_engine::create_menu_items(void){
 		menu_system[4].item[d].text_size=1.5f;
 		menu_system[4].item[d].height=25;
 
-		if(debug.debug_state[0]==1){
+		if (debug.debug_state[Logfile::STARTUP] == 1){
 			d++;
 			menu_system[4].item[d].text="Start Editor";
 			menu_system[4].item[d].help="Starts the map editor";
@@ -12550,66 +12477,6 @@ void game_engine::playsound(int sample_number,float volume,float sound_x,float s
 	resources.sample[sample_number]->Play( end_volume,pan );
 
 }
-
-/*
-int game_engine::load_sample(string name, int samples){//loads the sample if it's unique
-
-	if(name=="none")return -1;
-
-	if(!play_sound)return -1;
-	if(!sound_initialized)return -1;
-	if(samples_loaded>=maximum_samples)return -1;
-
-	int i;
-	char temprivi[300];
-	//find if the sample was already loaded
-	for(i=0;i<samples_loaded;i++){
-		//if(strcmpi(name,sample_name[i])==0){return i;}
-		if(sample_name[i]==name){return i;}
-	}
-
-	//not loaded, load it
-	{
-
-		tempstring="Load Sample ";
-		tempstring+=name;
-		debug.debug_output(tempstring,1);
-
-		if(samples==-1)samples=2;
-
-		HRESULT hr;
-		//try mod directory
-		strcpy(temprivi,"sound/");
-		strcat(temprivi,mod_name.c_str());
-		strcat(temprivi,"/");
-		strcat(temprivi,name.c_str());
-		hr=g_pSoundManager->Create( &sample[samples_loaded], temprivi, DSBCAPS_CTRLVOLUME|DSBCAPS_CTRLPAN , GUID_NULL,samples );
-
-
-
-		//try default directory
-		if(hr!=S_OK){
-			SAFE_DELETE(sample[samples_loaded]);
-			strcpy(temprivi,"sound/");
-			strcat(temprivi,name.c_str());
-			hr=g_pSoundManager->Create( &sample[samples_loaded], temprivi, DSBCAPS_CTRLVOLUME|DSBCAPS_CTRLPAN , GUID_NULL,samples );
-		}
-
-		if(hr==S_OK){
-			//store name
-			sample_name[samples_loaded]=name;
-
-			debug.debug_output(tempstring,0);
-
-			samples_loaded++;
-			return samples_loaded-1;
-		}
-
-		debug.debug_output("Loading Sample",2);
-		return -1;
-	}
-
-}*/
 
 void game_engine::draw_loading_screen(void){
 	//loading screen
@@ -13461,7 +13328,7 @@ void game_engine::combine_items(int a,int combine_item, const vector<Mod::combin
 
 void game_engine::create_maps(void){
 
-	debug.debug_output("Map Creation",1,0);
+	debug.debug_output("Map Creation",Action::START,Logfile::STARTUP);
 
 	int a,b,c,d;
 
@@ -13528,7 +13395,7 @@ void game_engine::create_maps(void){
 	}
 
 	//distribute items
-	debug.debug_output("Distributing Items",1,0);
+	debug.debug_output("Distributing Items",Action::START,Logfile::STARTUP);
 	int *items_pre=new int[mod.general_areas.size()*items_max];
 	int *items_total= new int[mod.general_areas.size()];
 	for(d=0;d<mod.general_areas.size();d++){items_total[d]=0;};
@@ -13580,7 +13447,7 @@ void game_engine::create_maps(void){
 			}
 		}
 	}
-	debug.debug_output("Distributing Items",0,0);
+	debug.debug_output("Distributing Items",Action::END,Logfile::STARTUP);
 
 	//create maps
 	for(d=0;d<mod.general_areas.size();d++){
@@ -13593,17 +13460,17 @@ void game_engine::create_maps(void){
 
 		int map_type=d;
 
-		debug.debug_output("Initializing Area "+mod.general_areas[map_type].name,1,0);
+		debug.debug_output("Initializing Area "+mod.general_areas[map_type].name,Action::START,Logfile::STARTUP);
 
 		//find multiplier for prop numbers
-		debug.debug_output("Find prop number multipliers",1,0);
+		debug.debug_output("Find prop number multipliers",Action::START,Logfile::STARTUP);
 		int sizex=mod.terrain_maps[mod.general_areas[map_type].terrain_map_number].terrain_grid[0].terrain_blocks.size();
 		int sizey=mod.terrain_maps[mod.general_areas[map_type].terrain_map_number].terrain_grid.size();
 		float amount_multiplier=(map_size_multiplier*map_size_multiplier*sizex*sizey)/(100*100);
-		debug.debug_output("Find prop number multipliers",0,0);
+		debug.debug_output("Find prop number multipliers",Action::END,Logfile::STARTUP);
 
 		//select climate
-		debug.debug_output("Select Climate",1,0);
+		debug.debug_output("Select Climate",Action::START,Logfile::STARTUP);
 		int climate=randInt(0,mod.general_climates.size());
 		int tries=0;
 		while(!mod.general_climates[climate].can_be_random||mod.general_climates[climate].dead){
@@ -13617,10 +13484,10 @@ void game_engine::create_maps(void){
 		//override for map development
 		if(climate_override!=-1)
 			climate=climate_override;
-		debug.debug_output("Select Climate",0,0);
+		debug.debug_output("Select Climate",Action::END,Logfile::STARTUP);
 
 		//create list of hazardous terrain maps
-		debug.debug_output("List no_random_objects_terrain",1,0);
+		debug.debug_output("List no_random_objects_terrain",Action::START,Logfile::STARTUP);
 		vector <bool> terrain_hazardous;
 		for(a=0;a<sizex;a++){
 			for(b=0;b<sizey;b++){
@@ -13643,15 +13510,15 @@ void game_engine::create_maps(void){
 		for(a=0;a<mod.terrain_types.size();a++){
 			no_random_terrain_types.push_back(mod.terrain_types[a].do_not_place_random_objects);
 		}
-		debug.debug_output("List no_random_objects_terrain",0,0);
+		debug.debug_output("List no_random_objects_terrain",Action::END,Logfile::STARTUP);
 
-		debug.debug_output("Allocate memory for map",1,0);
+		debug.debug_output("Allocate memory for map",Action::START,Logfile::STARTUP);
 		map *temp_map;
 		//temp_map = new map((int)(mod.general_areas[map_type].sizex*map_size_multiplier),(int)(mod.general_areas[map_type].sizey*map_size_multiplier),amount_multiplier,climate,mod.general_climates[climate].terrain_texture,mod.general_climates[climate].terrain_type,mod.general_climates[climate].prop_amount,mod.general_climates[climate].prop_object_definition_number,mod.general_areas[map_type].alien_type,mod.general_areas[map_type].alien_amount,items_total[d]);
 		map_storage.push_back(new map((int)(sizex*map_size_multiplier),(int)(sizey*map_size_multiplier),amount_multiplier,climate,mod.general_climates[climate].terrain_types,no_random_terrain_types,do_not_place_on_map_edges,terrain_hazardous,mod.general_climates[climate].prop_amount,mod.general_climates[climate].prop_object_definition_number,mod.general_areas[map_type].alien_type,mod.general_areas[map_type].alien_amount,mod.general_areas[map_type].alien_sides,items_total[d]));
 		temp_map=map_storage[d];
 		temp_map->area_type=map_type;
-		debug.debug_output("Allocate memory for map",0,0);
+		debug.debug_output("Allocate memory for map",Action::END,Logfile::STARTUP);
 
 
 		//player race
@@ -13668,7 +13535,7 @@ void game_engine::create_maps(void){
 		vary_object_sizes(temp_map);
 
 		//drop map editor terrains
-		debug.debug_output("Distribute Map Editor terrains",1,0);
+		debug.debug_output("Distribute Map Editor terrains",Action::START,Logfile::STARTUP);
 		for(a=0;a<sizex;a++){
 			for(b=0;b<sizey;b++){
 				if(mod.terrain_maps[mod.general_areas[map_type].terrain_map_number].terrain_grid[b].terrain_blocks[a].terrain_type>1){
@@ -13676,14 +13543,14 @@ void game_engine::create_maps(void){
 				}
 			}
 		}
-		debug.debug_output("Distribute Map Editor terrains",0,0);
+		debug.debug_output("Distribute Map Editor terrains",Action::END,Logfile::STARTUP);
 
 
 
 
 
 		//initialize creature parameters
-		debug.debug_output("Initializing Creature Specialties",1,0);
+		debug.debug_output("Initializing Creature Specialties",Action::START,Logfile::STARTUP);
 		for(a=0;a<temp_map->creature.size();a++){
 
 			//creature specialties
@@ -13702,14 +13569,14 @@ void game_engine::create_maps(void){
 			AI_initiate_behavior_parameters(&temp_map->creature[a]);
 
 		}
-		debug.debug_output("Initializing Creature Specialties",0,0);
+		debug.debug_output("Initializing Creature Specialties",Action::END,Logfile::STARTUP);
 
 
 
 
 
 		//drop map editor objects
-		debug.debug_output("Distribute Map Editor objects",1,0);
+		debug.debug_output("Distribute Map Editor objects",Action::START,Logfile::STARTUP);
 		for(a=0;a<mod.terrain_maps[mod.general_areas[map_type].terrain_map_number].map_objects.size();a++){
 			Mod::terrain_map_base::editor_object_base temp_object=mod.terrain_maps[mod.general_areas[map_type].terrain_map_number].map_objects[a];
 			switch(temp_object.type){
@@ -13768,12 +13635,12 @@ void game_engine::create_maps(void){
 				break;
 			}
 		}
-		debug.debug_output("Distribute Map Editor objects",0,0);
+		debug.debug_output("Distribute Map Editor objects",Action::END,Logfile::STARTUP);
 
 		//initialize terrain frames
-		debug.debug_output("Initialize animation frames",1,0);
+		debug.debug_output("Initialize animation frames",Action::START,Logfile::STARTUP);
 		initialize_animation_frames(temp_map);
-		debug.debug_output("Initialize animation frames",0,0);
+		debug.debug_output("Initialize animation frames",Action::END,Logfile::STARTUP);
 
 		//initialize the map
 		temp_map->initialize_objects();
@@ -13784,12 +13651,12 @@ void game_engine::create_maps(void){
 
 
 		//now that object infos are known, we can initialize items and plot objects
-		debug.debug_output("Initializing Plot Objects and Items",1,0);
+		debug.debug_output("Initializing Plot Objects and Items",Action::START,Logfile::STARTUP);
 		temp_map->items.reserve(items_total[d]+10);
 		for(a=0;a<items_total[d];a++){
 			create_plot_object(temp_map,items_pre[d*items_max+a],-1,-1,-1,-1);
 		}
-		debug.debug_output("Initializing Plot Objects and Items",0,0);
+		debug.debug_output("Initializing Plot Objects and Items",Action::END,Logfile::STARTUP);
 
 
 
@@ -13832,14 +13699,14 @@ void game_engine::create_maps(void){
 		temp_map->initialize_items();
 
 		//map texture
-		debug.debug_output("Creating minimap",1,0);
+		debug.debug_output("Creating minimap",Action::START,Logfile::STARTUP);
 		temp_map->map_texture=-1;
 		temp_map->map_texture_2=-1;
 		create_minimap(temp_map,d);
-		debug.debug_output("Creating minimap",0,0);
+		debug.debug_output("Creating minimap",Action::END,Logfile::STARTUP);
 
 
-		debug.debug_output("Initializing Area "+mod.general_areas[map_type].name,0,0);
+		debug.debug_output("Initializing Area "+mod.general_areas[map_type].name,Action::END,Logfile::STARTUP);
 
 	}
 
@@ -13852,7 +13719,7 @@ void game_engine::create_maps(void){
 	SAFE_DELETE_ARRAY(items_total);
 
 
-	debug.debug_output("Map Creation",0,0);
+	debug.debug_output("Map Creation",Action::END,Logfile::STARTUP);
 }
 
 void game_engine::create_minimap(map *map_to_edit, int d){
@@ -14222,7 +14089,7 @@ void game_engine::set_edges(void){
 			stringtok (ls, rivi, ";");
 			//int d=ls.size();
 			if(ls.size()<width){
-				debug.debug_output("Misconfigured map.dat!",2,0);
+				debug.debug_output("Misconfigured map.dat!",Action::FAIL_AND_END,Logfile::STARTUP);
 			}
 
 			for(b=0;b<width;b++){
@@ -17258,7 +17125,7 @@ void game_engine::initialize_creature_specialties(creature_base *creature, map *
 void game_engine::initialize_animation_frames(map *map_to_edit){
 
 	//terrain
-	debug.debug_output("Initialize terrain frames",1,0);
+	debug.debug_output("Initialize terrain frames",Action::START,Logfile::STARTUP);
 	for(int i=0;i<map_to_edit->sizex;i++){
 		for(int j=0;j<map_to_edit->sizey;j++){
 
@@ -17269,28 +17136,20 @@ void game_engine::initialize_animation_frames(map *map_to_edit){
 			map_to_edit->grid[i].grid[j].frame_time=randDouble(0,mod.terrain_types[map_to_edit->grid[i].grid[j].terrain_type].terrain_frames[map_to_edit->grid[i].grid[j].current_frame].time);
 		}
 	}
-	debug.debug_output("Initialize terrain frames",0,0);
+	debug.debug_output("Initialize terrain frames",Action::END,Logfile::STARTUP);
 
 	//props
-	debug.debug_output("Initialize object frames",1,0);
+	debug.debug_output("Initialize object frames",Action::START,Logfile::STARTUP);
 	for(unsigned i=0;i<map_to_edit->object.size();i++){
 		if(map_to_edit->object[i].dead)continue;
 
-		/*itoa(map_to_edit->object[i].type,temprivi,10);
-		debug.debug_output((string)"type="+temprivi,3,0);*/
-
 		//start with random frame
 		map_to_edit->object[i].current_animation_frame=randInt(0,mod.general_objects[map_to_edit->object[i].type].animation_frames.size());
-		/*itoa(map_to_edit->object[i].current_animation_frame,temprivi,10);
-		debug.debug_output((string)"frame="+temprivi,3,0);*/
 
 		//set time to current plus random to next frame
 		map_to_edit->object[i].animation_frame_time=randDouble(0,mod.general_objects[map_to_edit->object[i].type].animation_frames[map_to_edit->object[i].current_animation_frame].time);
-		/*itoa((int)map_to_edit->object[i].animation_frame_time,temprivi,10);
-		debug.debug_output((string)"time="+temprivi,3,0);*/
-
 	}
-	debug.debug_output("Initialize object frames",0,0);
+	debug.debug_output("Initialize object frames",Action::END,Logfile::STARTUP);
 
 	/*//plot_objects
 	for(i=0;k<map_to_edit.items.size();k++){

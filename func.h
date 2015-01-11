@@ -6,6 +6,7 @@
 //#include <windows.h>
 #include <string>
 #include <vector>
+#include <unordered_map>
 
 #include <cstdlib>
 #include <ctime>
@@ -96,13 +97,20 @@ float x1, float y1 ,
 float x2, float y2 ,
 float x3, float y3 , float r );
 
+namespace Debugger {
+	enum Action { START, END, FAIL_AND_END, LOG };
+	enum Logfile { STARTUP, FRAME };
+}
+
 class debugger
 {
     protected:
-        int debug_level[2];
+		std::unordered_map<Debugger::Logfile, int> debug_level;
+		std::string type2file(Debugger::Logfile type);
     public:
-        int debug_state[2];
-        void debug_output(const std::string& rivi, int level, int type);
+		std::unordered_map<Debugger::Logfile, int> debug_state;
+		void debug_output(const std::string& rivi, Debugger::Action level, Debugger::Logfile type);
+		void restart_log(Debugger::Logfile type);
         debugger();
 };
 
