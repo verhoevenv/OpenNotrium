@@ -285,5 +285,59 @@ Psionic Dash;//name---------------------------------------
   end_fire_effects;
   begin_hit_effects;
   end_hit_effects;
+Flame Thrower;//name---------------------------------------
+  21;//identifier
+  3;//class
+  qfbullet.png;//bullet texture
+  9;//bullets at one shot
+  0;//stop at hit 0=stop where hit, 1=don't stop
+  0.000000;//bullet size
+  0.200000;//spread
+  0.600000;//bullet speed
+  200.000000;//time until bullet disappears
+  40;//fire rate
+  0;//trace 0=no trace, 1=blue beam, 2=bullet trace, 3=red beam, 4=green beam, 5=yellow beam
+  -1;//hit visual effect colour, -1=nothing 0=?, 1=red, 2=green, 3=blue
+  12;//hit visual effect particle, -1=nothing, 0=>particle from particles.dat 
+  fire.wav;//hit effect sound
+  0.010000;//push target back
+  0.000000;//push shooter back
+  fire.wav;//fire sound
+  claws0.wav;//hit sound
+  1.000000;//AI hear volume, the amount of anger the AI gets when it hears the weapon
+  begin_wield_conditions;
+    0;//condition
+      75.000000;//condition parameter0
+      1.000000;//condition parameter1
+  end_wield_conditions;
+  begin_fire_effects;
+    16;//effect number
+      75.000000;//parameter1
+      -1.000000;//parameter2
+      0.000000;//parameter3
+      0.000000;//parameter4
+    27;//effect number
+      3.000000;//parameter1
+      50.000000;//parameter2
+      0.300000;//parameter3
+      0.500000;//parameter4
+    26;//effect number
+      5.000000;//parameter1
+      3.000000;//parameter2
+      21.000000;//parameter3
+      0.000000;//parameter4
+  end_fire_effects;
+  begin_hit_effects;
+    4;//effect number
+      -5.000000;//parameter1
+      0.000000;//parameter2
+      0.000000;//parameter3
+      0.000000;//parameter4
+    23;//effect number
+      -3.500000;//parameter1
+      21.000000;//parameter2
+      0.000000;//parameter3
+      10000.000000;//parameter4
+  end_hit_effects;
 end_of_file;
 
