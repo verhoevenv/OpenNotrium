@@ -4858,8 +4858,8 @@ void game_engine::load_setup(const char *filename){//loads setup from file
 			return;
 		}
 
-		debug.debug_state[Logfile::STARTUP]=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-		debug.debug_state[Logfile::FRAME] = atoi(stripped_fgets(rivi, sizeof(rivi), fil));
+		debug.debug_state[Logfile::STARTUP]=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
+		debug.debug_state[Logfile::FRAME] = strtobool(stripped_fgets(rivi, sizeof(rivi), fil));
 		random_seed=atoi(stripped_fgets(rivi,sizeof(rivi),fil));//random seed
 		pop_up_x=atof(stripped_fgets(rivi,sizeof(rivi),fil));//pop_up_x
 		pop_up_y=atof(stripped_fgets(rivi,sizeof(rivi),fil));//pop_up_y
@@ -11767,7 +11767,7 @@ void game_engine::render_menu(void){
 						if(selected_mod>=mods)
 							selected_mod=0;
 						//tempstring=mod_names[selected_mod];
-						if (debug.debug_state[Logfile::STARTUP] == 0){
+						if (!debug.debug_state[Logfile::STARTUP]){
 							if(mod_names[selected_mod]=="Tutorial"){
 								selected_mod++;
 								if(selected_mod>=mods)
@@ -12251,7 +12251,7 @@ void game_engine::create_menu_items(void){
 		menu_system[4].item[d].text_size=1.5f;
 		menu_system[4].item[d].height=25;
 
-		if (debug.debug_state[Logfile::STARTUP] == 1){
+		if (debug.debug_state[Logfile::STARTUP]){
 			d++;
 			menu_system[4].item[d].text="Start Editor";
 			menu_system[4].item[d].help="Starts the map editor";

@@ -108,7 +108,7 @@ class debugger
 		std::unordered_map<Debugger::Logfile, int> debug_level;
 		std::string type2file(Debugger::Logfile type);
     public:
-		std::unordered_map<Debugger::Logfile, int> debug_state;
+		std::unordered_map<Debugger::Logfile, bool> debug_state;
 		void debug_output(const std::string& rivi, Debugger::Action level, Debugger::Logfile type);
 		void restart_log(Debugger::Logfile type);
         debugger();

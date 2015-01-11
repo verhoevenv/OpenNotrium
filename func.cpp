@@ -451,7 +451,7 @@ using namespace Debugger;
 
 void debugger::debug_output(const string& rivi, Action level, Logfile type){
 
-	if(debug_state[type]==1){
+	if(debug_state[type]){
 
 		if (level == Action::START) {
 			debug_level[type]++;
@@ -475,7 +475,7 @@ void debugger::debug_output(const string& rivi, Action level, Logfile type){
 
 
 void debugger::restart_log(Logfile type){
-	if (debug_state[type] == 1){
+	if (debug_state[type]){
 		string filename = type2file(type);
 		FILE *fil;
 		fil = fopen(filename.c_str(), "wt");
@@ -497,8 +497,8 @@ string debugger::type2file(Logfile type) {
 }
 
 debugger::debugger(){
-	debug_state[Logfile::STARTUP] = 0;
-	debug_state[Logfile::FRAME] = 0;
+	debug_state[Logfile::STARTUP] = false;
+	debug_state[Logfile::FRAME] = false;
 	debug_level[Logfile::STARTUP] = 0;
 	debug_level[Logfile::FRAME] = 0;
 }
