@@ -7445,7 +7445,6 @@ bool game_engine::use_item(int general_item_number,int *item_number_in_list, Mod
 //runs effect
 bool game_engine::run_effect(Mod::effect effect, creature_base *creature, int creature_number, float x, float y, float angle, bool undo){
 
-
 	int a;
 	bool arrange_needed=false;
 
@@ -7466,7 +7465,6 @@ bool game_engine::run_effect(Mod::effect effect, creature_base *creature, int cr
 				temp_effect.parameter0=effect.parameter3;
 				temp_effect.parameter1=effect.parameter4;
 
-
 				temp_effect.weapon_type=effect.parameter2;
 				creature->weapon_effects[creature->weapon_effects_amount]=temp_effect;
 				creature->weapon_effects_amount++;
@@ -7484,7 +7482,6 @@ bool game_engine::run_effect(Mod::effect effect, creature_base *creature, int cr
 
 				return_value=true;
 			}
-
 
 			break;
 		case 3:
@@ -7535,8 +7532,6 @@ bool game_engine::run_effect(Mod::effect effect, creature_base *creature, int cr
 					if(can_drop){
 						create_item(map_main,effect.parameter1,effect.parameter2,x+randDouble(-effect.parameter3,effect.parameter3),y+randDouble(-effect.parameter3,effect.parameter3),angle);
 					}
-
-
 
 				}
 
@@ -8993,7 +8988,6 @@ bool game_engine::run_effect(Mod::effect effect, creature_base *creature, int cr
 								nearest_enemy=a;
 								nearest_distance=distance;
 							}
-
 						}
 					}
 					float enemy_x=map_main->creature[nearest_enemy].x+mod.general_creatures[map_main->creature[nearest_enemy].type].size*map_main->creature[nearest_enemy].size*general_creature_size*0.5f;
@@ -9020,7 +9014,6 @@ bool game_engine::run_effect(Mod::effect effect, creature_base *creature, int cr
 					if(fire_angle>2*pi)
 						fire_angle-=2*pi;
 					bullet bullet_shot=shoot(creature_number,creature->side,effect.parameter1,x,y,fire_angle);
-
 
 					//shooting was a success
 					if(!bullet_shot.dead){
@@ -9163,12 +9156,6 @@ bool game_engine::run_effect(Mod::effect effect, creature_base *creature, int cr
 			}
 			break;
 
-
-
-
-
-
-
 	}
 
 	//we've done something, best to rearrange the item list
@@ -9176,15 +9163,12 @@ bool game_engine::run_effect(Mod::effect effect, creature_base *creature, int cr
 		arrange_item_list(false);
 
 	return return_value;
-
 }
 
 
 void game_engine::draw_item_view(void){
 
 	calculate_quick_keys(true);
-
-	int a,b;
 
 	//computer texture
 	grim->System_SetState_Blending(true);
@@ -9210,7 +9194,6 @@ void game_engine::draw_item_view(void){
 
 	int right_line=83;
 
-
 	//return to game by mouse
 	if(sqr(mousex-item_dialog_x-575)+sqr(mousey-item_dialog_y-427)<sqr(23)){
 		text_manager.write_line(font,mousex-170, mousey-6,"Click to exit",1);
@@ -9235,11 +9218,9 @@ void game_engine::draw_item_view(void){
 		pop_up_mode=1;
 	}
 
-
 	//use item by mouse
 	int can_use_item=-1;
 	vector <int> use_effects;
-
 
 	//dismantle selected item by b
 	int dismantle_item=-1;
@@ -9255,474 +9236,442 @@ void game_engine::draw_item_view(void){
 		drop_item=combine_item;
 	}*/
 
-
-
-
 	int mahtuu=13;
-
-
-
-
 
 	float item_list_x=50;
 	float item_list_y=85;
 	char temprivi2[100];
 
-			const int rivi_korkeus=25;
-
-			int rivi=0;
-			int ohirivit=0;
-			int total_items=0;
-
-			grim->System_SetState_Blending(true);
-			grim->System_SetState_BlendSrc(grBLEND_SRCALPHA);
-			grim->System_SetState_BlendDst(grBLEND_INVSRCALPHA);
-			grim->Quads_SetRotation(0);
-
-			bool rullaus=false;
-
-			grim->Quads_SetColor(0.8f,1,0.8f,1);
-			text_manager.write_line(font,item_dialog_x+55, item_dialog_y+55, "Select Item:",1.5f);
-			//text_manager.write_line(font,item_dialog_x+250, item_dialog_y+55, "Item Description:",1.5f);
-			//text_manager.write_line(font,item_dialog_x+250, item_dialog_y+250, "Combination:",1.5f);
-
-
-
-
-			grim->Quads_SetColor(0.8f,1,0.8f,0.8f);
-			//oikea viiva
-			text_manager.draw_line(item_dialog_x+240+right_line,item_dialog_y+37,item_dialog_x+240+right_line,item_dialog_y+406,1.5f,0.5f,0.5f,1,1,1);
-			//vasen viiva
-			text_manager.draw_line(item_dialog_x+83,item_dialog_y+80,item_dialog_x+83,item_dialog_y+406,1.5f,0.5f,0.5f,1,1,1);
-
-
-
-			string header="Item Description:";
-			int item_description=-1;
-
-			//list all items
-			bool mouse_on_any_item=false;
-			for(a=0;a<inventory[active_inventory].player_items.size();a++){
-
-				if(inventory[active_inventory].player_items[a].item<=-1)continue;
-				if(inventory[active_inventory].player_items[a].amount<=0)continue;
-				if(mod.general_items[inventory[active_inventory].player_items[a].item].visible_in_inventory==0)continue;
-				//if(inventory[active_inventory].player_items[a].wielded)continue;
-				total_items++;
-				if(total_items>=mahtuu){rullaus=true;}
-				if(rivi>=mahtuu){continue;}
-				if(item_list_place>ohirivit){ohirivit++;continue;}
-
-
-				//item name
-				tempstring=mod.general_items[inventory[active_inventory].player_items[a].item].name;
-				int max_length=22;
-				if(inventory[active_inventory].player_items[a].amount>1)max_length-=4;
-				if(inventory[active_inventory].player_items[a].amount>10)max_length-=1;
-				if(tempstring.length()>max_length){
-					tempstring=tempstring.substr(0,max_length);
-					tempstring+="..";
-				}
-				if(inventory[active_inventory].player_items[a].amount>1){
-					//itoa(inventory[active_inventory].player_items[a].amount,temprivi2,10);
-					sprintf(temprivi2,"%d",inventory[active_inventory].player_items[a].amount);
-					tempstring+=" (";
-					tempstring+=temprivi2;
-					tempstring+=")";
-				}
-				grim->Quads_SetColor(1,1,1,1);
-				int text_right_x=text_manager.write_line(font,item_dialog_x+item_list_x+34,item_dialog_y+item_list_y+rivi*rivi_korkeus, tempstring,1);
-
-				//weight
-				//itoa(mod.general_items[inventory[active_inventory].player_items[a].item].weight*inventory[active_inventory].player_items[a].amount,temprivi,10);
-				sprintf(temprivi,"%d",(int)(mod.general_items[inventory[active_inventory].player_items[a].item].weight*inventory[active_inventory].player_items[a].amount));
-				text_manager.write_line(font,item_dialog_x+item_list_x,item_dialog_y+item_list_y+rivi*rivi_korkeus,temprivi,1);
-
-
-				//small picture
-				if(text_right_x<item_dialog_x+240+right_line-rivi_korkeus-4){
-					grim->Quads_SetColor(1,1,1,1);
-					resources.Texture_Set(mod.general_items[inventory[active_inventory].player_items[a].item].texture);
-					grim->Quads_SetSubset(0,0,1,1);
-					grim->Quads_Begin();
-						grim->Quads_Draw(item_dialog_x+240+right_line-rivi_korkeus-4,item_dialog_y+item_list_y+rivi*rivi_korkeus-3, rivi_korkeus, rivi_korkeus);
-					grim->Quads_End();
-				}
-
-
-
-				//mouse is on this
-				bool mouse_on_this=false;
-				if((mousex>item_dialog_x+83)&&(mousex<item_dialog_x+240+right_line-10)
-				&&(mousey>=item_dialog_y+item_list_y+rivi*rivi_korkeus)&&(mousey<item_dialog_y+item_list_y+(rivi+1)*rivi_korkeus))
-				{
-
-					mouse_on_any_item=true;
-					mouse_on_this=true;
-				}
-
-
-				//use this item
-				if((mouse_on_this&&combine_item==-1)||(combine_item==a)){
-
-					for(int b=0;b<mod.general_items[inventory[active_inventory].player_items[a].item].effects.size();b++){
-						if(key_clicked[translate_key_int(mod.general_items[inventory[active_inventory].player_items[a].item].effects[b].use_key)]){
-							//key_clicked[translate_key_int(mod.general_items[inventory[active_inventory].player_items[a].item].effects[b].use_key)]=false;
-							can_use_item=a;
-							use_effects.push_back(b);
-							combine_item=-1;
-						}
-					}
-				}
-
-				//drop or break this item
-				if((mouse_on_this&&combine_item==-1)||(combine_item==a)){
-					if(!key_d&&key_d2){
-						if(can_drop_items){
-							key_d2=false;
-							drop_item=a;
-							combine_item=-1;
-						}
-						else
-							text_manager.message(3000,1000,"Cannot drop items.");
-					}
-					if(!key_b&&key_b2){
-						key_b2=false;
-						dismantle_item=a;
-						combine_item=-1;
-					}
-				}
-
-
-				//find item description
-				if((mouse_on_this&&(combine_item==-1))){
-					item_description=inventory[active_inventory].player_items[a].item;
-				}
-
-				//find the combine result if there is one
-				if((mouse_on_this)&&(combine_item!=-1)){
-					Mod::combines combination;
-					bool combination_found=false;
-					if(item_has_combination(inventory[active_inventory].player_items[combine_item].item,inventory[active_inventory].player_items[a].item,&combination))combination_found=true;
-					if(item_has_combination(inventory[active_inventory].player_items[a].item,inventory[active_inventory].player_items[combine_item].item,&combination))combination_found=true;
-
-					//combination found
-					if(combination_found){
-						header="Combination Result:";
-						item_description=combination.combine_results[0].combines_to;
-					}
-					else{
-						header="Doesn't Combine";
-						item_description=-2;
-					}
-				}
-
-
-
-
-
-				//select the combined items
-				if(mouse_on_this)
-					if(!mouse_left&&mouse_left2){
-						mouse_left=false;
-						mouse_left2=false;
-
-						playsound(UI_game_click[1],1,0,0,0,0);
-						if(combine_item==-1){
-							combine_item=a;
-						}
-						//combine with this
-						else if(combine_item>-1){
-							//find out if these can be combined
-							if(combine_item!=a){
-
-								Mod::combines combination;
-								bool combination_found=false;
-								if(item_has_combination(inventory[active_inventory].player_items[combine_item].item,inventory[active_inventory].player_items[a].item,&combination))combination_found=true;
-								if(item_has_combination(inventory[active_inventory].player_items[a].item,inventory[active_inventory].player_items[combine_item].item,&combination))combination_found=true;
-
-
-								//combine
-								if(combination_found){
-									show_slider(2,a,combine_item,-1,-1,combination.combine_puzzle_difficulty);
-									text_manager.message(combination.combine_puzzle_difficulty*1000,1000,"Combining...");
-									combine_item=-1;
-								}
-								//doesn't combine, inform player of failure
-								else{
-									text_manager.message(3000,1000,"Unable to combine these items");
-								}
-							}
-						}
-					}
-				rivi++;
-			}
-
-			//help text
-			bool mouse_on_slot=false;
-			if((combine_item==-1)&&(!mouse_on_any_item)&&((mousex<item_dialog_x+10)||(mousey<item_dialog_y+10)||(mousex>item_dialog_x+640-10)||(mousey>item_dialog_y+480-10))){
-				/*grim->Quads_SetColor(0.8f,1,0.8f,1);
-				text_manager.write_line(font,item_dialog_x+250, item_dialog_y+55, "Inventory:",1.5f);*/
-				grim->Quads_SetColor(1,1,1,1);
-				text_manager.write(font,"To use an item, select it, then press the U-key. \\   To combine an item with another item, click the item from the list, then click on the item you want to combine it with. \\   To break down an item, select it from the list and press B-key. \\   To drop an item, select it from the list, then press D-key.",1,item_dialog_x+250+right_line,item_dialog_y+55,screen_width-130,screen_height,1,1,1,0.8f);
-			}
-
-
-			//ragdoll
-			else if(((item_description==-1)||(item_description==-2))&&(mod.general_races[player_race].rag_doll>=0)){
-				float rag_doll_x=329;
-				float rag_doll_y=107;
-				grim->Quads_SetColor(1,1,1,1);
-				resources.Texture_Set(mod.general_races[player_race].rag_doll);
-				grim->Quads_SetSubset(0,0,1,1);
-				grim->Quads_Begin();
-					grim->Quads_Draw(item_dialog_x+rag_doll_x,item_dialog_y+rag_doll_y, 256, 256);
-				grim->Quads_End();
-
-
-				//slots
-				for(a=0;a<mod.general_races[player_race].slots.size();a++){
-					if(mod.general_races[player_race].slots[a].active){
-
-						//light the slots the item goes to
-						bool can_place_item_here=false;
-						if(combine_item>-1){
-							for(b=0;b<mod.general_items[inventory[active_inventory].player_items[combine_item].item].wield_slots.size();b++){
-								if(mod.general_items[inventory[active_inventory].player_items[combine_item].item].wield_slots[b]==a)
-									can_place_item_here=true;
-							}
-						}
-
-						//mouse on it
-						bool mouse_on=false;
-						if((mousex>item_dialog_x+rag_doll_x+mod.general_races[player_race].slots[a].x)
-						&&(mousey>item_dialog_y+rag_doll_y+mod.general_races[player_race].slots[a].y)
-						&&(mousex<item_dialog_x+rag_doll_x+mod.general_races[player_race].slots[a].x+64)
-						&&(mousey<item_dialog_y+rag_doll_y+mod.general_races[player_race].slots[a].y+64)){
-							mouse_on=true;
-							mouse_on_slot=true;
-							//place item here
-							if(combine_item>-1){
-								if(!mouse_left&&mouse_left2){
-									mouse_left=false;
-									mouse_left2=false;
-
-									//check if correct slot and not the same item
-									if((can_place_item_here)&&(inventory[active_inventory].slot_used_by[a]!=combine_item)){
-
-										//check if new item can be wielded
-										bool OK=true;
-										for(b=0;b<mod.general_items[inventory[active_inventory].player_items[combine_item].item].effects.size();b++){
-											if(!use_item(inventory[active_inventory].player_items[combine_item].item, &combine_item, mod.general_items[inventory[active_inventory].player_items[combine_item].item].effects[b].effect, false, true, true,false))
-												OK=false;
-										}
-										if(OK){
-											int item_number=inventory[active_inventory].slot_used_by[a];
-
-											//an item is already in the slot, unwield it
-											if(item_number>=0){
-												for(b=0;b<mod.general_items[inventory[active_inventory].player_items[item_number].item].effects.size();b++){
-													use_item(inventory[active_inventory].player_items[item_number].item, &item_number, mod.general_items[inventory[active_inventory].player_items[item_number].item].effects[b].effect, true, false, false,false);
-												}
-											}
-
-											//now wield the new item
-											for(b=0;b<mod.general_items[inventory[active_inventory].player_items[combine_item].item].effects.size();b++){
-												use_item(inventory[active_inventory].player_items[combine_item].item, &combine_item, mod.general_items[inventory[active_inventory].player_items[combine_item].item].effects[b].effect, false, true, false,false);
-											}
-
-											combine_item=-1;
-										}
-									}
-								}
-							}
-						}
-
-						if(can_place_item_here){
-							//something already in slot
-							if((inventory[active_inventory].slot_used_by[a]>=0)&&(inventory[active_inventory].slot_used_by[a]!=combine_item)){
-								if(mouse_on)
-									grim->Quads_SetColor(1.0f,0.0f,0.0f,1.0f);
-								else
-									grim->Quads_SetColor(1.0f,0.0f,0.0f,0.8f);
-							}
-							else{
-								if(mouse_on)
-									grim->Quads_SetColor(0.5f,1.0f,0.5f,1.0f);
-								else
-									grim->Quads_SetColor(0.5f,1.0f,0.5f,0.8f);
-							}
-						}
-						else if(mouse_on)
-							grim->Quads_SetColor(1,1,1,0.75f);
-						else
-							grim->Quads_SetColor(1,1,1,0.7f);
-
-
-						resources.Texture_Set(mod.general_races[player_race].slots[a].texture);
-						grim->Quads_SetSubset(0,0,1,1);
-						grim->Quads_Begin();
-							grim->Quads_Draw(item_dialog_x+rag_doll_x+mod.general_races[player_race].slots[a].x,item_dialog_y+rag_doll_y+mod.general_races[player_race].slots[a].y, 64, 64);
-						grim->Quads_End();
-					}
-				}
-
-				//items in use
-				for(a=0;a<inventory[active_inventory].player_items.size();a++){
-					if(inventory[active_inventory].player_items[a].item<=-1)continue;
-					if(inventory[active_inventory].player_items[a].amount<=0)continue;
-					if(!inventory[active_inventory].player_items[a].wielded)continue;
-
-					//all slots
-					for(b=0;b<mod.general_items[inventory[active_inventory].player_items[a].item].wield_slots.size();b++){
-
-						//draw icon
-						grim->Quads_SetColor(1,1,1,1);
-						resources.Texture_Set(mod.general_items[inventory[active_inventory].player_items[a].item].texture);
-						grim->Quads_SetSubset(0,0,1,1);
-						grim->Quads_Begin();
-							grim->Quads_Draw(item_dialog_x+rag_doll_x+mod.general_races[player_race].slots[mod.general_items[inventory[active_inventory].player_items[a].item].wield_slots[b]].x+2,item_dialog_y+rag_doll_y+mod.general_races[player_race].slots[mod.general_items[inventory[active_inventory].player_items[a].item].wield_slots[b]].y+2, 60, 60);
-						grim->Quads_End();
-
-						//mouse on it
-						if((mousex>item_dialog_x+rag_doll_x+mod.general_races[player_race].slots[mod.general_items[inventory[active_inventory].player_items[a].item].wield_slots[b]].x)
-						&&(mousey>item_dialog_y+rag_doll_y+mod.general_races[player_race].slots[mod.general_items[inventory[active_inventory].player_items[a].item].wield_slots[b]].y)
-						&&(mousex<item_dialog_x+rag_doll_x+mod.general_races[player_race].slots[mod.general_items[inventory[active_inventory].player_items[a].item].wield_slots[b]].x+64)
-						&&(mousey<item_dialog_y+rag_doll_y+mod.general_races[player_race].slots[mod.general_items[inventory[active_inventory].player_items[a].item].wield_slots[b]].y+64)){
-							if(!mouse_left&&mouse_left2){
-								mouse_left=false;
-								mouse_left2=false;
-								playsound(UI_game_click[1],1,0,0,0,0);
-								combine_item=a;
-								combine_item_from_wield=true;
-							}
-						}
-
-					}
-				}
-
-
-			}
-
-
-			//item description
-			if(item_description!=-1){
-				grim->Quads_SetColor(0.8f,1,0.8f,1);
-				text_manager.write_line(font,item_dialog_x+250+right_line, item_dialog_y+55, header,1.5f);
-
-
-				//item symbol
-				if(item_description>=0){
-					grim->Quads_SetColor(1,1,1,1);
-					text_manager.write_line(font,item_dialog_x+250+right_line, item_dialog_y+55+30, mod.general_items[item_description].name,1.1f);
-
-					grim->Quads_SetColor(1,1,1,1);
-					resources.Texture_Set(mod.general_items[item_description].texture);
-					grim->Quads_SetSubset(0,0,1,1);
-					grim->Quads_Begin();
-						grim->Quads_Draw(item_dialog_x+410, item_dialog_y+300, 100, 100);
-					grim->Quads_End();
-
-					text_manager.write(font,mod.general_items[item_description].description,1,item_dialog_x+250+right_line,item_dialog_y+85+30,screen_width-130,screen_height,1,1,1,0.8f);
-				}
-			}
-
-
-
-
-			//jos tarvitaan sivuille rullia
-			if(rullaus){
-				grim->System_SetState_Blending(true);
-				resources.Texture_Set(mod.general_races[player_race].interface_texture);
-				//ylempi nuoli
-				if(item_list_place>0){
-					if((mousex>item_dialog_x+232+right_line)&&(mousex<item_dialog_x+232+16+right_line)&&(mousey>item_dialog_y+31)&&(mousey<item_dialog_y+31+16)){
-						grim->Quads_SetColor(1,1,1,1);
-						if(mouse_left&&!mouse_left2){
-							playsound(UI_game_click[0],1,0,0,0,0);
-							mouse_on_any_item=true;
-							item_list_place-=1;
-							if(item_list_place<0)item_list_place=0;
-						}
-					}
-				}
-				grim->Quads_SetColor(1,1,1,1);
-				grim->Quads_SetSubset(0,0,(16/256.0f),(16/256.0f));
-				grim->Quads_Begin();
-				grim->Quads_Draw(item_dialog_x+232+right_line, item_dialog_y+31, 16, 16);
-				grim->Quads_End();
-
-				//alempi nuoli
-				if(item_list_place<total_items-mahtuu){
-					if((mousex>item_dialog_x+232+right_line)&&(mousex<item_dialog_x+232+16+right_line)&&(mousey>item_dialog_y+437-42)&&(mousey<item_dialog_y+437+16-42)){
-						grim->Quads_SetColor(1,1,1,1);
-						if(mouse_left&&!mouse_left2){
-							playsound(UI_game_click[0],1,0,0,0,0);
-							mouse_on_any_item=true;
-							item_list_place+=1;
-							if(item_list_place>total_items-mahtuu)item_list_place=total_items-mahtuu;
-						}
-					}
-				}
-				grim->Quads_SetColor(1,1,1,1);
-				grim->Quads_SetSubset(0,(32/256.0f),(16/256.0f),(48/256.0f));
-				grim->Quads_Begin();
-				grim->Quads_Draw(item_dialog_x+232+right_line, item_dialog_y+437-42, 16, 16);
-				grim->Quads_End();
-
-				//viiva
-				float pituus=((float)mahtuu/total_items)*(437-47-42);
-				float alku=((float)item_list_place/total_items)*(437-47-42);
-				text_manager.draw_line(item_dialog_x+240+right_line,item_dialog_y+47+alku,item_dialog_x+240+right_line,item_dialog_y+47+alku+pituus,8,1,1,1,1,1);
-				if((mousex>item_dialog_x+232+right_line)&&(mousex<item_dialog_x+232+16+right_line)&&(mousey>item_dialog_y+31+16)&&(mousey<item_dialog_y+437-42)){
-					if(mouse_left){
-						mouse_on_any_item=true;
-						item_list_place=(mousey-item_dialog_y-47)/(437-47-42)*total_items-mahtuu/2;
-
-
-					}
-				}
-
-
-				//rulla
-				int rulla=mouse_wheel;
-				int rullanopeus=total_items/50.0f;
-				if(rullanopeus<1)rullanopeus=1;
-				if(rulla<0)item_list_place+=rullanopeus;
-				if(rulla>0)item_list_place-=rullanopeus;
-
-
-				if(item_list_place<0)
-					item_list_place=0;
-				if(item_list_place>total_items-mahtuu)
-					item_list_place=total_items-mahtuu;
-			}
-
-
-			//combine items
-			if(combine_item>-1){
-
-
-				//item name
-				grim->Quads_SetColor(0.8f,1,0.8f,1);
-				text_manager.write_line(font,mousex+28-16, mousey+10-16, mod.general_items[inventory[active_inventory].player_items[combine_item].item].name,1);
-
-				grim->Quads_SetColor(1,1,1,1);
-
-				/*//item symbol
-				resources.Texture_Set(items_texture);
-				find_texture_coordinates(mod.general_items[inventory[active_inventory].player_items[combine_item]].symbol_number,&x0,&y0,&x1,&y1,4);
-				grim->Quads_SetSubset(x0,y0,x1,y1);
-				grim->Quads_Begin();
-				grim->Quads_Draw(mousex-16, mousey-16, 32, 32);
-				grim->Quads_End();*/
-
-
-				if (!key_escape&&key_escape2){
-					key_escape2=false;
-					combine_item=-1;
-				}
-			}
+    const int rivi_korkeus=25;
+
+    int rivi=0;
+    int ohirivit=0;
+    int total_items=0;
+
+    grim->System_SetState_Blending(true);
+    grim->System_SetState_BlendSrc(grBLEND_SRCALPHA);
+    grim->System_SetState_BlendDst(grBLEND_INVSRCALPHA);
+    grim->Quads_SetRotation(0);
+
+    bool rullaus=false;
+
+    grim->Quads_SetColor(0.8f,1,0.8f,1);
+    text_manager.write_line(font,item_dialog_x+55, item_dialog_y+55, "Select Item:",1.5f);
+    //text_manager.write_line(font,item_dialog_x+250, item_dialog_y+55, "Item Description:",1.5f);
+    //text_manager.write_line(font,item_dialog_x+250, item_dialog_y+250, "Combination:",1.5f);
+
+    grim->Quads_SetColor(0.8f,1,0.8f,0.8f);
+    //oikea viiva
+    text_manager.draw_line(item_dialog_x+240+right_line,item_dialog_y+37,item_dialog_x+240+right_line,item_dialog_y+406,1.5f,0.5f,0.5f,1,1,1);
+    //vasen viiva
+    text_manager.draw_line(item_dialog_x+83,item_dialog_y+80,item_dialog_x+83,item_dialog_y+406,1.5f,0.5f,0.5f,1,1,1);
+
+    string header="Item Description:";
+    int item_description=-1;
+
+    //list all items
+    bool mouse_on_any_item=false;
+    for(int a = 0 ; a < inventory[active_inventory].player_items.size() ; a++) {
+        auto& inventory_entry = inventory[active_inventory].player_items[a];
+
+        if(inventory_entry.item<=-1)continue;
+        if(inventory_entry.amount<=0)continue;
+        if(mod.general_items[inventory_entry.item].visible_in_inventory==0)continue;
+        //if(inventory_entry.wielded)continue;
+        total_items++;
+        if(total_items>=mahtuu){rullaus=true;}
+        if(rivi>=mahtuu){continue;}
+        if(item_list_place>ohirivit){ohirivit++;continue;}
+
+            //item name
+            tempstring=mod.general_items[inventory_entry.item].name;
+            int max_length=22;
+            if(inventory_entry.amount>1)max_length-=4;
+            if(inventory_entry.amount>10)max_length-=1;
+            if(tempstring.length()>max_length){
+                tempstring=tempstring.substr(0,max_length);
+                tempstring+="..";
+            }
+            if(inventory_entry.amount>1){
+                //itoa(inventory_entry.amount,temprivi2,10);
+                sprintf(temprivi2,"%d",inventory_entry.amount);
+                tempstring+=" (";
+                tempstring+=temprivi2;
+                tempstring+=")";
+            }
+            grim->Quads_SetColor(1,1,1,1);
+            int text_right_x=text_manager.write_line(font,item_dialog_x+item_list_x+34,item_dialog_y+item_list_y+rivi*rivi_korkeus, tempstring,1);
+
+            //weight
+            //itoa(mod.general_items[inventory_entry.item].weight*inventory_entry.amount,temprivi,10);
+            sprintf(temprivi,"%d",(int)(mod.general_items[inventory_entry.item].weight*inventory_entry.amount));
+            text_manager.write_line(font,item_dialog_x+item_list_x,item_dialog_y+item_list_y+rivi*rivi_korkeus,temprivi,1);
+
+
+            //small picture
+            if(text_right_x<item_dialog_x+240+right_line-rivi_korkeus-4){
+                grim->Quads_SetColor(1,1,1,1);
+                resources.Texture_Set(mod.general_items[inventory_entry.item].texture);
+                grim->Quads_SetSubset(0,0,1,1);
+                grim->Quads_Begin();
+                    grim->Quads_Draw(item_dialog_x+240+right_line-rivi_korkeus-4,item_dialog_y+item_list_y+rivi*rivi_korkeus-3, rivi_korkeus, rivi_korkeus);
+                grim->Quads_End();
+            }
+
+            //mouse is on this
+            bool mouse_on_this=false;
+            if((mousex>item_dialog_x+83)&&(mousex<item_dialog_x+240+right_line-10)
+            &&(mousey>=item_dialog_y+item_list_y+rivi*rivi_korkeus)&&(mousey<item_dialog_y+item_list_y+(rivi+1)*rivi_korkeus))
+            {
+
+                mouse_on_any_item=true;
+                mouse_on_this=true;
+            }
+
+
+            //use this item
+            if((mouse_on_this&&combine_item==-1)||(combine_item==a)){
+
+                for(int b=0;b<mod.general_items[inventory_entry.item].effects.size();b++){
+                    if(key_clicked[translate_key_int(mod.general_items[inventory_entry.item].effects[b].use_key)]){
+                        //key_clicked[translate_key_int(mod.general_items[inventory_entry.item].effects[b].use_key)]=false;
+                        can_use_item=a;
+                        use_effects.push_back(b);
+                        combine_item=-1;
+                    }
+                }
+            }
+
+            //drop or break this item
+            if((mouse_on_this&&combine_item==-1)||(combine_item==a)){
+                if(!key_d&&key_d2){
+                    if(can_drop_items){
+                        key_d2=false;
+                        drop_item=a;
+                        combine_item=-1;
+                    }
+                    else
+                        text_manager.message(3000,1000,"Cannot drop items.");
+                }
+                if(!key_b&&key_b2){
+                    key_b2=false;
+                    dismantle_item=a;
+                    combine_item=-1;
+                }
+            }
+
+            //find item description
+            if((mouse_on_this&&(combine_item==-1))){
+                item_description=inventory_entry.item;
+            }
+
+            //find the combine result if there is one
+            if((mouse_on_this)&&(combine_item!=-1)){
+                Mod::combines combination;
+                bool combination_found=false;
+                if(item_has_combination(inventory[active_inventory].player_items[combine_item].item,inventory_entry.item,&combination))combination_found=true;
+                if(item_has_combination(inventory_entry.item,inventory[active_inventory].player_items[combine_item].item,&combination))combination_found=true;
+
+                //combination found
+                if(combination_found){
+                    header="Combination Result:";
+                    item_description=combination.combine_results[0].combines_to;
+                }
+                else{
+                    header="Doesn't Combine";
+                    item_description=-2;
+                }
+            }
+
+            //select the combined items
+            if(mouse_on_this) {
+                if(!mouse_left&&mouse_left2){
+                    mouse_left=false;
+                    mouse_left2=false;
+
+                    playsound(UI_game_click[1],1,0,0,0,0);
+                    if(combine_item==-1){
+                        combine_item=a;
+                    }
+                    //combine with this
+                    else if(combine_item>-1){
+                        //find out if these can be combined
+                        if(combine_item!=a){
+
+                            Mod::combines combination;
+                            bool combination_found=false;
+                            if(item_has_combination(inventory[active_inventory].player_items[combine_item].item,inventory_entry.item,&combination))combination_found=true;
+                            if(item_has_combination(inventory_entry.item,inventory[active_inventory].player_items[combine_item].item,&combination))combination_found=true;
+
+
+                            //combine
+                            if(combination_found){
+                                show_slider(2,a,combine_item,-1,-1,combination.combine_puzzle_difficulty);
+                                text_manager.message(combination.combine_puzzle_difficulty*1000,1000,"Combining...");
+                                combine_item=-1;
+                            }
+                            //doesn't combine, inform player of failure
+                            else{
+                                text_manager.message(3000,1000,"Unable to combine these items");
+                            }
+                        }
+                    }
+                }
+            }
+            rivi++;
+        }
+
+        //help text
+        bool mouse_on_slot=false;
+        if((combine_item==-1)&&(!mouse_on_any_item)&&((mousex<item_dialog_x+10)||(mousey<item_dialog_y+10)||(mousex>item_dialog_x+640-10)||(mousey>item_dialog_y+480-10))){
+            /*grim->Quads_SetColor(0.8f,1,0.8f,1);
+            text_manager.write_line(font,item_dialog_x+250, item_dialog_y+55, "Inventory:",1.5f);*/
+            grim->Quads_SetColor(1,1,1,1);
+            text_manager.write(font,"To use an item, select it, then press the U-key. \\   To combine an item with another item, click the item from the list, then click on the item you want to combine it with. \\   To break down an item, select it from the list and press B-key. \\   To drop an item, select it from the list, then press D-key.",1,item_dialog_x+250+right_line,item_dialog_y+55,screen_width-130,screen_height,1,1,1,0.8f);
+        }
+        //ragdoll
+        else if(((item_description==-1)||(item_description==-2))&&(mod.general_races[player_race].rag_doll>=0)){
+            float rag_doll_x=329;
+            float rag_doll_y=107;
+            grim->Quads_SetColor(1,1,1,1);
+            resources.Texture_Set(mod.general_races[player_race].rag_doll);
+            grim->Quads_SetSubset(0,0,1,1);
+            grim->Quads_Begin();
+                grim->Quads_Draw(item_dialog_x+rag_doll_x,item_dialog_y+rag_doll_y, 256, 256);
+            grim->Quads_End();
+
+            //slots
+            for(int a = 0 ; a < mod.general_races[player_race].slots.size() ; a++){
+                auto& races_entry = mod.general_races[player_race].slots[a];
+                if(races_entry.active){
+
+                    //light the slots the item goes to
+                    bool can_place_item_here=false;
+                    if(combine_item>-1){
+                        for(int b = 0 ; b < mod.general_items[inventory[active_inventory].player_items[combine_item].item].wield_slots.size() ;b++){
+                            if(mod.general_items[inventory[active_inventory].player_items[combine_item].item].wield_slots[b]==a)
+                                can_place_item_here=true;
+                        }
+                    }
+
+                    //mouse on it
+                    bool mouse_on=false;
+                    if((mousex>item_dialog_x+rag_doll_x+races_entry.x)
+                    &&(mousey>item_dialog_y+rag_doll_y+races_entry.y)
+                    &&(mousex<item_dialog_x+rag_doll_x+races_entry.x+64)
+                    &&(mousey<item_dialog_y+rag_doll_y+races_entry.y+64)){
+                        mouse_on=true;
+                        mouse_on_slot=true;
+                        //place item here
+                        if(combine_item>-1){
+                            if(!mouse_left&&mouse_left2){
+                                mouse_left=false;
+                                mouse_left2=false;
+
+                                //check if correct slot and not the same item
+                                if((can_place_item_here)&&(inventory[active_inventory].slot_used_by[a]!=combine_item)){
+
+                                    //check if new item can be wielded
+                                    bool OK=true;
+                                    for(int b=0;b<mod.general_items[inventory[active_inventory].player_items[combine_item].item].effects.size();b++){
+                                        if(!use_item(inventory[active_inventory].player_items[combine_item].item, &combine_item, mod.general_items[inventory[active_inventory].player_items[combine_item].item].effects[b].effect, false, true, true,false))
+                                            OK=false;
+                                    }
+                                    if(OK){
+                                        int item_number=inventory[active_inventory].slot_used_by[a];
+
+                                        //an item is already in the slot, unwield it
+                                        if(item_number>=0){
+                                            for(int b=0;b<mod.general_items[inventory[active_inventory].player_items[item_number].item].effects.size();b++){
+                                                use_item(inventory[active_inventory].player_items[item_number].item, &item_number, mod.general_items[inventory[active_inventory].player_items[item_number].item].effects[b].effect, true, false, false,false);
+                                            }
+                                        }
+
+                                        //now wield the new item
+                                        for(int b=0;b<mod.general_items[inventory[active_inventory].player_items[combine_item].item].effects.size();b++){
+                                            use_item(inventory[active_inventory].player_items[combine_item].item, &combine_item, mod.general_items[inventory[active_inventory].player_items[combine_item].item].effects[b].effect, false, true, false,false);
+                                        }
+
+                                        combine_item=-1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+
+                    if(can_place_item_here){
+                        //something already in slot
+                        if((inventory[active_inventory].slot_used_by[a]>=0)&&(inventory[active_inventory].slot_used_by[a]!=combine_item)){
+                            if(mouse_on)
+                                grim->Quads_SetColor(1.0f,0.0f,0.0f,1.0f);
+                            else
+                                grim->Quads_SetColor(1.0f,0.0f,0.0f,0.8f);
+                        }
+                        else{
+                            if(mouse_on)
+                                grim->Quads_SetColor(0.5f,1.0f,0.5f,1.0f);
+                            else
+                                grim->Quads_SetColor(0.5f,1.0f,0.5f,0.8f);
+                        }
+                    }
+                    else if(mouse_on)
+                        grim->Quads_SetColor(1,1,1,0.75f);
+                    else
+                        grim->Quads_SetColor(1,1,1,0.7f);
+
+
+                    resources.Texture_Set(races_entry.texture);
+                    grim->Quads_SetSubset(0,0,1,1);
+                    grim->Quads_Begin();
+                        grim->Quads_Draw(item_dialog_x+rag_doll_x+races_entry.x,item_dialog_y+rag_doll_y+races_entry.y, 64, 64);
+                    grim->Quads_End();
+                }
+            }
+
+            //items in use
+            for(int a=0;a<inventory[active_inventory].player_items.size();a++){
+                auto& inventory_entry = inventory[active_inventory].player_items[a];
+                if(inventory_entry.item<=-1)continue;
+                if(inventory_entry.amount<=0)continue;
+                if(!inventory_entry.wielded)continue;
+
+                //all slots
+                for(int b=0;b<mod.general_items[inventory_entry.item].wield_slots.size();b++){
+
+                    //draw icon
+                    grim->Quads_SetColor(1,1,1,1);
+                    resources.Texture_Set(mod.general_items[inventory_entry.item].texture);
+                    grim->Quads_SetSubset(0,0,1,1);
+                    grim->Quads_Begin();
+                        grim->Quads_Draw(item_dialog_x+rag_doll_x+mod.general_races[player_race].slots[mod.general_items[inventory_entry.item].wield_slots[b]].x+2,
+                                         item_dialog_y+rag_doll_y+mod.general_races[player_race].slots[mod.general_items[inventory_entry.item].wield_slots[b]].y+2,
+                                         60, 60);
+                    grim->Quads_End();
+
+                    //mouse on it
+                    if((mousex>item_dialog_x+rag_doll_x+mod.general_races[player_race].slots[mod.general_items[inventory_entry.item].wield_slots[b]].x)
+                    &&(mousey>item_dialog_y+rag_doll_y+mod.general_races[player_race].slots[mod.general_items[inventory_entry.item].wield_slots[b]].y)
+                    &&(mousex<item_dialog_x+rag_doll_x+mod.general_races[player_race].slots[mod.general_items[inventory_entry.item].wield_slots[b]].x+64)
+                    &&(mousey<item_dialog_y+rag_doll_y+mod.general_races[player_race].slots[mod.general_items[inventory_entry.item].wield_slots[b]].y+64)){
+                        if(!mouse_left&&mouse_left2){
+                            mouse_left=false;
+                            mouse_left2=false;
+                            playsound(UI_game_click[1],1,0,0,0,0);
+                            combine_item=a;
+                            combine_item_from_wield=true;
+                        }
+                    }
+                }
+            }
+        }
+
+        //item description
+        if(item_description!=-1){
+            grim->Quads_SetColor(0.8f,1,0.8f,1);
+            text_manager.write_line(font,item_dialog_x+250+right_line, item_dialog_y+55, header,1.5f);
+
+            //item symbol
+            if(item_description>=0){
+                grim->Quads_SetColor(1,1,1,1);
+                text_manager.write_line(font,item_dialog_x+250+right_line, item_dialog_y+55+30, mod.general_items[item_description].name,1.1f);
+
+                grim->Quads_SetColor(1,1,1,1);
+                resources.Texture_Set(mod.general_items[item_description].texture);
+                grim->Quads_SetSubset(0,0,1,1);
+                grim->Quads_Begin();
+                    grim->Quads_Draw(item_dialog_x+410, item_dialog_y+300, 100, 100);
+                grim->Quads_End();
+
+                text_manager.write(font,mod.general_items[item_description].description,1,item_dialog_x+250+right_line,item_dialog_y+85+30,screen_width-130,screen_height,1,1,1,0.8f);
+            }
+        }
+
+        //jos tarvitaan sivuille rullia
+        if(rullaus){
+            grim->System_SetState_Blending(true);
+            resources.Texture_Set(mod.general_races[player_race].interface_texture);
+            //ylempi nuoli
+            if(item_list_place>0){
+                if((mousex>item_dialog_x+232+right_line)&&(mousex<item_dialog_x+232+16+right_line)&&(mousey>item_dialog_y+31)&&(mousey<item_dialog_y+31+16)){
+                    grim->Quads_SetColor(1,1,1,1);
+                    if(mouse_left&&!mouse_left2){
+                        playsound(UI_game_click[0],1,0,0,0,0);
+                        mouse_on_any_item=true;
+                        item_list_place-=1;
+                        if(item_list_place<0)item_list_place=0;
+                    }
+                }
+            }
+            grim->Quads_SetColor(1,1,1,1);
+            grim->Quads_SetSubset(0,0,(16/256.0f),(16/256.0f));
+            grim->Quads_Begin();
+            grim->Quads_Draw(item_dialog_x+232+right_line, item_dialog_y+31, 16, 16);
+            grim->Quads_End();
+
+            //alempi nuoli
+            if(item_list_place<total_items-mahtuu){
+                if((mousex>item_dialog_x+232+right_line)&&(mousex<item_dialog_x+232+16+right_line)&&(mousey>item_dialog_y+437-42)&&(mousey<item_dialog_y+437+16-42)){
+                    grim->Quads_SetColor(1,1,1,1);
+                    if(mouse_left&&!mouse_left2){
+                        playsound(UI_game_click[0],1,0,0,0,0);
+                        mouse_on_any_item=true;
+                        item_list_place+=1;
+                        if(item_list_place>total_items-mahtuu)item_list_place=total_items-mahtuu;
+                    }
+                }
+            }
+            grim->Quads_SetColor(1,1,1,1);
+            grim->Quads_SetSubset(0,(32/256.0f),(16/256.0f),(48/256.0f));
+            grim->Quads_Begin();
+                grim->Quads_Draw(item_dialog_x+232+right_line, item_dialog_y+437-42, 16, 16);
+            grim->Quads_End();
+
+            //viiva
+            float pituus=((float)mahtuu/total_items)*(437-47-42);
+            float alku=((float)item_list_place/total_items)*(437-47-42);
+            text_manager.draw_line(item_dialog_x+240+right_line,item_dialog_y+47+alku,item_dialog_x+240+right_line,item_dialog_y+47+alku+pituus,8,1,1,1,1,1);
+            if((mousex>item_dialog_x+232+right_line)&&(mousex<item_dialog_x+232+16+right_line)&&(mousey>item_dialog_y+31+16)&&(mousey<item_dialog_y+437-42)){
+                if(mouse_left){
+                    mouse_on_any_item=true;
+                    item_list_place=(mousey-item_dialog_y-47)/(437-47-42)*total_items-mahtuu/2;
+                }
+            }
+
+            //rulla
+            int rulla=mouse_wheel;
+            int rullanopeus=total_items/50.0f;
+            if(rullanopeus<1)rullanopeus=1;
+            if(rulla<0)item_list_place+=rullanopeus;
+            if(rulla>0)item_list_place-=rullanopeus;
+
+            if(item_list_place<0)
+                item_list_place=0;
+            if(item_list_place>total_items-mahtuu)
+                item_list_place=total_items-mahtuu;
+        }
+
+        //combine items
+        if(combine_item>-1){
+
+            //item name
+            grim->Quads_SetColor(0.8f,1,0.8f,1);
+            text_manager.write_line(font,mousex+28-16, mousey+10-16, mod.general_items[inventory[active_inventory].player_items[combine_item].item].name,1);
+
+            grim->Quads_SetColor(1,1,1,1);
+
+            /*//item symbol
+            resources.Texture_Set(items_texture);
+            find_texture_coordinates(mod.general_items[inventory[active_inventory].player_items[combine_item]].symbol_number,&x0,&y0,&x1,&y1,4);
+            grim->Quads_SetSubset(x0,y0,x1,y1);
+            grim->Quads_Begin();
+            grim->Quads_Draw(mousex-16, mousey-16, 32, 32);
+            grim->Quads_End();*/
+
+            if (!key_escape&&key_escape2){
+                key_escape2=false;
+                combine_item=-1;
+            }
+        }
 
 	//player clicked with combine_item, but not on any item
 	if(mouse_left&&!mouse_left2){
@@ -9733,8 +9682,10 @@ void game_engine::draw_item_view(void){
 				//mouse on the left side of the inventory
 				if(mousex<item_dialog_x+240+right_line){
 					//unwield the item
-					for(b=0;b<mod.general_items[inventory[active_inventory].player_items[combine_item].item].effects.size();b++){
-						use_item(inventory[active_inventory].player_items[combine_item].item, &combine_item, mod.general_items[inventory[active_inventory].player_items[combine_item].item].effects[b].effect, true,false, false,false);
+					for(int b=0 ; b < mod.general_items[inventory[active_inventory].player_items[combine_item].item].effects.size() ; b++){
+						use_item(inventory[active_inventory].player_items[combine_item].item, &combine_item,
+                                mod.general_items[inventory[active_inventory].player_items[combine_item].item].effects[b].effect,
+                                true, false, false,false);
 					}
 					combine_item_from_wield=false;
 				}
@@ -9765,7 +9716,7 @@ void game_engine::draw_item_view(void){
 		}
 		//now find the item slot again as it may have been deleted
 		int item_found=-1;
-		for(a=0;a<inventory[active_inventory].player_items.size();a++){
+		for(int a=0;a<inventory[active_inventory].player_items.size();a++){
 			if(inventory[active_inventory].player_items[a].item==item_type){
 				item_found=a;
 				break;
@@ -9795,7 +9746,7 @@ void game_engine::draw_item_view(void){
 	if(dismantle_item>=0){
 		//see if there's a combination that produces this item
 		bool items_found=false;
-		for(a=0;a<mod.general_items.size();a++){
+		for(int a=0;a<mod.general_items.size();a++){
 			if(mod.general_items[a].dead)continue;
 			for(int b=0;b<mod.general_items[a].combinations.size();b++){
 				if(mod.general_items[a].combinations[b].combine_results.size()>1)continue;
@@ -9809,10 +9760,8 @@ void game_engine::draw_item_view(void){
 
 					items_found=true;
 
-
 					give_item(mod.general_items[a].combinations[b].combines_with,1,time_from_beginning+randInt(1,10),true);
 					give_item(a,1,time_from_beginning+randInt(1,10),true);
-
 
 					//this must be last
 					inventory[active_inventory].player_items[dismantle_item].amount--;
@@ -9828,7 +9777,6 @@ void game_engine::draw_item_view(void){
 					}
 
 					arrange_item_list(false);
-
 					text_manager.message(3000,2000,"Item broken up");
 				}
 				if(items_found)break;
@@ -9847,30 +9795,24 @@ void game_engine::draw_item_view(void){
 
 		//find if the player race has some specialty preventing drop
 		bool OK=true;
-		for(a=0;a<mod.general_races[player_race].specialties.size();a++){
-			if(!mod.general_races[player_race].specialties[a].difficulty[game_difficulty_level])continue;
-			//specialty found
-			if(mod.general_races[player_race].specialties[a].number==4){
+		for(int a=0;a<mod.general_races[player_race].specialties.size();a++){
+			auto& specialty = mod.general_races[player_race].specialties[a];
 
-				if(mod.general_races[player_race].specialties[a].parameter0==inventory[active_inventory].player_items[drop_item].item){
-					OK=false;
-					text_manager.message(2000,2000,"Cannot drop item");
-				}
-			}
+			if(!specialty.difficulty[game_difficulty_level])continue;
 			//specialty found
-			if(mod.general_races[player_race].specialties[a].number==0){
+			bool cannot_drop = (specialty.number == 4 && specialty.parameter0 == inventory[active_inventory].player_items[drop_item].item)
+			 || (specialty.number == 0 && specialty.parameter0 == mod.general_items[inventory[active_inventory].player_items[drop_item].item].item_class);
 
-				if(mod.general_races[player_race].specialties[a].parameter0==mod.general_items[inventory[active_inventory].player_items[drop_item].item].item_class){
-					OK=false;
-					text_manager.message(2000,2000,"Cannot drop item");
-				}
+			if(cannot_drop){
+                OK=false;
+                text_manager.message(2000,2000,"Cannot drop item");
 			}
 		}
 
 		if(OK){
 			int amount;
 			//only one item, drop it
-			if(inventory[active_inventory].player_items[drop_item].amount<=1){
+			if(inventory[active_inventory].player_items[drop_item].amount == 1){
 				amount=1;
 
 				inventory[active_inventory].player_items[drop_item].amount-=amount;
@@ -9888,14 +9830,11 @@ void game_engine::draw_item_view(void){
 			//more, show a bar
 			else if(inventory[active_inventory].player_items[drop_item].amount>1){
 				//amount=(int)((inventory[active_inventory].player_items[drop_item].amount/3.0f)*2);
-				show_slider(1,drop_item,0,mousex,mousey,1);
+				show_slider(1,drop_item,0,mousex,mousey,0);
 			}
-
 		}
 
-
 	}
-
 
 }
 
@@ -14465,7 +14404,6 @@ void game_engine::show_slider(int type, int item, int item2, int x, int y, int p
 	if(slider_x>screen_height-90)
 		slider_x=screen_height-90;
 
-
 	mouse_left=false;
 	mouse_left2=false;
 	override_mouse_left=false;
@@ -14478,27 +14416,30 @@ void game_engine::show_slider(int type, int item, int item2, int x, int y, int p
 
 	slider_minimum=0;
 
-	//0=give items to player
-	if(slider_type==0){
-		slider_maximum=map_main->items[item].amount;
-	}
+    switch (slider_type) {
+        //0=give items to player
+        case 0:
+            slider_maximum = map_main->items[item].amount;
+            break;
 
-	//1=drop items to ground
-	if(slider_type==1){
-		slider_maximum=inventory[active_inventory].player_items[item].amount;
-	}
+        //1=drop items to ground
+        case 1:
+            slider_minimum = 1; // don't let the user drop 0 items
+            slider_maximum = inventory[active_inventory].player_items[item].amount;
+            break;
 
-	//2=countdown to combine items
-	if(slider_type==2){
-		slider_maximum=slider_point;
-		pop_up_mode=1;
+        //2=countdown to combine items
+        case 2:
+            slider_maximum=slider_point;
+            pop_up_mode=1;
+            break;
 	}
 }
 
 void game_engine::draw_slider(void){
 
-	if(!slider_active)return;
-	if(ask_continue_game)return;
+	if (!slider_active) return;
+	if (ask_continue_game) return;
 
 	input_override=true;
 
@@ -14520,24 +14461,24 @@ void game_engine::draw_slider(void){
 	bool move_by_mouse=false;
 
 	//0=give items to player
-	if(slider_type==0){
+	if(slider_type==0) {
 		show_ok=true;
 		show_all=true;
 		move_by_mouse=true;
 	}
 
 	//1=drop items to ground
-	if(slider_type==1){
+	if(slider_type==1) {
 		show_ok=true;
 		show_all=true;
 		move_by_mouse=true;
 	}
 
 	//2=countdown to combine items
-	if(slider_type==2){
-		slider_point-=elapsed*game_speed*0.001f;
+	if(slider_type == 2) {
+		slider_point -= elapsed*game_speed*0.001f;
 
-		if(slider_point<0){
+		if(slider_point <= 0.0f){
 
 			/*int combines_to=0;
 			int amount=0;
@@ -14557,8 +14498,7 @@ void game_engine::draw_slider(void){
 			//find the combined items
 			int item_1=-1;
 			int item_2=-1;
-			int a;
-			for(a=0;a<inventory[active_inventory].player_items.size();a++){
+			for(int a = 0 ; a < inventory[active_inventory].player_items.size() ; a++){
 				if(inventory[active_inventory].player_items[a].item<=-1)continue;
 				if(inventory[active_inventory].player_items[a].amount<=0)continue;
 				if(mod.general_items[inventory[active_inventory].player_items[a].item].visible_in_inventory==0)continue;
@@ -14570,12 +14510,10 @@ void game_engine::draw_slider(void){
 			if(item_1==-1)return;
 			if(item_2==-1)return;
 
-
 			Mod::combines combination;
 			bool discard_this=false;
 			bool discard_that=false;
 			bool combination_found=false;
-
 
 			if(item_has_combination(inventory[active_inventory].player_items[item_1].item,inventory[active_inventory].player_items[item_2].item,&combination)){
 				discard_this=combination.discard_this;
@@ -14599,63 +14537,60 @@ void game_engine::draw_slider(void){
 		}
 	}
 
-
-
 	//slider bar
 	resources.Texture_Set(bar_texture);
 	grim->Quads_Begin();
-		float slider_bar_x=0;
-		float slider_bar_y=0;
-		float slider_length=128;
-		float slider_height=32;
-		int slider_point_x=((float)slider_point/(float)(slider_maximum-slider_minimum))*slider_length;
-		grim->Quads_SetColor(1,1,1,1);
+    float slider_bar_x=0;
+    float slider_bar_y=0;
+    float slider_length=128;
+    float slider_height=32;
+    int slider_point_x=(slider_point/(float)(slider_maximum-slider_minimum))*slider_length;
+    grim->Quads_SetColor(1,1,1,1);
 
-		//left side
-		grim->Quads_SetSubset((0/16.0f),(0/16.0f),(7/16.0f),(16/16.0f));
-		grim->Quads_Draw((slider_x+slider_bar_x-7), (slider_y+slider_bar_y), 7, slider_height);
-		//middle part
-		grim->Quads_SetSubset((7/16.0f),(0/16.0f),(9/16.0f),(16/16.0f));
-		grim->Quads_Draw((slider_x+slider_bar_x), (slider_y+slider_bar_y), (slider_length), slider_height);
-		//right side
-		grim->Quads_SetSubset((9/16.0f),(0/16.0f),(16/16.0f),(16/16.0f));
-		grim->Quads_Draw((slider_x+slider_bar_x+slider_length), (slider_y+slider_bar_y), 7, slider_height);
+    //left side
+    grim->Quads_SetSubset((0/16.0f),(0/16.0f),(7/16.0f),(16/16.0f));
+    grim->Quads_Draw((slider_x+slider_bar_x-7), (slider_y+slider_bar_y), 7, slider_height);
+    //middle part
+    grim->Quads_SetSubset((7/16.0f),(0/16.0f),(9/16.0f),(16/16.0f));
+    grim->Quads_Draw((slider_x+slider_bar_x), (slider_y+slider_bar_y), (slider_length), slider_height);
+    //right side
+    grim->Quads_SetSubset((9/16.0f),(0/16.0f),(16/16.0f),(16/16.0f));
+    grim->Quads_Draw((slider_x+slider_bar_x+slider_length), (slider_y+slider_bar_y), 7, slider_height);
 
-		//change with mouse
-		grim->Quads_SetColor(1,1,0,1);
-		if(move_by_mouse){
-			if((override_mousey>slider_y+slider_bar_y)&&(override_mousey<slider_y+slider_bar_y+slider_height)){
-				grim->Quads_SetColor(0.8f,0.8f,0,1);
+    //change with mouse
+    grim->Quads_SetColor(1,1,0,1);
+    if(move_by_mouse){
+        if((override_mousey > slider_y+slider_bar_y)&&(override_mousey < slider_y+slider_bar_y+slider_height)){
+            grim->Quads_SetColor(0.8f,0.8f,0,1);
 
-				if(override_mouse_left){
-					slider_point=(int)(((override_mousex-slider_x-slider_bar_x)/slider_length)*(slider_maximum-slider_minimum)+0.5f);
+            if(override_mouse_left){
+                slider_point=static_cast<int>(((override_mousex-slider_x-slider_bar_x)
+                                    / slider_length)*(slider_maximum-slider_minimum)+0.5f); // !
 
-					if(slider_point<slider_minimum)
-						slider_point=slider_minimum;
-					if(slider_point>slider_maximum)
-						slider_point=slider_maximum;
-				}
+                if(slider_point<0)
+                    slider_point=0;
+                if(slider_point>slider_maximum-slider_minimum)
+                    slider_point=slider_maximum-slider_minimum;
+            }
 
-			}
-		}
+        }
+    }
+    int usernum = static_cast<int>(slider_point) + slider_minimum;
 
-		//slider point
-		grim->Quads_SetSubset((0/16.0f),(0/16.0f),(16/16.0f),(16/16.0f));
-		grim->Quads_Draw((slider_x+slider_bar_x-8+slider_point_x), (slider_y+slider_bar_y), 16, 32);
+    //slider point
+    grim->Quads_SetSubset((0/16.0f),(0/16.0f),(16/16.0f),(16/16.0f));
+    grim->Quads_Draw((slider_x+slider_bar_x-8+slider_point_x), (slider_y+slider_bar_y), 16, 32);
 
 	grim->Quads_End();
-
-
 
 	//numbers
 	grim->Quads_SetColor(1,1,1,1);
 	//itoa(slider_point,temprivi,10);
-	sprintf(temprivi,"%d",int(slider_point));
+	sprintf(temprivi,"%d", usernum);
 	text_manager.write_line(font,slider_x+slider_bar_x-66,slider_y+slider_bar_y+1,temprivi,2);
 	//itoa(slider_maximum,temprivi,10);
 	sprintf(temprivi,"%d",slider_maximum);
 	text_manager.write_line(font,slider_x+slider_bar_x+slider_length+2,slider_y+slider_bar_y+1,temprivi,2);
-
 
 	//cancel
 	if(show_cancel){
@@ -14710,7 +14645,6 @@ void game_engine::draw_slider(void){
 		int button_width=100;
 		int button_height=48;
 
-
 		//mouse
 		if((override_mousex>slider_x+button_left)&&(override_mousex<slider_x+button_left+button_width)&&(override_mousey>slider_y+button_top)&&(override_mousey<slider_y+button_top+button_height)){
 			//text_manager.write_line(font,override_mousex+5, override_mousey-6,"Accept",1);
@@ -14732,26 +14666,28 @@ void game_engine::draw_slider(void){
 
 				//0=give items to player
 				if(slider_type==0){
-					give_item(map_main->items[item_1].type,slider_point,time_from_beginning, true);
+					give_item(map_main->items[item_1].type, usernum, time_from_beginning, true);
 
-					map_main->items[item_1].amount-=slider_point;
-					if(map_main->items[item_1].amount==0){
-						map_main->items[item_1].dead=true;
+					map_main->items[item_1].amount -= usernum;
+					if(map_main->items[item_1].amount == 0){
+						map_main->items[item_1].dead = true;
 					}
 
 				}
-
 				//1=drop items to ground
-				if(slider_type==1){
+				else if(slider_type==1){
 
-					create_item(map_main,inventory[active_inventory].player_items[item_1].item,slider_point,player_middle_x,player_middle_y,-1);
+					create_item(map_main,inventory[active_inventory].player_items[item_1].item,
+                        usernum, player_middle_x, player_middle_y,-1);
 
-					inventory[active_inventory].player_items[item_1].amount-=slider_point;
+					inventory[active_inventory].player_items[item_1].amount -= usernum;
 					if(inventory[active_inventory].player_items[item_1].amount==0){
 						//unuse item
-						if(inventory[active_inventory].player_items[item_1].wielded)
-						for(int c=0;c<mod.general_items[inventory[active_inventory].player_items[item_1].item].effects.size();c++){
-							use_item(inventory[active_inventory].player_items[item_1].item,&item_1, mod.general_items[inventory[active_inventory].player_items[item_1].item].effects[c].effect,true, false, false,false);//unuse
+						if(inventory[active_inventory].player_items[item_1].wielded) {
+                            auto& item_effects = mod.general_items[inventory[active_inventory].player_items[item_1].item].effects;
+                            for(int c=0 ; c < item_effects.size() ; c++){
+                                use_item(inventory[active_inventory].player_items[item_1].item,&item_1, item_effects[c].effect, true, false, false, false);//unuse
+                            }
 						}
 						delete_item(item_1);
 					}
