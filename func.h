@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <cassert>
+#include <type_traits>
 
 template <typename T>
 inline void SAFE_DELETE(T*& p) {
@@ -102,13 +103,21 @@ namespace Debugger {
 	enum class Logfile { STARTUP, FRAME };
 }
 
+struct EnumClassHash {
+    template <typename T>
+    std::size_t operator()(T e) const {
+        static_assert(std::is_enum<T>::value, "EnumClassHash only applies to enums");
+        return static_cast<std::size_t>(e);
+    }
+};
+
 class debugger
 {
     protected:
-		std::unordered_map<Debugger::Logfile, int> debug_level;
+		std::unordered_map<Debugger::Logfile, int, EnumClassHash> debug_level;
 		std::string type2file(Debugger::Logfile type);
     public:
-		std::unordered_map<Debugger::Logfile, bool> debug_state;
+		std::unordered_map<Debugger::Logfile, bool, EnumClassHash> debug_state;
 		void debug_output(const std::string& rivi, Debugger::Action level, Debugger::Logfile type);
 		void restart_log(Debugger::Logfile type);
         debugger();

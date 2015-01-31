@@ -60,11 +60,8 @@ float randDouble( float low, float high )
 // carriage return or line feed.
 char *stripped_fgets(char *s, int n, FILE *f)
 {
-	using namespace std;
-
-	if (!fgets(s,n,f))
-        return NULL;
-
+	if (!std::fgets(s,n,f))
+        return nullptr;
 
 	//start cut
 	int i=0;
@@ -74,19 +71,17 @@ char *stripped_fgets(char *s, int n, FILE *f)
 		i++;
 	}
 	if(extra_start_characters>0){
-		int length=strlen(s);
-		for(int a=0;a<length-extra_start_characters;a++){
-			s[a]=s[a+extra_start_characters];
+		int length=std::strlen(s);
+		for(int a=0 ; a < length-extra_start_characters ; a++){
+			s[a] = s[a+extra_start_characters];
 		}
 	}
 
-
 	//end cut
 	i=0;
-	while (s[i]!=';' && s[i]!=13 && s[i]!=10 && s[i]!=0)
+	while (s[i]!=';' && s[i]!='\r' && s[i]!='\n' && s[i]!='\0')
 		i++;
-	s[i]=0;
-
+	s[i] = '\0';
 
 	return(s);
 }
@@ -100,121 +95,67 @@ bool strtobool(const char *rivi){
 
 void random_name(char *creature_name){//give a random name
 
-	char konsonantti[20];
-	char vokaali[6];
-	char iso_konsonantti[20];
-	char iso_vokaali[6];
+	char konsonantti[20] = {'b','c','d','f','g','h','j','k',
+            'l','m','n','p','q','r','s','t','v','w','x','z'};
+	const char vokaali[6] = {'a','e','i','o','u','y'}; //kirjaimet
+	char iso_konsonantti[20] = {'B','C','D','F','G','H','J','K',
+            'L','M','N','P','Q','R','S','T','V','W','X','Z'};
+	const char iso_vokaali[6] = {'A', 'E', 'I', 'O', 'U', 'Y'};
 
-	//kirjaimet
-	vokaali[0]='a';
-	vokaali[1]='e';
-	vokaali[2]='i';
-	vokaali[3]='o';
-	vokaali[4]='u';
-	vokaali[5]='y';
-
-	iso_vokaali[0]='A';
-	iso_vokaali[1]='E';
-	iso_vokaali[2]='I';
-	iso_vokaali[3]='O';
-	iso_vokaali[4]='U';
-	iso_vokaali[5]='Y';
-
-	konsonantti[0]='b';
-	konsonantti[1]='c';
-	konsonantti[2]='d';
-	konsonantti[3]='f';
-	konsonantti[4]='g';
-	konsonantti[5]='h';
-	konsonantti[6]='j';
-	konsonantti[7]='k';
-	konsonantti[8]='l';
-	konsonantti[9]='m';
-	konsonantti[10]='n';
-	konsonantti[11]='p';
-	konsonantti[12]='q';
-	konsonantti[13]='r';
-	konsonantti[14]='s';
-	konsonantti[15]='t';
-	konsonantti[16]='v';
-	konsonantti[17]='w';
-	konsonantti[18]='x';
-	konsonantti[19]='z';
-
-	iso_konsonantti[0]='B';
-	iso_konsonantti[1]='C';
-	iso_konsonantti[2]='D';
-	iso_konsonantti[3]='F';
-	iso_konsonantti[4]='G';
-	iso_konsonantti[5]='H';
-	iso_konsonantti[6]='J';
-	iso_konsonantti[7]='K';
-	iso_konsonantti[8]='L';
-	iso_konsonantti[9]='M';
-	iso_konsonantti[10]='N';
-	iso_konsonantti[11]='P';
-	iso_konsonantti[12]='Q';
-	iso_konsonantti[13]='R';
-	iso_konsonantti[14]='S';
-	iso_konsonantti[15]='T';
-	iso_konsonantti[16]='V';
-	iso_konsonantti[17]='W';
-	iso_konsonantti[18]='X';
-	iso_konsonantti[19]='Z';
-
-			int randomi=randInt(0,6);
-			if(randomi==0){
-				creature_name[0]=iso_konsonantti[randInt(0,20)];
-				creature_name[1]=vokaali[randInt(0,6)];
-				creature_name[2]=konsonantti[randInt(0,20)];
-				creature_name[3]=creature_name[2];
-				creature_name[4]=vokaali[randInt(0,6)];
-				creature_name[5]=konsonantti[randInt(0,20)];
-				creature_name[6]=0;
-			}
-			if(randomi==1){
-				creature_name[0]=iso_konsonantti[randInt(0,20)];
-				creature_name[1]=vokaali[randInt(0,6)];
-				creature_name[2]=konsonantti[randInt(0,20)];
-				creature_name[3]=vokaali[randInt(0,6)];
-				creature_name[4]=konsonantti[randInt(0,20)];
-				creature_name[5]=0;
-			}
-			if(randomi==2){
-				creature_name[0]=iso_konsonantti[randInt(0,20)];
-				creature_name[1]=vokaali[randInt(0,6)];
-				creature_name[2]=konsonantti[randInt(0,20)];
-				creature_name[3]=vokaali[randInt(0,6)];
-				creature_name[4]=konsonantti[randInt(0,20)];
-				creature_name[5]='u';
-				creature_name[6]='s';
-				creature_name[7]=0;
-			}
-			if(randomi==3){
-				creature_name[0]=iso_konsonantti[randInt(0,20)];
-				creature_name[1]=vokaali[randInt(0,6)];
-				creature_name[2]=konsonantti[randInt(0,20)];
-				creature_name[3]=vokaali[randInt(0,6)];
-				creature_name[4]=creature_name[3];
-				creature_name[5]=konsonantti[randInt(0,20)];
-				creature_name[6]=0;
-			}
-			if(randomi==4){
-				creature_name[0]=iso_konsonantti[randInt(0,20)];
-				creature_name[1]=vokaali[randInt(0,6)];
-				creature_name[2]=creature_name[1];
-				creature_name[3]=konsonantti[randInt(0,20)];
-				creature_name[4]=vokaali[randInt(0,6)];
-				creature_name[5]=0;
-			}
-			if(randomi==5){
-				creature_name[0]=iso_vokaali[randInt(0,6)];
-				creature_name[1]=konsonantti[randInt(0,20)];
-				creature_name[2]=creature_name[1];
-				creature_name[3]=vokaali[randInt(0,6)];
-				creature_name[4]=0;
-			}
-
+    int randomi=randInt(0,6);
+    switch (randomi) {
+        case 0:
+            creature_name[0]=iso_konsonantti[randInt(0,20)];
+            creature_name[1]=vokaali[randInt(0,6)];
+            creature_name[2]=konsonantti[randInt(0,20)];
+            creature_name[3]=creature_name[2];
+            creature_name[4]=vokaali[randInt(0,6)];
+            creature_name[5]=konsonantti[randInt(0,20)];
+            creature_name[6]=0;
+            break;
+        case 1:
+            creature_name[0]=iso_konsonantti[randInt(0,20)];
+            creature_name[1]=vokaali[randInt(0,6)];
+            creature_name[2]=konsonantti[randInt(0,20)];
+            creature_name[3]=vokaali[randInt(0,6)];
+            creature_name[4]=konsonantti[randInt(0,20)];
+            creature_name[5]=0;
+            break;
+        case 2:
+            creature_name[0]=iso_konsonantti[randInt(0,20)];
+            creature_name[1]=vokaali[randInt(0,6)];
+            creature_name[2]=konsonantti[randInt(0,20)];
+            creature_name[3]=vokaali[randInt(0,6)];
+            creature_name[4]=konsonantti[randInt(0,20)];
+            creature_name[5]='u';
+            creature_name[6]='s';
+            creature_name[7]=0;
+            break;
+        case 3:
+            creature_name[0]=iso_konsonantti[randInt(0,20)];
+            creature_name[1]=vokaali[randInt(0,6)];
+            creature_name[2]=konsonantti[randInt(0,20)];
+            creature_name[3]=vokaali[randInt(0,6)];
+            creature_name[4]=creature_name[3];
+            creature_name[5]=konsonantti[randInt(0,20)];
+            creature_name[6]=0;
+            break;
+        case 4:
+            creature_name[0]=iso_konsonantti[randInt(0,20)];
+            creature_name[1]=vokaali[randInt(0,6)];
+            creature_name[2]=creature_name[1];
+            creature_name[3]=konsonantti[randInt(0,20)];
+            creature_name[4]=vokaali[randInt(0,6)];
+            creature_name[5]=0;
+            break;
+        case 5:
+            creature_name[0]=iso_vokaali[randInt(0,6)];
+            creature_name[1]=konsonantti[randInt(0,20)];
+            creature_name[2]=creature_name[1];
+            creature_name[3]=vokaali[randInt(0,6)];
+            creature_name[4]=0;
+            break;
+    }
 }
 
 void find_texture_coordinates(int slot,float *x0,float *y0,float *x1,float *y1,int slots_per_texture){
@@ -245,7 +186,6 @@ void find_texture_coordinates(int slot,float *x0,float *y0,float *x1,float *y1,i
 // Converts a floating point number to string
 string FloatToText(float n, int nNumberOfDecimalPlaces)
 {
-
 	char s[200];
 
 	sprintf(s, "%f", n);
@@ -277,7 +217,6 @@ std::vector <point2d> sphere_line_intersection (
     float x2, float y2 ,
     float x3, float y3 , float r )
 {
-
 	// x1,y1,z1  P1 coordinates (point of line)
 	// x2,y2,z2  P2 coordinates (point of line)
 	// x3,y3,z3, r  P3 coordinates and radius (sphere)
@@ -285,10 +224,6 @@ std::vector <point2d> sphere_line_intersection (
 	//
 	// This function returns a pointer array which first index indicates
 	// the number of intersection point, followed by coordinate pairs.
-
-
-
-
 
 	//float x , y , z;
 	float a, b, c, mu, i ;
@@ -302,60 +237,56 @@ std::vector <point2d> sphere_line_intersection (
 	  2* ( x3*x1 + y3*y1 ) - square(r) ;
 	i =   b * b - 4 * a * c ;
 
-	if ( i < 0.0 )
-	{
-	// no intersection
-	return(intersections);
+	if ( i < 0.0 ) {
+        // no intersection
+        return(intersections);
 	}
 
-
-	if ( i == 0.0 )
-	{
-	// one intersection
-	mu = -b/(2*a) ;
-	point2d temp_point;
-	temp_point.x = x1 + mu*(x2-x1);
-	temp_point.y = y1 + mu*(y2-y1);
-	//check if the intersect point is within the line
-	if((temp_point.x>=min(x1,x2))&&
-		(temp_point.y>=min(y1,y2))&&
-		(temp_point.x<=max(x1,x2))&&
-		(temp_point.y<=max(y1,y2)))
-		intersections.push_back(temp_point);
-	return(intersections);
+	if ( i == 0.0 ) {
+        // one intersection
+        mu = -b/(2*a) ;
+        point2d temp_point;
+        temp_point.x = x1 + mu*(x2-x1);
+        temp_point.y = y1 + mu*(y2-y1);
+        //check if the intersect point is within the line
+        if((temp_point.x>=min(x1,x2))&&
+            (temp_point.y>=min(y1,y2))&&
+            (temp_point.x<=max(x1,x2))&&
+            (temp_point.y<=max(y1,y2)))
+            intersections.push_back(temp_point);
+        return(intersections);
 	}
-	if ( i > 0.0 )
-	{
-	// two intersections
+	if ( i > 0.0 ) {
+        // two intersections
 
-	// first intersection
-	mu = (-b + sqrt( square(b) - 4*a*c )) / (2*a);
-	point2d temp_point;
-	temp_point.x = x1 + mu*(x2-x1);
-	temp_point.y = y1 + mu*(y2-y1);
-	// second intersection
-	mu = (-b - sqrt(square(b) - 4*a*c )) / (2*a);
-	point2d temp_point2;
-	temp_point2.x = x1 + mu*(x2-x1);
-	temp_point2.y = y1 + mu*(y2-y1);
+        // first intersection
+        mu = (-b + sqrt( square(b) - 4*a*c )) / (2*a);
+        point2d temp_point;
+        temp_point.x = x1 + mu*(x2-x1);
+        temp_point.y = y1 + mu*(y2-y1);
+        // second intersection
+        mu = (-b - sqrt(square(b) - 4*a*c )) / (2*a);
+        point2d temp_point2;
+        temp_point2.x = x1 + mu*(x2-x1);
+        temp_point2.y = y1 + mu*(y2-y1);
 
-	//find the one closer to start point
-	/*if(square(temp_point.x-x1)+square(temp_point.y-y1)>square(temp_point2.x-x1)+square(temp_point2.y-y1))
-		temp_point=temp_point2;*/
+        //find the one closer to start point
+        /*if(square(temp_point.x-x1)+square(temp_point.y-y1)>square(temp_point2.x-x1)+square(temp_point2.y-y1))
+            temp_point=temp_point2;*/
 
-	//check if the intersect point is within the line
-	if((temp_point.x>=min(x1,x2))&&
-		(temp_point.y>=min(y1,y2))&&
-		(temp_point.x<=max(x1,x2))&&
-		(temp_point.y<=max(y1,y2)))
-		intersections.push_back(temp_point);
-	if((temp_point2.x>=min(x1,x2))&&
-		(temp_point2.y>=min(y1,y2))&&
-		(temp_point2.x<=max(x1,x2))&&
-		(temp_point2.y<=max(y1,y2)))
-		intersections.push_back(temp_point2);
+        //check if the intersect point is within the line
+        if((temp_point.x>=min(x1,x2))&&
+            (temp_point.y>=min(y1,y2))&&
+            (temp_point.x<=max(x1,x2))&&
+            (temp_point.y<=max(y1,y2)))
+            intersections.push_back(temp_point);
+        if((temp_point2.x>=min(x1,x2))&&
+            (temp_point2.y>=min(y1,y2))&&
+            (temp_point2.x<=max(x1,x2))&&
+            (temp_point2.y<=max(y1,y2)))
+            intersections.push_back(temp_point2);
 
-	return(intersections);
+        return(intersections);
 	}
 
 	// no intersection
@@ -365,68 +296,44 @@ std::vector <point2d> sphere_line_intersection (
 bool isvowel(char character){
 	switch(character){
 	case 'a':
-		return true;
 	case 'e':
-		return true;
 	case 'i':
-		return true;
 	case 'o':
-		return true;
 	case 'u':
-		return true;
 	case 'y':
-		return true;
 	case '\xE5': //lowercase a with ring
-		return true;
 	case '\xE4': //lowercase o with ring
-		return true;
 	case '\xF6': //lowercase o diaeresis
-		return true;
 	case 'A':
-		return true;
 	case 'E':
-		return true;
 	case 'I':
-		return true;
 	case 'O':
-		return true;
 	case 'U':
-		return true;
 	case 'Y':
-		return true;
 	case '\xC4': //uppercase a diaeresis
-		return true;
 	case '\xD5': //uppercase o diaeresis
-		return true;
 	case '\xC5': //uppercase a with ring
 		return true;
 	}
 	return false;
 }
 
-
 int lines_intersect(float x1,float y1,float x2,float y2,float x3,float y3,float x4,float y4,float *x,float *y,float rounding)
 {
-
 	double u,v,delta;
     double t1,t2;
 
-
     double xba,yba,xdc,ydc,xca,yca;
-
 
     xba=x2-x1;    yba=y2-y1;
     xdc=x4-x3;    ydc=y4-y3;
     xca=x3-x1;    yca=y3-y1;
 
-
     delta=xba*ydc-yba*xdc;
     t1=xca*ydc-yca*xdc;
     t2=xca*yba-yca*xba;
 
-
-    if(delta!=0)
-    {
+    if(delta!=0) {
        u=t1/delta;   v=t2/delta;
 
       /*two segments intersect (including intersect at end points)*/
@@ -437,14 +344,10 @@ int lines_intersect(float x1,float y1,float x2,float y2,float x3,float y3,float 
 
 		   return 1;
 	   }
-      else return 0;
+	   return 0;
     }
-	else{
-		return 0;
-	}
 
 	return 0;
-
 }
 
 using namespace Debugger;
