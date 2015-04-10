@@ -14,7 +14,9 @@
 
 #define WM_GRAPHNOTIFY  WM_APP + 1
 
-using namespace std;
+using std::vector;
+using std::list;
+using std::string;
 using namespace Debugger;
 
 Engine *grim = NULL;
@@ -58,7 +60,7 @@ void game_engine::GetScreenshotFileName(string& FileName)
     string buffer;
     for (int i = 0; i < 1000; i++)
     {
-		ostringstream os;
+		std::ostringstream os;
 		os << "shot" << i << ".bmp";
 		buffer = os.str();
 
@@ -570,7 +572,7 @@ int main(int argc, char* argv[])
 	grim->System_SetState_FocusGainFunc(focusgained);
 
 	if (!engine->cfg_load()) {
-        cerr << "Config file not found." << endl;
+        std::cerr << "Config file not found." << std::endl;
         delete engine;
         delete grim;
         return -1;
@@ -17150,5 +17152,3 @@ void game_engine::draw_map_grid_small(map *map_to_edit, int texture, int texture
 
 
 }
-
-
