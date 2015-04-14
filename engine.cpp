@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include "func.h"
 #include "physfs.h"
+#include "physfsrwops.h"
 
 Engine::Engine()
 :   window(nullptr)
@@ -402,7 +403,16 @@ bool Engine::Texture_Load(const std::string& id, char *filename){
     SDL_Surface *surface;
     GLenum texture_format;
 
-    surface = IMG_Load(filename);
+    SDL_RWops* rw = PHYSFSRWOPS_openRead(filename);
+    if (rw == NULL)
+    {
+        return false;
+    }
+
+    surface = IMG_Load_RW(rw, 0);
+
+    SDL_FreeRW(rw);
+
     if(!surface)
         return false;
 

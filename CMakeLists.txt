@@ -11,7 +11,7 @@ find_package(SDL2_image 2.0 REQUIRED)
 find_package(PhysFS REQUIRED)
 find_package(PhysFS REQUIRED)
 
-file(GLOB OpenNotrium_sources *.cpp)
+file(GLOB OpenNotrium_sources *.cpp *.c)
 
 include_directories(
     ${SDL2_INCLUDE_DIR}
