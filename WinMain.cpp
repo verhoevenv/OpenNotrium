@@ -392,7 +392,8 @@ bool game_engine::Frame(void)
 
 
 	//print screen to file
-	if (grim->Key_Click(KEY_PRINT )){
+	if (grim->Key_Click(KEY_PRINT )
+			|| (grim->Key_Down(KEY_LCONTROL) && grim->Key_Click(KEY_F10))){
 		Screenshot(screenshot_name);
 		if(screenshot_name=="none"){
 			tempstring="Screenshots not available in windowed mode";
