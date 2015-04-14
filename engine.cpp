@@ -216,7 +216,10 @@ void Engine::System_SaveScreenshot(const std::string& filename){
 #endif
     glReadPixels (0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE,
             shot->pixels);
-    SDL_SaveBMP ( shot, filename.c_str());
+
+    SDL_RWops* rw = PHYSFSRWOPS_openWrite(filename.c_str());
+    SDL_SaveBMP_RW(shot, rw, 1);
+
     SDL_FreeSurface (shot);
 
     //we render the first state of the screen to the screen again
@@ -409,9 +412,7 @@ bool Engine::Texture_Load(const std::string& id, char *filename){
         return false;
     }
 
-    surface = IMG_Load_RW(rw, 0);
-
-    SDL_FreeRW(rw);
+    surface = IMG_Load_RW(rw, 1);
 
     if(!surface)
         return false;
