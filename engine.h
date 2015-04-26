@@ -113,10 +113,14 @@ public:
 	void System_ReleaseInput();
 
 	/**
-	* Initialises the system with the given states, starts engine, etc. Does not enter the main loop yet.
-	* The argv[0] is required on some systems to know the path to the current directory.
+	* Initialises file system. The argv[0] is required on some systems to know the path to the current directory.
 	*/
-	void System_Initiate(const char *argv0);
+	void File_Initiate(const char *argv0);
+
+	/**
+	* Initialises the system with the given states, starts engine, etc. Does not enter the main loop yet.
+	*/
+	void System_Initiate();
 
     /**
 	* Enters main loop. Return false from the frame function to exit this loop.
@@ -192,6 +196,7 @@ public:
 	bool File_Exists(const std::string& filename);
 	bool File_IsDirectory(const std::string& filename);
 	std::vector<std::string> File_ListDirectory(const std::string& dir);
+  std::vector<std::string> File_ReadAll(const std::string& filename);
 
 	/**
 	* Returns the amount of milliseconds the program has been running. Might wrap around after ~ 50 or 25 days.

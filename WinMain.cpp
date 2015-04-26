@@ -473,25 +473,19 @@ bool focusgained()
 }
 
 bool game_engine::cfg_load(void){
-		FILE *fil;
+	vector<string> config_lines = grim->File_ReadAll("cfg.cfg");
 
-		char temprivi[200];
+	if(config_lines.size() < 6) {
+		return false;
+	}
+	screen_width=atoi(config_lines.at(0).c_str());
+	screen_height=atoi(config_lines.at(1).c_str());
+	bit_depth=atoi(config_lines.at(2).c_str());
+	windowed=atoi(config_lines.at(3).c_str());
+	play_sound=strtobool(config_lines.at(4).c_str());
+	play_music=strtobool(config_lines.at(5).c_str());
 
-		fil = fopen("cfg.cfg","rt");
-
-		if (!fil) {
-            return false;
-		}
-
-		fgets(temprivi,sizeof(temprivi),fil);screen_width=atoi(temprivi);
-		fgets(temprivi,sizeof(temprivi),fil);screen_height=atoi(temprivi);
-		fgets(temprivi,sizeof(temprivi),fil);bit_depth=atoi(temprivi);
-		fgets(temprivi,sizeof(temprivi),fil);windowed=atoi(temprivi);
-		fgets(temprivi,sizeof(temprivi),fil);play_sound=strtobool(temprivi);
-		fgets(temprivi,sizeof(temprivi),fil);play_music=strtobool(temprivi);
-
-		fclose(fil);
-        return true;
+    return true;
 }
 
 //bool game_engine::init_mouse(void){
@@ -565,6 +559,7 @@ int main(int argc, char* argv[])
 
 	//grim = Grim::Interface_Get("grim.dll");
 	grim = new Engine();
+	grim->File_Initiate(argv[0]);
 
 	engine=new game_engine();
 	//engine->hInst=hInst;
@@ -603,7 +598,7 @@ int main(int argc, char* argv[])
 	engine->input_grabbed = true;
 
 	//initiate graphics engine
-	grim->System_Initiate(argv[0]);
+	grim->System_Initiate();
 
 
 

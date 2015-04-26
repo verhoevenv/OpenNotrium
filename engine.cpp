@@ -1,6 +1,7 @@
 #include "engine.h"
 #include <SDL.h>
 #include <SDL_image.h>
+#include <sstream>
 #include "func.h"
 #include "physfs.h"
 #include "physfsrwops.h"
@@ -117,7 +118,12 @@ void Engine::System_Start(){
     }
 }
 
-void Engine::System_Initiate(const char *argv0){
+void Engine::File_Initiate(const char *argv0){
+    PHYSFS_init(argv0);
+    PHYSFS_setSaneConfig("monkkonen","notrium",nullptr,0,0); //Perhaps we should allow packages here. Not now.
+}
+
+void Engine::System_Initiate(){
     if ( SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER) < 0 ) {
         exit(1);
     }
@@ -146,9 +152,6 @@ void Engine::System_Initiate(const char *argv0){
     this->glcontext = SDL_GL_CreateContext(window);
 
     System_GrabInput();
-
-	PHYSFS_init(argv0);
-	PHYSFS_setSaneConfig("monkkonen","notrium",nullptr,0,0); //Perhaps we should allow packages here. Not now.
 
     setup_opengl();
     startFrame();
@@ -593,6 +596,29 @@ std::vector<std::string> Engine::File_ListDirectory(const std::string& dir){
 	PHYSFS_freeList(rc);
 
 	return vec;
+}
+
+std::vector<std::string> Engine::File_ReadAll(const std::string& filename){
+    std::vector<std::string> vec;
+
+    PHYSFS_file *f = PHYSFS_openRead(filename.c_str());
+    if(f == nullptr) {
+        return vec;
+    }
+    char *myBuf = new char[PHYSFS_fileLength(f)];
+    PHYSFS_read (f, myBuf, 1, PHYSFS_fileLength(f));
+
+    std::stringstream ss(myBuf);
+    std::string line;
+
+    while(std::getline(ss,line,'\n')){
+        vec.push_back(line);
+    }
+
+    PHYSFS_close(f);
+    delete myBuf;
+
+    return vec;
 }
 
 long Engine::Time_GetTicks(){
