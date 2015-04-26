@@ -1,6 +1,7 @@
 #include "soundmanager.h"
 
 #include <SDL.h>
+#include "physfsrwops.h"
 
 bool SoundManager::Create(SoundSample** dest, const char *filename)
 {
@@ -34,7 +35,7 @@ bool SoundManager::Initialize(int freq, int channels)
 }
 
 void SoundManager::playMusic(const char* filename){
-    currentmusic = Mix_LoadMUS(filename);
+    currentmusic = Mix_LoadMUS_RW(PHYSFSRWOPS_openRead(filename), 1);
     Mix_PlayMusic(currentmusic, -1);
 }
 
@@ -44,7 +45,7 @@ void SoundManager::setMusicVolume(float volume){
 
 SoundSample::SoundSample(const char *filename,int freq,int bytes){
     //TODO: the delay seems solvable by using VC++ compiler/libs and DirectSound
-    chunk = Mix_LoadWAV(filename);
+    chunk = Mix_LoadWAV_RW(PHYSFSRWOPS_openRead(filename), 1);
     samplefreq = freq;
     bytespersample = bytes;
 }
