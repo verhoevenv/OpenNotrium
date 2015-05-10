@@ -599,7 +599,6 @@ public:
 	debugger *debug;
 	resource_handler *resources;
 
-	void print_effect_numbers(FILE *fil);
 	void load_animation_info(const std::string& filename);//loads item info from file
 	void load_light_info(const std::string& filename);//loads light info from file
 	void load_plot_object_info(const std::string& filename);//loads plot object info from file

@@ -518,9 +518,6 @@ public:
     game_engine();
     ~game_engine();
 
-	//void print_effect_numbers(FILE *fil);
-	//void load_item_info(std::string filename);//loads item info from file
-
 	void load_particles(const std::string& filename);
 	void load_sounds(const std::string& filename);
 
