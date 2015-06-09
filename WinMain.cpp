@@ -64,7 +64,7 @@ void game_engine::GetScreenshotFileName(string& FileName)
 		os << "shot" << i << ".bmp";
 		buffer = os.str();
 
-		if (!grim->File_Exists(buffer))
+		if (!grim->fs()->exists(buffer))
         {   break; }
     }
 
@@ -473,7 +473,7 @@ bool focusgained()
 }
 
 bool game_engine::cfg_load(void){
-	vector<string> config_lines = grim->File_ReadAll("cfg.cfg");
+	vector<string> config_lines = grim->fs()->readLines("cfg.cfg");
 
 	if(config_lines.size() < 6) {
 		return false;
@@ -12506,14 +12506,14 @@ void game_engine::play_music_file(int song_number, int *do_not_play)
 	strcat(temprivi,mod.mod_name.c_str());
 	strcat(temprivi,"/");
 	strcat(temprivi,play_file.c_str());
-	if(grim->File_Exists(temprivi)){
+	if(grim->fs()->exists(temprivi)){
 		SwapSourceFilter(temprivi);
 	}
 
 	//no song there, try the default directory
 	strcpy(temprivi,"music/");
 	strcat(temprivi,play_file.c_str());
-	if(grim->File_Exists(temprivi)){
+	if(grim->fs()->exists(temprivi)){
 		SwapSourceFilter(temprivi);
 	}
 
@@ -13881,10 +13881,10 @@ void game_engine::load_mod_names(const string& StartingPath)
 	mods=0;
 	selected_mod=0;
 
-	vector<string> v = grim->File_ListDirectory(StartingPath);
+	vector<string> v = grim->fs()->listDirectory(StartingPath);
 
 	for (int i=0; i<v.size(); i++) {
-		if (grim->File_IsDirectory(StartingPath + '/' + v[i])) {
+		if (grim->fs()->isDirectory(StartingPath + '/' + v[i])) {
 			mod_names[mods]=v[i];
 			//select default mod as default
 			if(mod_names[mods]=="Default")

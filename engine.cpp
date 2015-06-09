@@ -3,8 +3,8 @@
 #include <SDL_image.h>
 #include <sstream>
 #include "func.h"
-#include "physfs.h"
-#include "physfsrwops.h"
+
+using std::shared_ptr;
 
 Engine::Engine()
 :   window(nullptr)
@@ -25,6 +25,14 @@ Engine::Engine()
         vertex_b[i] = 1;
         vertex_a[i] = 1;
     }
+}
+
+void Engine::File_Initiate(const char* argv0){
+    fs_p = std::make_shared<VirtualFS>(argv0);
+}
+
+shared_ptr<VirtualFS> Engine::fs() {
+    return fs_p;
 }
 
 void Engine::startFrame(){
@@ -116,11 +124,6 @@ void Engine::System_Start(){
             }
         }
     }
-}
-
-void Engine::File_Initiate(const char *argv0){
-    PHYSFS_init(argv0);
-    PHYSFS_setSaneConfig("monkkonen","notrium",nullptr,0,0); //Perhaps we should allow packages here. Not now.
 }
 
 void Engine::System_Initiate(){
@@ -220,7 +223,7 @@ void Engine::System_SaveScreenshot(const std::string& filename){
     glReadPixels (0, 0, width, height, GL_BGR, GL_UNSIGNED_BYTE,
             shot->pixels);
 
-    SDL_RWops* rw = PHYSFSRWOPS_openWrite(filename.c_str());
+    SDL_RWops* rw = fs_p->openRWops_write(filename);
     SDL_SaveBMP_RW(shot, rw, 1);
 
     SDL_FreeSurface (shot);
@@ -409,7 +412,7 @@ bool Engine::Texture_Load(const std::string& id, char *filename){
     SDL_Surface *surface;
     GLenum texture_format;
 
-    SDL_RWops* rw = PHYSFSRWOPS_openRead(filename);
+    SDL_RWops* rw = fs_p->openRWops_read(filename);
     if (rw == NULL)
     {
         return false;
@@ -573,52 +576,6 @@ void Engine::setglColor(int index){
         glColor4f(vertex_r[index],vertex_g[index],vertex_b[index],vertex_a[index]);
     else
         glColor4f(1,1,1,1);
-}
-
-bool Engine::File_Exists(const std::string& filename){
-	return (PHYSFS_exists(filename.c_str()) != 0);
-}
-
-bool Engine::File_IsDirectory(const std::string& filename){
-	return (PHYSFS_isDirectory(filename.c_str()) != 0);
-}
-
-std::vector<std::string> Engine::File_ListDirectory(const std::string& dir){
-	char **rc = PHYSFS_enumerateFiles(dir.c_str());
-	char **i;
-
-	std::vector<std::string> vec;
-
-	for (i = rc; *i != NULL; i++){
-		vec.push_back(*i);
-	}
-
-	PHYSFS_freeList(rc);
-
-	return vec;
-}
-
-std::vector<std::string> Engine::File_ReadAll(const std::string& filename){
-    std::vector<std::string> vec;
-
-    PHYSFS_file *f = PHYSFS_openRead(filename.c_str());
-    if(f == nullptr) {
-        return vec;
-    }
-    char *myBuf = new char[PHYSFS_fileLength(f)];
-    PHYSFS_read (f, myBuf, 1, PHYSFS_fileLength(f));
-
-    std::stringstream ss(myBuf);
-    std::string line;
-
-    while(std::getline(ss,line,'\n')){
-        vec.push_back(line);
-    }
-
-    PHYSFS_close(f);
-    delete myBuf;
-
-    return vec;
 }
 
 long Engine::Time_GetTicks(){

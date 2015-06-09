@@ -33,14 +33,14 @@ int resource_handler::load_texture(const string& name, const string& mod_name){/
 	strcat(temprivi,mod_name.c_str());
 	strcat(temprivi,"/");
 	strcat(temprivi,name.c_str());
-	bool OK=grim->File_Exists(temprivi);
+	bool OK=grim->fs()->exists(temprivi);
 
 	//try default directory
 	if(!OK){
 		strcpy(temprivi,"textures/");
 		strcat(temprivi,name.c_str());
 
-		OK=grim->File_Exists(temprivi);
+		OK=grim->fs()->exists(temprivi);
 	}
 	if(!OK){
 		debug->debug_output("Loading Texture!",Action::FAIL_AND_END,Logfile::STARTUP);

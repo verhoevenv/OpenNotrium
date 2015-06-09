@@ -8,6 +8,7 @@
 #include <vector>
 #include "keys.h"
 #include "blendstate.h"
+#include "virtualfs.h"
 
 typedef
 bool (*ProgramCallback)(void);
@@ -38,6 +39,7 @@ class Engine
 {
     SDL_Window* window;
     SDL_GLContext glcontext;
+    std::shared_ptr<VirtualFS> fs_p;
     int width,height,bpp;
     bool fullscreen;
     float clear_r,clear_g,clear_b,clear_a;
@@ -112,10 +114,11 @@ public:
 	void System_GrabInput();
 	void System_ReleaseInput();
 
-	/**
-	* Initialises file system. The argv[0] is required on some systems to know the path to the current directory.
-	*/
-	void File_Initiate(const char *argv0);
+    /**
+    * Initialises file system. The argv[0] is required on some systems to know the path to the current directory.
+    */
+    void File_Initiate(const char* argv0);
+    std::shared_ptr<VirtualFS> fs();
 
 	/**
 	* Initialises the system with the given states, starts engine, etc. Does not enter the main loop yet.
@@ -190,13 +193,6 @@ public:
     void Quads_SetColorVertex(int vertex, float r, float g, float b, float a);
     void Quads_Draw4V(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
     //void Quads_RenderText(float x, float y, char *text);
-
-	//TODO: other file stuff (reading, writing, ...)
-	//bool File_Exists_ReadDir(std::string filename);
-	bool File_Exists(const std::string& filename);
-	bool File_IsDirectory(const std::string& filename);
-	std::vector<std::string> File_ListDirectory(const std::string& dir);
-  std::vector<std::string> File_ReadAll(const std::string& filename);
 
 	/**
 	* Returns the amount of milliseconds the program has been running. Might wrap around after ~ 50 or 25 days.
