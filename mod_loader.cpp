@@ -1652,9 +1652,9 @@ void Mod::load_terrain_maps(const VirtualFS& fs, const string& filename){
 }
 
 
-void Mod::save_terrain_maps(const VirtualFS& fs, string filename){
+std::string Mod::save_terrain_maps(const VirtualFS& fs){
 
-	if(filename=="")filename="data/"+mod_name+"/terrain_maps.dat";
+	std::string filename="data/"+mod_name+"/terrain_maps.dat";
 
 	debug->debug_output("Save file "+filename,Action::START,Logfile::STARTUP);
 
@@ -1722,6 +1722,7 @@ void Mod::save_terrain_maps(const VirtualFS& fs, string filename){
 	fclose(fil);
 
 	debug->debug_output("Save file "+filename,Action::END,Logfile::STARTUP);
+	return filename;
 }
 
 

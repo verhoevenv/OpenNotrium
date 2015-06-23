@@ -624,7 +624,7 @@ protected:
 public:
 	void load_mod(const VirtualFS& fs, const std::string& mod, debugger *debugger, resource_handler *resources);
 	void load_race_info(const VirtualFS& fs, const std::string& filename);//loads race info from file
-	void save_terrain_maps(const VirtualFS& fs, std::string filename);
+	std::string save_terrain_maps(const VirtualFS& fs);
 
 };
 
