@@ -118,6 +118,13 @@ bool strtobool(const char *rivi){
 }
 
 
+bool strtobool(const std::string& rivi){
+	int a=stoi(rivi);
+	if (a==0)return false;
+	else return true;
+}
+
+
 void random_name(char *creature_name){//give a random name
 
 	char konsonantti[20] = {'b','c','d','f','g','h','j','k',

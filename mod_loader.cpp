@@ -155,82 +155,40 @@ void Mod::load_item_info(const VirtualFS& fs, const string& filename){//loads ob
 void Mod::load_object_info(const VirtualFS& fs, const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
-	FILE *fil;
+	std::string contents = fs.readAll(filename);
+	std::string& fil = contents;
 	char rivi[800];
-
-	//int object_infos=0;
 
 	general_objects.clear();
 
-/*	fil = fopen(filename.c_str(),"rt");
-	if(fil){
+	if(true){
 		general_objects_base temp_object;
-		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){
+		while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_of_file"){
 
 			temp_object.name=rivi;
-			temp_object.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			stripped_fgets(rivi,sizeof(rivi),fil);//texture name
-			//load texture if it's not loaded
-			temp_object.texture_name=rivi;
-			temp_object.texture=resources->load_texture(rivi);
-
-			temp_object.base_size=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));//base_size
-			temp_object.vary_size=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));//vary_size
-			temp_object.transparent=atoi(stripped_fgets(rivi,sizeof(rivi),fil));//transparency
-			temp_object.layer=atoi(stripped_fgets(rivi,sizeof(rivi),fil));//layer
-			temp_object.swing=atoi(stripped_fgets(rivi,sizeof(rivi),fil));//swing
-			temp_object.collision_type=0;
-			temp_object.passable_radius=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));//passable_radius
-			temp_object.collision_parameter0=temp_object.passable_radius;
-			temp_object.collision_parameter1=0;
-
-
-			if(temp_object.passable_radius==0)temp_object.collision_type=-1;
-
-			//if the identifier is bigger than current list size, increase list size
-			while(general_objects.size()<temp_object.identifier+1){
-				//put in dummy elements
-				general_objects.push_back(temp_object);
-			}
-			general_objects[temp_object.identifier]=temp_object;
-		}
-	}
-	fclose(fil);*/
-
-	fil = fopen(filename.c_str(),"rt");
-	if(fil){
-		general_objects_base temp_object;
-		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){
-
-			temp_object.name=rivi;
-			temp_object.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			//stripped_fgets(rivi,sizeof(rivi),fil);//texture name
-			//load texture if it's not loaded
-			//temp_object.texture_name=rivi;
-			//temp_object.texture=resources->load_texture(rivi,mod_name);
-
+			temp_object.identifier=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
 
 			temp_object.animation_frames.clear();
 			stripped_fgets(rivi,sizeof(rivi),fil);
-			while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_animation_frames")!=0){
+			while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_animation_frames"){
 				object_animation_frame_base temp_frame;
 
 				temp_frame.texture=resources->load_texture(rivi,mod_name);
 				temp_frame.texture_name=rivi;
-				temp_frame.time=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+				temp_frame.time=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 				temp_object.animation_frames.push_back(temp_frame);
 			}
 
-			temp_object.base_size=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));//base_size
-			temp_object.vary_size=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));//vary_size
-			temp_object.transparent=atoi(stripped_fgets(rivi,sizeof(rivi),fil));//transparency
-			temp_object.layer=atoi(stripped_fgets(rivi,sizeof(rivi),fil));//layer
-			temp_object.swing=atoi(stripped_fgets(rivi,sizeof(rivi),fil));//swing
-			temp_object.get_transparent=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_object.provide_shade=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_object.collision_type=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_object.collision_parameter0=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_object.collision_parameter1=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_object.base_size=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));//base_size
+			temp_object.vary_size=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));//vary_size
+			temp_object.transparent=stoi(stripped_fgets(rivi,sizeof(rivi),fil));//transparency
+			temp_object.layer=stoi(stripped_fgets(rivi,sizeof(rivi),fil));//layer
+			temp_object.swing=stoi(stripped_fgets(rivi,sizeof(rivi),fil));//swing
+			temp_object.get_transparent=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_object.provide_shade=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_object.collision_type=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_object.collision_parameter0=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_object.collision_parameter1=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_object.blocks_vision=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_object.stops_bullets=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
 
@@ -247,7 +205,6 @@ void Mod::load_object_info(const VirtualFS& fs, const string& filename){//loads 
 			general_objects[temp_object.identifier]=temp_object;
 		}
 	}
-	fclose(fil);
 
 	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }

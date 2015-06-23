@@ -52,6 +52,7 @@ float randDouble( float low, float high );
 char *stripped_fgets(char *s, int n, FILE *f);
 std::string stripped_fgets(char *s, int n, std::string& f);
 bool strtobool(const char* rivi);
+bool strtobool(const std::string& rivi);
 void random_name(const char* creature_name);//give the given monk a random name
 void find_texture_coordinates(int slot,float *x0,float *y0,float *x1,float *y1,int slots_per_texture);
 std::string FloatToText(float n, int nNumberOfDecimalPlaces);
