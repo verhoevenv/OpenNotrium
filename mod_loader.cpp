@@ -214,59 +214,59 @@ void Mod::load_object_info(const VirtualFS& fs, const string& filename){//loads 
 void Mod::load_creature_info(const VirtualFS& fs, const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
-	FILE *fil;
+	std::string contents = fs.readAll(filename);
+	std::string& fil = contents;
 	char rivi[2000];
 
 
 	general_creatures.clear();
 
-	fil = fopen(filename.c_str(),"rt");
-	if(fil){
+	if(true){
 		general_creatures_base temp_creature;
-		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//object name
+		while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_of_file"){//object name
 			temp_creature.name=rivi;
 			debug->debug_output("Load "+temp_creature.name,Action::START,Logfile::STARTUP);
 
-			temp_creature.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.creature_class=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.identifier=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.creature_class=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			stripped_fgets(rivi,sizeof(rivi),fil);//texture name
 			//load texture if it's not loaded
 			temp_creature.texture=resources->load_texture(rivi,mod_name);
 			temp_creature.texture_name=rivi;
-			temp_creature.layer=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.corpse_item=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.corpse_item_amount=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.layer=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.corpse_item=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.corpse_item_amount=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_creature.close_combat=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.particle_on_radar=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.AI_tactics[0]=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.AI_tactics[1]=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.footsteps=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.die_after_seconds=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.eat_item=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.size=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));//size
-			temp_creature.weight=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));//size
-			temp_creature.movement_speed=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));//speed
-			temp_creature.minimum_movement_speed=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.leg_animation_speed=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.turn_speed=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));//speed
-			temp_creature.inertia=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));//speed
+			temp_creature.particle_on_radar=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.AI_tactics[0]=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.AI_tactics[1]=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.footsteps=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.die_after_seconds=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.eat_item=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.size=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));//size
+			temp_creature.weight=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));//size
+			temp_creature.movement_speed=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));//speed
+			temp_creature.minimum_movement_speed=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.leg_animation_speed=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.turn_speed=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));//speed
+			temp_creature.inertia=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));//speed
 			temp_creature.hide_behind_walls=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.weapon=atoi(stripped_fgets(rivi,sizeof(rivi),fil));//weapon
-			temp_creature.weapon_x=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));//weapon_x
-			temp_creature.weapon_y=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));//weapon_y
-			temp_creature.blood=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.weapon=stoi(stripped_fgets(rivi,sizeof(rivi),fil));//weapon
+			temp_creature.weapon_x=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));//weapon_x
+			temp_creature.weapon_y=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));//weapon_y
+			temp_creature.blood=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_creature.bars_visible=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.death_animation_speed=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.death_animation_speed=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 			temp_creature.can_change_area=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.AI_hear_range=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.AI_see_range=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_creature.AI_see_angle=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.AI_hear_range=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.AI_see_range=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_creature.AI_see_angle=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 
 
 			temp_creature.footstep_sounds.clear();
 			temp_creature.footstep_sound_names.clear();
 			stripped_fgets(rivi,sizeof(rivi),fil);
-			while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_footstep_sounds")!=0){
+			while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_footstep_sounds"){
 				temp_creature.footstep_sounds.push_back(resources->load_sample(rivi,2,mod_name));
 				temp_creature.footstep_sound_names.push_back(rivi);
 			}
@@ -275,7 +275,7 @@ void Mod::load_creature_info(const VirtualFS& fs, const string& filename){//load
 			temp_creature.hit_sound.clear();
 			temp_creature.hit_sound_names.clear();
 			stripped_fgets(rivi,sizeof(rivi),fil);
-			while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_hit_sounds")!=0){
+			while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_hit_sounds"){
 				temp_creature.hit_sound.push_back(resources->load_sample(rivi,2,mod_name));
 				temp_creature.hit_sound_names.push_back(rivi);
 			}
@@ -283,7 +283,7 @@ void Mod::load_creature_info(const VirtualFS& fs, const string& filename){//load
 			temp_creature.die_sound.clear();
 			temp_creature.die_sound_names.clear();
 			stripped_fgets(rivi,sizeof(rivi),fil);
-			while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_die_sounds")!=0){
+			while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_die_sounds"){
 				temp_creature.die_sound.push_back(resources->load_sample(rivi,2,mod_name));
 				temp_creature.die_sound_names.push_back(rivi);
 			}
@@ -291,32 +291,31 @@ void Mod::load_creature_info(const VirtualFS& fs, const string& filename){//load
 			//eat block
 			temp_creature.eat_block.clear();
 			stripped_fgets(rivi,sizeof(rivi),fil);
-			while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_eat_block")!=0){
+			while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_eat_block"){
 				general_creatures_base::effect_block temp_effect;
 
 				//conditions
 				temp_effect.conditions.clear();
-				//stripped_fgets(rivi,sizeof(rivi),fil);
-				while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_conditions")!=0){
+				while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_conditions"){
 					Mod::condition temp_effect_condition;
 
-					temp_effect_condition.condition_number=atoi(rivi);
-					temp_effect_condition.condition_parameter0=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_condition.condition_parameter1=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_condition.condition_number=stoi(rivi);
+					temp_effect_condition.condition_parameter0=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_condition.condition_parameter1=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 
 					temp_effect.conditions.push_back(temp_effect_condition);
 				}
 				//effects
 				temp_effect.effects.clear();
 				stripped_fgets(rivi,sizeof(rivi),fil);
-				while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_effects")!=0){
+				while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_effects"){
 					Mod::effect temp_effect_effect;
 
-					temp_effect_effect.effect_number=atoi(rivi);
-					temp_effect_effect.parameter1=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter2=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter3=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter4=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.effect_number=stoi(rivi);
+					temp_effect_effect.parameter1=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter2=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter3=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter4=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 
 					temp_effect.effects.push_back(temp_effect_effect);
 				}
@@ -327,34 +326,34 @@ void Mod::load_creature_info(const VirtualFS& fs, const string& filename){//load
 			//death block
 			temp_creature.death_block.clear();
 			stripped_fgets(rivi,sizeof(rivi),fil);
-			while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_death_block")!=0){
+			while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_death_block"){
 				general_creatures_base::death_effect_block temp_effect;
 
-				temp_effect.death_type=atoi(rivi);
+				temp_effect.death_type=stoi(rivi);
 
 				//conditions
 				temp_effect.conditions.clear();
 				stripped_fgets(rivi,sizeof(rivi),fil);
-				while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_conditions")!=0){
+				while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_conditions"){
 					Mod::condition temp_effect_condition;
 
-					temp_effect_condition.condition_number=atoi(rivi);
-					temp_effect_condition.condition_parameter0=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_condition.condition_parameter1=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_condition.condition_number=stoi(rivi);
+					temp_effect_condition.condition_parameter0=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_condition.condition_parameter1=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 
 					temp_effect.conditions.push_back(temp_effect_condition);
 				}
 				//effects
 				temp_effect.effects.clear();
 				stripped_fgets(rivi,sizeof(rivi),fil);
-				while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_effects")!=0){
+				while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_effects"){
 					Mod::effect temp_effect_effect;
 
-					temp_effect_effect.effect_number=atoi(rivi);
-					temp_effect_effect.parameter1=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter2=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter3=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter4=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.effect_number=stoi(rivi);
+					temp_effect_effect.parameter1=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter2=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter3=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter4=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 
 					temp_effect.effects.push_back(temp_effect_effect);
 				}
@@ -365,32 +364,32 @@ void Mod::load_creature_info(const VirtualFS& fs, const string& filename){//load
 			//hit block
 			temp_creature.hit_block.clear();
 			stripped_fgets(rivi,sizeof(rivi),fil);
-			while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_hit_block")!=0){
+			while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_hit_block"){
 				general_creatures_base::effect_block temp_effect;
 
 				//conditions
 				temp_effect.conditions.clear();
 				//stripped_fgets(rivi,sizeof(rivi),fil);
-				while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_conditions")!=0){
+				while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_conditions"){
 					Mod::condition temp_effect_condition;
 
-					temp_effect_condition.condition_number=atoi(rivi);
-					temp_effect_condition.condition_parameter0=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_condition.condition_parameter1=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_condition.condition_number=stoi(rivi);
+					temp_effect_condition.condition_parameter0=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_condition.condition_parameter1=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 
 					temp_effect.conditions.push_back(temp_effect_condition);
 				}
 				//effects
 				temp_effect.effects.clear();
 				stripped_fgets(rivi,sizeof(rivi),fil);
-				while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_effects")!=0){
+				while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_effects"){
 					Mod::effect temp_effect_effect;
 
-					temp_effect_effect.effect_number=atoi(rivi);
-					temp_effect_effect.parameter1=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter2=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter3=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter4=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.effect_number=stoi(rivi);
+					temp_effect_effect.parameter1=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter2=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter3=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter4=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 
 					temp_effect.effects.push_back(temp_effect_effect);
 				}
@@ -401,34 +400,34 @@ void Mod::load_creature_info(const VirtualFS& fs, const string& filename){//load
 			//timed block
 			temp_creature.timed_block.clear();
 			stripped_fgets(rivi,sizeof(rivi),fil);
-			while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_timed_block")!=0){
+			while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_timed_block"){
 				general_creatures_base::timed_effect_block temp_effect;
 
-				temp_effect.interval=atoi(rivi);
+				temp_effect.interval=stoi(rivi);
 
 				//conditions
 				temp_effect.conditions.clear();
 				stripped_fgets(rivi,sizeof(rivi),fil);
-				while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_conditions")!=0){
+				while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_conditions"){
 					Mod::condition temp_effect_condition;
 
-					temp_effect_condition.condition_number=atoi(rivi);
-					temp_effect_condition.condition_parameter0=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_condition.condition_parameter1=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_condition.condition_number=stoi(rivi);
+					temp_effect_condition.condition_parameter0=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_condition.condition_parameter1=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 
 					temp_effect.conditions.push_back(temp_effect_condition);
 				}
 				//effects
 				temp_effect.effects.clear();
 				stripped_fgets(rivi,sizeof(rivi),fil);
-				while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_effects")!=0){
+				while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_effects"){
 					Mod::effect temp_effect_effect;
 
-					temp_effect_effect.effect_number=atoi(rivi);
-					temp_effect_effect.parameter1=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter2=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter3=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter4=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.effect_number=stoi(rivi);
+					temp_effect_effect.parameter1=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter2=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter3=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter4=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 
 					temp_effect.effects.push_back(temp_effect_effect);
 				}
@@ -439,20 +438,20 @@ void Mod::load_creature_info(const VirtualFS& fs, const string& filename){//load
 			//specialties
 			temp_creature.specialties.clear();
 			stripped_fgets(rivi,sizeof(rivi),fil);
-			while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_specialties")!=0){
+			while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_specialties"){
 				general_creatures_base::creature_specialty temp_specialty;
 
 
 				//temp_specialty.description="";
 				temp_specialty.description=rivi;
-				temp_specialty.number=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
+				temp_specialty.number=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
 
-				//temp_specialty.number=atoi(rivi);
+				//temp_specialty.number=stoi(rivi);
 
-				temp_specialty.parameter0=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));
-				temp_specialty.parameter1=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));
-				temp_specialty.parameter2=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));
-				temp_specialty.parameter3=(float)atof(stripped_fgets(rivi,sizeof(rivi),fil));
+				temp_specialty.parameter0=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));
+				temp_specialty.parameter1=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));
+				temp_specialty.parameter2=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));
+				temp_specialty.parameter3=(float)stof(stripped_fgets(rivi,sizeof(rivi),fil));
 				temp_creature.specialties.push_back(temp_specialty);
 			}
 
@@ -469,8 +468,6 @@ void Mod::load_creature_info(const VirtualFS& fs, const string& filename){//load
 			debug->debug_output("Load "+temp_creature.name,Action::END,Logfile::STARTUP);
 		}
 	}
-
-	fclose(fil);
 
 	debug->debug_output("Load file " + filename,Action::END,Logfile::STARTUP);
 }
