@@ -6,10 +6,11 @@
 using namespace std;
 using namespace Debugger;
 
-void Mod::load_item_info(const string& filename){//loads object info from file
+void Mod::load_item_info(const VirtualFS& fs, const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
-	FILE *fil;
+	std::string contents = fs.readAll(filename);
+	std::string& fil = contents;
 	char rivi[2000];
 
 	general_items.clear();
@@ -17,43 +18,42 @@ void Mod::load_item_info(const string& filename){//loads object info from file
 	//quick_keys.clear();
 
 
-	fil = fopen(filename.c_str(),"rt");
-	if(fil){
+	if(true){
 		general_item_base temp_item;
-		while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_of_file")!=0){//object name
+		while(stripped_fgets(rivi,sizeof(rivi),fil)!="end_of_file"){//object name
 			temp_item.name=rivi;
 			debug->debug_output("Load "+temp_item.name,Action::START,Logfile::STARTUP);
 
-			temp_item.identifier=atoi(stripped_fgets(rivi,sizeof(rivi),fil));//identifier
-			temp_item.item_class=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_item.weight=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_item.identifier=stoi(stripped_fgets(rivi,sizeof(rivi),fil));//identifier
+			temp_item.item_class=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_item.weight=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 			stripped_fgets(rivi,sizeof(rivi),fil);
 			temp_item.description=rivi;
 			stripped_fgets(rivi,sizeof(rivi),fil);
 			temp_item.event_text=rivi;
-			temp_item.size=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_item.show_on_radar=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_item.show_on_radar_particle=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_item.visible_in_inventory=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_item.size=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_item.show_on_radar=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_item.show_on_radar_particle=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_item.visible_in_inventory=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
 			//load texture
 			stripped_fgets(rivi,sizeof(rivi),fil);
 			temp_item.texture_name=rivi;
 			temp_item.texture=resources->load_texture(rivi,mod_name);
-			temp_item.wielded_script=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_item.wielded_disabling_script=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-			temp_item.show_condition_help=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_item.wielded_script=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_item.wielded_disabling_script=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+			temp_item.show_condition_help= ("0" !=stripped_fgets(rivi,sizeof(rivi),fil));
 
 			//wield slots
 			temp_item.wield_slots.clear();
 			stripped_fgets(rivi,sizeof(rivi),fil);
-			while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_wield_slots")!=0){
-				temp_item.wield_slots.push_back(atoi(rivi));
+			while(stripped_fgets(rivi,sizeof(rivi),fil)!="end_wield_slots"){
+				temp_item.wield_slots.push_back(stoi(rivi));
 			}
 
 			//uses
 			temp_item.effects.clear();
 			stripped_fgets(rivi,sizeof(rivi),fil);
-			while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_effects_block")!=0){
+			while(stripped_fgets(rivi,sizeof(rivi),fil) != "end_effects_block"){
 				item_effect_base temp_effect;
 
 
@@ -62,7 +62,7 @@ void Mod::load_item_info(const string& filename){//loads object info from file
 				temp_effect.effect.sound=-1;
 				temp_effect.effect.sound_name=stripped_fgets(rivi,sizeof(rivi),fil);
 				if(temp_effect.effect.sound_name!="none")temp_effect.effect.sound=resources->load_sample(rivi,2,mod_name);//hit sound
-				temp_effect.effect.vanish_after_used=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
+				temp_effect.effect.vanish_after_used=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
 				temp_effect.use_key=string(stripped_fgets(rivi,sizeof(rivi),fil)).at(0);
 				temp_effect.quick_key=string(stripped_fgets(rivi,sizeof(rivi),fil)).at(0);
 				/*if(temp_effect.quick_key!=0){
@@ -75,12 +75,12 @@ void Mod::load_item_info(const string& filename){//loads object info from file
 				//conditions
 				temp_effect.effect.conditions.clear();
 				stripped_fgets(rivi,sizeof(rivi),fil);
-				while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_conditions")!=0){
+				while(stripped_fgets(rivi,sizeof(rivi),fil)!="end_conditions"){
 					condition temp_effect_condition;
 
 					temp_effect_condition.condition_number=atoi(rivi);
-					temp_effect_condition.condition_parameter0=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_condition.condition_parameter1=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_condition.condition_parameter0=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_condition.condition_parameter1=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 
 					temp_effect.effect.conditions.push_back(temp_effect_condition);
 				}
@@ -88,14 +88,14 @@ void Mod::load_item_info(const string& filename){//loads object info from file
 				//effects
 				temp_effect.effect.effects.clear();
 				stripped_fgets(rivi,sizeof(rivi),fil);
-				while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_effects")!=0){
+				while(stripped_fgets(rivi,sizeof(rivi),fil)!="end_effects"){
 					effect temp_effect_effect;
 
 					temp_effect_effect.effect_number=atoi(rivi);
-					temp_effect_effect.parameter1=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter2=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter3=atof(stripped_fgets(rivi,sizeof(rivi),fil));
-					temp_effect_effect.parameter4=atof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter1=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter2=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter3=stof(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_effect_effect.parameter4=stof(stripped_fgets(rivi,sizeof(rivi),fil));
 
 					temp_effect.effect.effects.push_back(temp_effect_effect);
 				}
@@ -106,21 +106,21 @@ void Mod::load_item_info(const string& filename){//loads object info from file
 			//combinations
 			temp_item.combinations.clear();
 			stripped_fgets(rivi,sizeof(rivi),fil);
-			while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_combinations")!=0){
+			while(stripped_fgets(rivi,sizeof(rivi),fil)!="end_combinations"){
 				combines temp_combination;
 				temp_combination.discard_this=strtobool(rivi);
-				temp_combination.combines_with=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-				temp_combination.discard_that=strtobool(stripped_fgets(rivi,sizeof(rivi),fil));
-				temp_combination.combine_puzzle_difficulty=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
-				temp_combination.can_be_broken_up=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
+				temp_combination.combines_with=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+				temp_combination.discard_that=stripped_fgets(rivi,sizeof(rivi),fil) != "0";
+				temp_combination.combine_puzzle_difficulty=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
+				temp_combination.can_be_broken_up=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
 
 
 				temp_combination.combine_results.clear();
 				stripped_fgets(rivi,sizeof(rivi),fil);
-				while(strcmp(stripped_fgets(rivi,sizeof(rivi),fil),"end_items_given")!=0){
+				while(stripped_fgets(rivi,sizeof(rivi),fil)!="end_items_given"){
 					combines::combine_results_base temp_result;
 					temp_result.combines_to=atoi(rivi);
-					temp_result.combines_amount=atoi(stripped_fgets(rivi,sizeof(rivi),fil));
+					temp_result.combines_amount=stoi(stripped_fgets(rivi,sizeof(rivi),fil));
 
 					temp_combination.combine_results.push_back(temp_result);
 				}
@@ -148,14 +148,11 @@ void Mod::load_item_info(const string& filename){//loads object info from file
 		}
 	}
 
-	fclose(fil);
-
-
 	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
 
-void Mod::load_object_info(const string& filename){//loads object info from file
+void Mod::load_object_info(const VirtualFS& fs, const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -257,7 +254,7 @@ void Mod::load_object_info(const string& filename){//loads object info from file
 
 
 
-void Mod::load_creature_info(const string& filename){//loads object info from file
+void Mod::load_creature_info(const VirtualFS& fs, const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -522,7 +519,7 @@ void Mod::load_creature_info(const string& filename){//loads object info from fi
 }
 
 
-void Mod::load_weapon_info(const string& filename){//loads object info from file
+void Mod::load_weapon_info(const VirtualFS& fs, const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -644,7 +641,7 @@ void Mod::load_weapon_info(const string& filename){//loads object info from file
 
 
 
-void Mod::load_climate_info(const string& filename){//loads climate info from file
+void Mod::load_climate_info(const VirtualFS& fs, const string& filename){//loads climate info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -784,7 +781,7 @@ void Mod::load_climate_info(const string& filename){//loads climate info from fi
 }
 
 
-void Mod::load_area_info(const string& filename){//loads area info from file
+void Mod::load_area_info(const VirtualFS& fs, const string& filename){//loads area info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -853,7 +850,7 @@ void Mod::load_area_info(const string& filename){//loads area info from file
 }
 
 
-void Mod::load_light_info(const string& filename){//loads light info from file
+void Mod::load_light_info(const VirtualFS& fs, const string& filename){//loads light info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -902,7 +899,7 @@ void Mod::load_light_info(const string& filename){//loads light info from file
 	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
-void Mod::load_plot_object_info(const string& filename){//loads object info from file
+void Mod::load_plot_object_info(const VirtualFS& fs, const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -1014,7 +1011,7 @@ void Mod::load_plot_object_info(const string& filename){//loads object info from
 }
 
 
-void Mod::load_animation_info(const string& filename){//loads object info from file
+void Mod::load_animation_info(const VirtualFS& fs, const string& filename){//loads object info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -1060,7 +1057,7 @@ void Mod::load_animation_info(const string& filename){//loads object info from f
 
 
 
-void Mod::load_race_info(const string& filename){//loads race info from file
+void Mod::load_race_info(const VirtualFS& fs, const string& filename){//loads race info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -1215,7 +1212,7 @@ void Mod::load_race_info(const string& filename){//loads race info from file
 	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
-void Mod::load_polygons(const string& filename){//loads polygon info from file
+void Mod::load_polygons(const VirtualFS& fs, const string& filename){//loads polygon info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -1295,7 +1292,7 @@ void Mod::grow_polygon(polygon_base *temp_polygon){
 
 
 
-void Mod::load_scripts(const string& filename){
+void Mod::load_scripts(const VirtualFS& fs, const string& filename){
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -1376,7 +1373,7 @@ void Mod::load_scripts(const string& filename){
 
 }
 
-void Mod::load_AI_side(const string& filename){//loads AI info from file
+void Mod::load_AI_side(const VirtualFS& fs, const string& filename){//loads AI info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -1436,7 +1433,7 @@ void Mod::load_AI_side(const string& filename){//loads AI info from file
 }
 
 
-void Mod::load_bars(const string& filename){//loads bar info from file
+void Mod::load_bars(const VirtualFS& fs, const string& filename){//loads bar info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -1504,7 +1501,7 @@ void Mod::load_bars(const string& filename){//loads bar info from file
 
 
 
-void Mod::load_AI_info(const string& filename){//loads AI info from file
+void Mod::load_AI_info(const VirtualFS& fs, const string& filename){//loads AI info from file
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -1556,7 +1553,7 @@ void Mod::load_AI_info(const string& filename){//loads AI info from file
 }
 
 
-void Mod::load_terrain_types(const string& filename){
+void Mod::load_terrain_types(const VirtualFS& fs, const string& filename){
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -1662,7 +1659,7 @@ void Mod::load_terrain_types(const string& filename){
 
 
 
-void Mod::load_terrain_maps(const string& filename){
+void Mod::load_terrain_maps(const VirtualFS& fs, const string& filename){
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -1746,7 +1743,7 @@ void Mod::load_terrain_maps(const string& filename){
 }
 
 
-void Mod::save_terrain_maps(string filename){
+void Mod::save_terrain_maps(const VirtualFS& fs, string filename){
 
 	if(filename=="")filename="data/"+mod_name+"/terrain_maps.dat";
 
@@ -1819,7 +1816,7 @@ void Mod::save_terrain_maps(string filename){
 }
 
 
-void Mod::load_dialogs(const string& filename){
+void Mod::load_dialogs(const VirtualFS& fs, const string& filename){
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -1861,7 +1858,7 @@ void Mod::load_dialogs(const string& filename){
 }
 
 
-void Mod::load_music(const string& filename){
+void Mod::load_music(const VirtualFS& fs, const string& filename){
 	debug->debug_output("Load file "+filename,Action::START,Logfile::STARTUP);
 
 	FILE *fil;
@@ -1894,28 +1891,28 @@ void Mod::load_music(const string& filename){
 	debug->debug_output("Load file "+filename,Action::END,Logfile::STARTUP);
 }
 
-void Mod::load_mod(const string& mod, debugger *debugger, resource_handler *resources){
+void Mod::load_mod(const VirtualFS& fs, const string& mod, debugger *debugger, resource_handler *resources){
 	debug=debugger;
 	this->resources=resources;
 	this->mod_name=mod;
 
-	load_object_info("data/"+mod_name+"/object_definitions.dat");
-	load_climate_info("data/"+mod_name+"/climate_types.dat");
-	load_creature_info("data/"+mod_name+"/creatures.dat");
-	load_light_info("data/"+mod_name+"/light.dat");
-	load_weapon_info("data/"+mod_name+"/weapons.dat");
-	load_item_info("data/"+mod+"/items.dat");
-	load_area_info("data/"+mod_name+"/areas.dat");
-	load_plot_object_info("data/"+mod_name+"/plot_objects.dat");
-	load_animation_info("data/"+mod_name+"/animation.dat");
-	load_race_info("data/"+mod_name+"/player_races.dat");
-	load_AI_info("data/"+mod_name+"/AI_tactic.dat");
-	load_AI_side("data/"+mod_name+"/sides.dat");
-	load_bars("data/"+mod_name+"/bars.dat");
-	load_scripts("data/"+mod_name+"/scripts.dat");
-	load_polygons("data/"+mod_name+"/polygons.dat");
-	load_terrain_types("data/"+mod_name+"/terrain_types.dat");
-	load_terrain_maps("data/"+mod_name+"/terrain_maps.dat");
-	load_dialogs("data/"+mod_name+"/dialogs.dat");
-	load_music("data/"+mod_name+"/music.dat");
+	load_object_info(fs, "data/"+mod_name+"/object_definitions.dat");
+	load_climate_info(fs, "data/"+mod_name+"/climate_types.dat");
+	load_creature_info(fs, "data/"+mod_name+"/creatures.dat");
+	load_light_info(fs, "data/"+mod_name+"/light.dat");
+	load_weapon_info(fs, "data/"+mod_name+"/weapons.dat");
+	load_item_info(fs, "data/"+mod+"/items.dat");
+	load_area_info(fs, "data/"+mod_name+"/areas.dat");
+	load_plot_object_info(fs, "data/"+mod_name+"/plot_objects.dat");
+	load_animation_info(fs, "data/"+mod_name+"/animation.dat");
+	load_race_info(fs, "data/"+mod_name+"/player_races.dat");
+	load_AI_info(fs, "data/"+mod_name+"/AI_tactic.dat");
+	load_AI_side(fs, "data/"+mod_name+"/sides.dat");
+	load_bars(fs, "data/"+mod_name+"/bars.dat");
+	load_scripts(fs, "data/"+mod_name+"/scripts.dat");
+	load_polygons(fs, "data/"+mod_name+"/polygons.dat");
+	load_terrain_types(fs, "data/"+mod_name+"/terrain_types.dat");
+	load_terrain_maps(fs, "data/"+mod_name+"/terrain_maps.dat");
+	load_dialogs(fs, "data/"+mod_name+"/dialogs.dat");
+	load_music(fs, "data/"+mod_name+"/music.dat");
 }

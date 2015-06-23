@@ -64,7 +64,7 @@ void game_engine::GetScreenshotFileName(string& FileName)
 		os << "shot" << i << ".bmp";
 		buffer = os.str();
 
-		if (!grim->fs()->exists(buffer))
+		if (!grim->fs().exists(buffer))
         {   break; }
     }
 
@@ -473,7 +473,7 @@ bool focusgained()
 }
 
 bool game_engine::cfg_load(void){
-	vector<string> config_lines = grim->fs()->readLines("cfg.cfg");
+	vector<string> config_lines = grim->fs().readLines("cfg.cfg");
 
 	if(config_lines.size() < 6) {
 		return false;
@@ -11142,7 +11142,7 @@ void game_engine::load_mod(const string& mod_name){
 	debug.debug_output("Mod Loading", Action::END, Logfile::STARTUP);
 
 
-	mod.load_mod(mod_name,&debug,&resources);
+	mod.load_mod(grim->fs(), mod_name,&debug,&resources);
 
 
 	//initialize seen item texts
@@ -12506,14 +12506,14 @@ void game_engine::play_music_file(int song_number, int *do_not_play)
 	strcat(temprivi,mod.mod_name.c_str());
 	strcat(temprivi,"/");
 	strcat(temprivi,play_file.c_str());
-	if(grim->fs()->exists(temprivi)){
+	if(grim->fs().exists(temprivi)){
 		SwapSourceFilter(temprivi);
 	}
 
 	//no song there, try the default directory
 	strcpy(temprivi,"music/");
 	strcat(temprivi,play_file.c_str());
-	if(grim->fs()->exists(temprivi)){
+	if(grim->fs().exists(temprivi)){
 		SwapSourceFilter(temprivi);
 	}
 
@@ -13881,10 +13881,10 @@ void game_engine::load_mod_names(const string& StartingPath)
 	mods=0;
 	selected_mod=0;
 
-	vector<string> v = grim->fs()->listDirectory(StartingPath);
+	vector<string> v = grim->fs().listDirectory(StartingPath);
 
 	for (int i=0; i<v.size(); i++) {
-		if (grim->fs()->isDirectory(StartingPath + '/' + v[i])) {
+		if (grim->fs().isDirectory(StartingPath + '/' + v[i])) {
 			mod_names[mods]=v[i];
 			//select default mod as default
 			if(mod_names[mods]=="Default")
@@ -13900,7 +13900,7 @@ void game_engine::load_mod_names(const string& StartingPath)
 	int i,j;
 	for(i=0;i<mods;i++){
 		mod.mod_name=mod_names[i];
-		mod.load_race_info("data/"+mod_names[i]+"/player_races.dat");
+		mod.load_race_info(grim->fs(), "data/"+mod_names[i]+"/player_races.dat");
 		name_vector temp_names;
 		temp_names.names.clear();
 		temp_names.description.clear();

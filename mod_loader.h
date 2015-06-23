@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include "resource_handler.h"
+#include "virtualfs.h"
 
 class Mod
 {
@@ -599,32 +600,31 @@ public:
 	debugger *debug;
 	resource_handler *resources;
 
-	void load_animation_info(const std::string& filename);//loads item info from file
-	void load_light_info(const std::string& filename);//loads light info from file
-	void load_plot_object_info(const std::string& filename);//loads plot object info from file
-	void load_area_info(const std::string& filename);//loads area info from file
-	void load_climate_info(const std::string& filename);//loads climate info from file
-	void load_creature_info(const std::string& filename);//loads creature info from file
-	void load_item_info(const std::string& filename);//loads object info from file
-	void load_object_info(const std::string& filename);//loads object info from file
-	void load_weapon_info(const std::string& filename);//loads weapon info from file
-	void load_race_info(const std::string& filename);//loads race info from file
-	void load_polygons(const std::string& filename);
+protected:
+	void load_animation_info(const VirtualFS& fs, const std::string& filename);//loads item info from file
+	void load_light_info(const VirtualFS& fs, const std::string& filename);//loads light info from file
+	void load_plot_object_info(const VirtualFS& fs, const std::string& filename);//loads plot object info from file
+	void load_area_info(const VirtualFS& fs, const std::string& filename);//loads area info from file
+	void load_climate_info(const VirtualFS& fs, const std::string& filename);//loads climate info from file
+	void load_creature_info(const VirtualFS& fs, const std::string& filename);//loads creature info from file
+	void load_item_info(const VirtualFS& fs, const std::string& filename);//loads object info from file
+	void load_object_info(const VirtualFS& fs, const std::string& filename);//loads object info from file
+	void load_weapon_info(const VirtualFS& fs, const std::string& filename);//loads weapon info from file
+	void load_polygons(const VirtualFS& fs, const std::string& filename);
 	void grow_polygon(polygon_base *temp_polygon);
-	void load_scripts(const std::string& filename);
-	void load_AI_info(const std::string& filename);//loads AI info from file
-	void load_AI_side(const std::string& filename);
-	void load_bars(const std::string& filename);
-	void load_terrain_types(const std::string& filename);
-	void load_terrain_maps(const std::string& filename);
-	void save_terrain_maps(std::string filename);
-	void load_dialogs(const std::string& filename);
-	void load_music(const std::string& filename);
+	void load_scripts(const VirtualFS& fs, const std::string& filename);
+	void load_AI_info(const VirtualFS& fs, const std::string& filename);//loads AI info from file
+	void load_AI_side(const VirtualFS& fs, const std::string& filename);
+	void load_bars(const VirtualFS& fs, const std::string& filename);
+	void load_terrain_types(const VirtualFS& fs, const std::string& filename);
+	void load_terrain_maps(const VirtualFS& fs, const std::string& filename);
+	void load_dialogs(const VirtualFS& fs, const std::string& filename);
+	void load_music(const VirtualFS& fs, const std::string& filename);
 
-	void load_mod(const std::string& mod, debugger *debugger, resource_handler *resources);
-
-    //editor();//constructor
-    //~light();//destructor
+public:
+	void load_mod(const VirtualFS& fs, const std::string& mod, debugger *debugger, resource_handler *resources);
+	void load_race_info(const VirtualFS& fs, const std::string& filename);//loads race info from file
+	void save_terrain_maps(const VirtualFS& fs, std::string filename);
 
 };
 

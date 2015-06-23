@@ -236,7 +236,7 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 
 	//save
 	if(grim->Key_Click(KEY_F12)){
-		mod_to_edit->save_terrain_maps("");
+		mod_to_edit->save_terrain_maps(grim->fs(), "");
 		text_manager->message(3000,3000,"Saved.");
 	}
 

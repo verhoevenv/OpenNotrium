@@ -13,7 +13,8 @@ public:
 	bool exists(const std::string& filename);
 	bool isDirectory(const std::string& filename);
 	std::vector<std::string> listDirectory(const std::string& dir);
-	std::vector<std::string> readLines(const std::string& filename);
+	std::string readAll(const std::string& filename) const;
+	std::vector<std::string> readLines(const std::string& filename) const;
 
 	SDL_RWops* openRWops_write(const std::string& filename);
 	SDL_RWops* openRWops_read(const std::string& filename);

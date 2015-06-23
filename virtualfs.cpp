@@ -34,7 +34,26 @@ std::vector<std::string> VirtualFS::listDirectory(const std::string& dir){
 	return vec;
 }
 
-std::vector<std::string> VirtualFS::readLines(const std::string& filename){
+std::string VirtualFS::readAll(const std::string& filename) const{
+    std::string res;
+
+    PHYSFS_file *f = PHYSFS_openRead(filename.c_str());
+    if(f == nullptr) {
+        return res;
+    }
+    char *myBuf = new char[PHYSFS_fileLength(f)];
+    PHYSFS_read (f, myBuf, 1, PHYSFS_fileLength(f));
+
+    std::stringstream ss(myBuf);
+    res = ss.str();
+
+    PHYSFS_close(f);
+    delete myBuf;
+
+    return res;
+}
+
+std::vector<std::string> VirtualFS::readLines(const std::string& filename) const{
     std::vector<std::string> vec;
 
     PHYSFS_file *f = PHYSFS_openRead(filename.c_str());

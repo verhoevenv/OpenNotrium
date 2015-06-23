@@ -86,6 +86,31 @@ char *stripped_fgets(char *s, int n, FILE *f)
 	return(s);
 }
 
+std::string stripped_fgets(char *s, int n, std::string& contents)
+{
+	//start cut
+	int i=0;
+	int start=0;
+    int length=0;
+	while((contents[i]==' ')||(contents[i]==9)){
+		start++;
+		i++;
+	}
+
+	//end cut
+	i=start;
+	while (contents[i]!=';' && contents[i]!='\r' && contents[i]!='\n' && contents[i]!='\0') {
+        i++;
+        length++;
+    }
+    contents.copy(s, length, start);
+	s[length] = '\0';
+
+    auto newline = contents.find("\n");
+    contents = contents.substr(newline+1);
+	return s;
+}
+
 bool strtobool(const char *rivi){
 	int a=atoi(rivi);
 	if (a==0)return false;

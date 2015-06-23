@@ -28,11 +28,11 @@ Engine::Engine()
 }
 
 void Engine::File_Initiate(const char* argv0){
-    fs_p = std::make_shared<VirtualFS>(argv0);
+    fs_p = std::unique_ptr<VirtualFS>(new VirtualFS(argv0));
 }
 
-shared_ptr<VirtualFS> Engine::fs() {
-    return fs_p;
+VirtualFS& Engine::fs() {
+    return *fs_p;
 }
 
 void Engine::startFrame(){

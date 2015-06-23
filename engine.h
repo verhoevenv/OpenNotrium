@@ -39,7 +39,7 @@ class Engine
 {
     SDL_Window* window;
     SDL_GLContext glcontext;
-    std::shared_ptr<VirtualFS> fs_p;
+    std::unique_ptr<VirtualFS> fs_p;
     int width,height,bpp;
     bool fullscreen;
     float clear_r,clear_g,clear_b,clear_a;
@@ -118,7 +118,7 @@ public:
     * Initialises file system. The argv[0] is required on some systems to know the path to the current directory.
     */
     void File_Initiate(const char* argv0);
-    std::shared_ptr<VirtualFS> fs();
+    VirtualFS& fs();
 
 	/**
 	* Initialises the system with the given states, starts engine, etc. Does not enter the main loop yet.
