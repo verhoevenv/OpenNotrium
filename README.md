@@ -95,7 +95,7 @@ How to build - Windows - Visual Studio
 
 	Make sure to get the VS-development archives. It is highly recommended to unpack the libraries to the same directory, this helps with the next steps.
 
-5. Create environment variables for the libraries so CMake can find them. Set the paths below to where you unpacked
+5. Create environment variables for the libraries so CMake can find them. You can do this by typing the below in a command prompt. Alternatively, use the control panel. Set the paths to where you unpacked.
 
 		setx SDL2DIR c:\SDL2
 		setx PHYSFSDIR c:\physfs
