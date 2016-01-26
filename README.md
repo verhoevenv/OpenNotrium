@@ -5,6 +5,7 @@ Open source version of Notrium.
 
 Notrium is a top-down survival game originally developed by Ville Mönkkönen.
 
+Join the chat at https://gitter.im/verhoevenv/OpenNotrium
 
 Dependencies
 ------------
@@ -139,5 +140,3 @@ How to build - Windows - Visual Studio
 		- libvorbis-0.dll
 		- libvorbisfile-3.dll
 		- smpeg2.dll
-
-Join the chat at https://gitter.im/verhoevenv/OpenNotrium
