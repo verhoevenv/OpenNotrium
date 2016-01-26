@@ -95,7 +95,7 @@ How to build - Windows - Visual Studio
 
 4. Create environment variables for the libraries so CMake can find them. Set the paths below to where you unpacked
 
-		setx SDLDIR c:\sdl2
+		setx SDL2DIR c:\SDL2
 		setx PHYSFSDIR c:\physfs
 
 3. Create a project file using CMake
