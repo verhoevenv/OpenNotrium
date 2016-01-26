@@ -1,10 +1,12 @@
 OpenNotrium
+===========
 
 Open source version of Notrium.
 Notrium is a top-down survival game originally developed by Ville Mönkkönen.
 
 
-DEPENDENCIES
+Dependencies
+------------
 
 * SDL 2.0
 * SDL_mixer 2.0
@@ -13,53 +15,59 @@ DEPENDENCIES
 * CMake for building
 
 
-HOW TO BUILD - Linux
+How to build - Linux
+--------------------
 
 Underneath, Ubuntu is assumed. This probably only affects the package manager, apt-get. Please refer to the documentation of your own distro if you are not sure how to execute the following steps.
 We will also assume you have the OpenNotrium source files checked out in ~/OpenNotrium
 
 1. Install CMake
-  sudo apt-get install cmake
+	sudo apt-get install cmake
 
 2. Install dependencies
-  sudo apt-get install build-essential libsdl2-dev libsdl2-mixer-dev libsdl2-image-dev libphysfs-dev
+	sudo apt-get install build-essential libsdl2-dev libsdl2-mixer-dev libsdl2-image-dev libphysfs-dev
 
 3. Go to the OpenNotrium source directory and create a new directory for build output
-  cd ~/OpenNotrium
-  mkdir build
-  cd build
+	cd ~/OpenNotrium
+	mkdir build
+	cd build
 
 4. From this new directory, let cmake generate the Makefile. CMake should end with a message about build files being written. Fix any errors before continuing!
-  cmake ..
+	cmake ..
 
 5. Build OpenNotrium. This also shouldn't produce any errors. A few warnings is fine.
-  make
+	make
 
 6. You should have the executable OpenNotrium in your build directory. We will create a seperate directory from which to run the program. We also need the runtime files there.
-  cd ..
-  mkdir out
-  cp build/OpenNotrium out
-  cp -r runtime_files/* out
+	cd ..
+	mkdir out
+	cp build/OpenNotrium out
+	cp -r runtime_files/* out
 
 7. Run OpenNotrium!
-  cd out
-  ./OpenNotrium
+	cd out
+	./OpenNotrium
 
-HOW TO BUILD - Mac
+
+How to build - Mac
+--------------------
+
 We highly suggest using a package manager for Mac, either fink, MacPorts or Homebrew. Underneath Homebrew is used.
 
 1. Get XCode command line tools running
 You should search online for this. It involves registering an Apple developer account, downloading XCode, and installing the command line tools from there.
 
 2. Install CMake
-brew install cmake
+	brew install cmake
 
 3. Install dependencies
-brew install sdl2 sdl2_mixer physfs
+	brew install sdl2 sdl2_mixer physfs
 
 4. Follow Linux guidelines from step 3 onwards.
 
-HOW TO BUILD - Windows - Visual Studio
+
+How to build - Windows - Visual Studio
+--------------------
 
 1. Install CMake
 Find it from the website.
@@ -70,14 +78,14 @@ Physfs doesn't provide binaries on Windows. Google, download and unpack. Then, f
 3. Google, download and unpack, SDL 2.0, SDL_image 2.0 and SDL_mixer 2.0. Make sure to get the VS-development archives. It is highly recommended to unpack the libraries to the same directory, this helps with the next steps.
 
 4. Create environment variables for the libraries so CMake can find them. Set the paths below to where you unpacked
-setx SDLDIR c:\sdl2
-setx PHYSFSDIR c:\physfs
+	setx SDLDIR c:\sdl2
+	setx PHYSFSDIR c:\physfs
 
 3. Create a project file using CMake
 See steps 3 and 4 under the Linux howto, or use cmake-gui.
 
 4. From this new directory, let cmake generate the Makefile. CMake should end with a message about build files being written. Fix any errors before continuing!
-  cmake ..
+	cmake ..
 
 5. Build OpenNotrium by opening the Visual Studio solution file and doing a build.
 
