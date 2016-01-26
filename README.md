@@ -88,31 +88,34 @@ How to build - Windows - Visual Studio
 2. Build physfs
 
 	Physfs doesn't provide binaries on Windows. Google, download and unpack. Then, follow the instructions they provide in INSTALL.txt, which is mainly to use CMake.
+	
+3. Place the created libraries in the physfs directory, under a `lib` subdirectory. That is where CMake expects to find them
 
-3. Google, download and unpack, SDL 2.0, SDL_image 2.0 and SDL_mixer 2.0.
+4. Google, download and unpack, SDL 2.0, SDL_image 2.0 and SDL_mixer 2.0.
 
 	Make sure to get the VS-development archives. It is highly recommended to unpack the libraries to the same directory, this helps with the next steps.
 
-4. Create environment variables for the libraries so CMake can find them. Set the paths below to where you unpacked
+5. Create environment variables for the libraries so CMake can find them. Set the paths below to where you unpacked
 
 		setx SDL2DIR c:\SDL2
 		setx PHYSFSDIR c:\physfs
 
-3. Create a project file using CMake
+6. Create a project file using CMake
 
-	See steps 3 and 4 under the Linux howto, or use cmake-gui.
+	See steps 3 and 4 under the Linux howto, or use cmake-gui:
 
-4. From this new directory, let CMake generate the Makefile.
-
-	CMake should end with a message about build files being written. Fix any errors before continuing!
+	1. Where is the source code: browse to where you placed the OpenNotrium sources
+	2. Where to build the binaries: copy-paste the above, add `/build` to it to build in a subdirectory
+	3. Click `Configure`. Select your preferred option for any dialog the pops up.
+	4. The messages at the bottom should end with `Configuring done`, and the configuration options above should be filled out with proper paths. If not, fix errors. Probably your environment variables aren't set up properly, or the physfs libs aren't in a `/libs` directory.
+	5. Click `Generate`.
 	
-		cmake ..
 
-5. Build OpenNotrium by opening the Visual Studio solution file and doing a build.
+7. Build OpenNotrium by opening the Visual Studio solution file (under the /build subdirectory) and doing a build.
 
-6. Create a new directory named `out` under the OpenNotrium source folder. Copy both the executable (should be under `build\Debug\OpenNotrium.exe`) and the contents of `runtime_files` to it.
+8. Create a new directory named `out` under the OpenNotrium source directory. Copy both the executable (should be under `build\Debug\OpenNotrium.exe`) and the contents of `runtime_files` to it.
 
-7. Search the library directories for any necessary `.dll` files, and copy these to the new `out` directory. This may depend on your system, but you might want the x86 versions of:
+9. Search the library directories for any necessary `.dll` files, and copy these to the new `out` directory. This may depend on your system, but you might want the x86 versions of:
 
 	* for physfs
 	
