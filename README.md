@@ -2,6 +2,7 @@ OpenNotrium
 ===========
 
 Open source version of Notrium.
+
 Notrium is a top-down survival game originally developed by Ville Mönkkönen.
 
 
@@ -18,8 +19,8 @@ Dependencies
 How to build - Linux
 --------------------
 
-Underneath, Ubuntu is assumed. This probably only affects the package manager, apt-get. Please refer to the documentation of your own distro if you are not sure how to execute the following steps.
-We will also assume you have the OpenNotrium source files checked out in ~/OpenNotrium
+Underneath, Ubuntu is assumed. This probably only affects the package manager, `apt-get`. Please refer to the documentation of your own distro if you are not sure how to execute the following steps.
+We will also assume you have the OpenNotrium source files checked out in `~/OpenNotrium`
 
 1. Install CMake
 
@@ -100,7 +101,7 @@ How to build - Windows - Visual Studio
 
 	See steps 3 and 4 under the Linux howto, or use cmake-gui.
 
-4. From this new directory, let cmake generate the Makefile.
+4. From this new directory, let CMake generate the Makefile.
 
 	CMake should end with a message about build files being written. Fix any errors before continuing!
 	
@@ -108,9 +109,9 @@ How to build - Windows - Visual Studio
 
 5. Build OpenNotrium by opening the Visual Studio solution file and doing a build.
 
-6. Create a new directory named 'out' under the OpenNotrium source folder. Copy both the executable (should be under build\Debug\OpenNotrium.exe) and the contents of runtime_files to it.
+6. Create a new directory named `out` under the OpenNotrium source folder. Copy both the executable (should be under `build\Debug\OpenNotrium.exe`) and the contents of `runtime_files` to it.
 
-7. Search the library directories for any necessary .dll files, and copy these to the new 'out' directory. This may depend on your system, but you might want the x86 versions of:
+7. Search the library directories for any necessary `.dll` files, and copy these to the new `out` directory. This may depend on your system, but you might want the x86 versions of:
 
 	* for physfs
 	
