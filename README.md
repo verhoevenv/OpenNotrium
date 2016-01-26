@@ -104,8 +104,8 @@ How to build - Windows - Visual Studio
 
 	See steps 3 and 4 under the Linux howto, or use cmake-gui:
 
-	1. Where is the source code: browse to where you placed the OpenNotrium sources
-	2. Where to build the binaries: copy-paste the above, add `/build` to it to build in a subdirectory
+	1. _Where is the source code_: browse to where you placed the OpenNotrium sources
+	2. _Where to build the binaries_: copy-paste the above, add `/build` to it to build in a subdirectory
 	3. Click `Configure`. Select your preferred option for any dialog the pops up.
 	4. The messages at the bottom should end with `Configuring done`, and the configuration options above should be filled out with proper paths. If not, fix errors. Probably your environment variables aren't set up properly, or the physfs libs aren't in a `/libs` directory.
 	5. Click `Generate`.
