@@ -114,29 +114,29 @@ How to build - Windows - Visual Studio
 
 	* for physfs
 	
-		physfs.dll
+		- physfs.dll
 
 	* for SDL
 	
-		SDL2.dll
+		- SDL2.dll
 
 	* for SDL_image
 	
-		SDL2_image.dll
-		libjpeg-9.dll
-		libpng16-16.dll
-		libtiff-5.dll
-		libwebp-4.dll
-		zlib1.dll
+		- SDL2_image.dll
+		- libjpeg-9.dll
+		- libpng16-16.dll
+		- libtiff-5.dll
+		- libwebp-4.dll
+		- zlib1.dll
 
 	* for SDL_mixer
 	
-		SDL2_mixer.dll
-		libFLAC-8.dll
-		libmikmod-2.dll
-		libogg-0.dll
-		libvorbis-0.dll
-		libvorbisfile-3.dll
-		smpeg2.dll
+		- SDL2_mixer.dll
+		- libFLAC-8.dll
+		- libmikmod-2.dll
+		- libogg-0.dll
+		- libvorbis-0.dll
+		- libvorbisfile-3.dll
+		- smpeg2.dll
 
 Join the chat at https://gitter.im/verhoevenv/OpenNotrium
