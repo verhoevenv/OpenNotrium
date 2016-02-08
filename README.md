@@ -81,6 +81,8 @@ We highly suggest using a package manager for Mac, either fink, MacPorts or Home
 How to build - Windows - Visual Studio
 --------------------
 
+These instructions have been tested on Visual Studio Community 2015, which is free to download. Other versions of Visual Studio might or might not work, but the instructions below should still apply. Alternatively, it might be possible to use MinGW to build OpenNotrium, if you manage to do so, please let us know!
+
 1. Install CMake
 
 	Find it from the website.
