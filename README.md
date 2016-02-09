@@ -81,7 +81,7 @@ We highly suggest using a package manager for Mac, either fink, MacPorts or Home
 How to build - Windows - Visual Studio
 --------------------
 
-These instructions have been tested on Visual Studio Community 2015, which is free to download. Other versions of Visual Studio might or might not work, but the instructions below should still apply. Alternatively, it might be possible to use MinGW to build OpenNotrium, if you manage to do so, please let us know!
+These instructions have been tested on Visual Studio Community 2013 and 2015, which are both free to download. Other versions of Visual Studio might or might not work, but the instructions below should still apply. Alternatively, it might be possible to use MinGW to build OpenNotrium, if you manage to do so, please let us know!
 
 1. Install CMake
 
@@ -93,7 +93,7 @@ These instructions have been tested on Visual Studio Community 2015, which is fr
 	
 3. Place the created libraries in the physfs directory, under a `lib` subdirectory. That is where CMake expects to find them
 
-4. Google, download and unpack, SDL 2.0, SDL_image 2.0 and SDL_mixer 2.0.
+4. Download and unpack [SDL 2.0](https://www.libsdl.org/download-2.0.php), [SDL_image 2.0](https://www.libsdl.org/projects/SDL_image/) and [SDL_mixer 2.0](https://www.libsdl.org/projects/SDL_mixer/).
 
 	Make sure to get the VS-development archives. It is highly recommended to unpack the libraries to the same directory, this helps with the next steps.
 
@@ -104,7 +104,16 @@ These instructions have been tested on Visual Studio Community 2015, which is fr
 
 6. Create a project file using CMake
 
-	See steps 3 and 4 under the Linux howto, or use cmake-gui:
+        Similar to steps 3 and 4 under the Linux howto:
+        
+        mkdir build
+        cd build
+        :: to build with VS2013:
+        cmake .. -G "Visual Studio 12"
+        :: to build with VS2015:
+        cmake .. -G "Visual Studio 14"
+        
+        Alternatively, use cmake-gui:
 
 	1. _Where is the source code_: browse to where you placed the OpenNotrium sources
 	2. _Where to build the binaries_: copy-paste the above, add `/build` to it to build in a subdirectory
@@ -113,7 +122,7 @@ These instructions have been tested on Visual Studio Community 2015, which is fr
 	5. Click `Generate`.
 	
 
-7. Build OpenNotrium by opening the Visual Studio solution file (under the /build subdirectory) and doing a build.
+7. Build OpenNotrium by opening the Visual Studio solution file (under the /build subdirectory) and doing a build. If you want an optimized executable, make sure the "Release" target is set. For development purposes, the "Debug" target is ok.
 
 8. Create a new directory named `out` under the OpenNotrium source directory. Copy both the executable (should be under `build\Debug\OpenNotrium.exe`) and the contents of `runtime_files` to it.
 
