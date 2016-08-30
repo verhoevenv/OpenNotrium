@@ -487,7 +487,8 @@ bool game_engine::cfg_load(void){
 		fgets(temprivi,sizeof(temprivi),fil);bit_depth=atoi(temprivi);
 		fgets(temprivi,sizeof(temprivi),fil);windowed=atoi(temprivi);
 		fgets(temprivi,sizeof(temprivi),fil);play_sound=strtobool(temprivi);
-		fgets(temprivi,sizeof(temprivi),fil);play_music=strtobool(temprivi);
+		fgets(temprivi,sizeof(temprivi),fil);
+		play_music = play_sound && strtobool(temprivi);
 
 		fclose(fil);
         return true;
