@@ -108,6 +108,15 @@ public:
 	void initialize_items(void);//initializes the map
 	void initialize_objects(void);//initializes the map
 
+  /// obtain reference to grid point at the given grid coordinates
+  grid_point& at(int x, int y);
+  /// obtain reference to grid point at the given grid coordinates (const version)
+  const grid_point& at(int x, int y) const;
+
+  /// obtain reference to grid point at the given continuous coordinates
+  grid_point& at_real(float x, float y);
+  /// obtain reference to grid point at the given continuous coordinates (const version)
+  const grid_point& at_real(float x, float y) const;
 };
 
 //objects that are on the map, trees, buildings

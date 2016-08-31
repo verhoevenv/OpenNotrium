@@ -9,8 +9,34 @@
 
 using namespace std;
 
+/// obtain reference to grid point at the given grid coordinates
+inline map::grid_point& map::at(int x, int y) {
+  return this->grid[x].grid[y];
+}
+
+/// obtain reference to grid point at the given grid coordinates (const version)
+inline const map::grid_point& map::at(int x, int y) const {
+  return this->grid[x].grid[y];
+}
+
+/// obtain reference to grid point at the given real coordinates
+inline map::grid_point& map::at_real(float x, float y) {
+  return this->grid[static_cast<int>(x/grid_size)]
+      .grid[static_cast<int>(y/grid_size)];
+}
+
+/// obtain reference to grid point at the given real coordinates (const version)
+inline const map::grid_point& map::at_real(float x, float y) const {
+  return this->grid[static_cast<int>(x/grid_size)]
+      .grid[static_cast<int>(y/grid_size)];
+}
+
 //normal constructor
-map::map(int sizex,int sizey, float amount_multiplier, int climate, vector <int> terrain_types, vector <bool> no_random_terrain_types, vector <bool> do_not_place_on_map_edges, vector <bool> terrain_is_hazardous, vector <int> prop_amounts, vector <int> prop_objects, vector <int> alien_types, vector <int> alien_amounts, vector <int> alien_sides, int items_amount)
+map::map(int sizex, int sizey, float amount_multiplier, int climate,
+        vector<int> terrain_types, vector<bool> no_random_terrain_types,
+        vector<bool> do_not_place_on_map_edges, vector<bool> terrain_is_hazardous,
+        vector<int> prop_amounts, vector<int> prop_objects, vector<int> alien_types,
+        vector<int> alien_amounts, vector<int> alien_sides, int items_amount)
 {
 	int i,j;
 
@@ -73,9 +99,6 @@ map::map(int sizex,int sizey, float amount_multiplier, int climate, vector <int>
 map::map(int sizex,int sizey, int creatures_amount, int objects_amount, int items_amount, int climate)
 {
 
-	int i,j;
-
-
 	//store grid size
 	map::sizex=sizex;
 	map::sizey=sizey;
@@ -87,9 +110,9 @@ map::map(int sizex,int sizey, int creatures_amount, int objects_amount, int item
 
 	//initialize grid
 	grid=new row[sizex];
-	for (i=0; i<sizex; i++){
+	for (int i=0; i<sizex; i++){
 		grid[i].grid=new grid_point[sizey];
-		for (j=0; j<sizey; j++){
+		for (int j=0; j<sizey; j++){
 			grid[i].grid[j].items.clear();
 			grid[i].grid[j].objects.clear();
 		}
@@ -128,8 +151,8 @@ map::~map()
 		for (int j=0; j<sizey; j++){
 			//SAFE_DELETE_ARRAY(grid[i].grid[j].objects);
 			//SAFE_DELETE_ARRAY(grid[i].grid[j].items);
-			grid[i].grid[j].items.clear();
-			grid[i].grid[j].objects.clear();
+			at(i, j).items.clear();
+			at(i, j).objects.clear();
 			//grid[i].grid[j].creatures.clear();
 		}
 		SAFE_DELETE_ARRAY(grid[i].grid);
@@ -160,24 +183,19 @@ map::~map()
 //find out on which map square is each creature
 void map::check_creatures(void){
 
-	int i,j,k,x,y;
-
 	//squares have no creatures by default
-	for (i=0; i<sizex; i++){
-		for (j=0; j<sizey; j++){
-			grid[i].grid[j].total_creatures=0;
+	for (int i=0; i<sizex; i++){
+		for (int j=0; j<sizey; j++){
+			at(i, j).total_creatures = 0;
 		}
 	}
 	//find out the squares
-	for (k=0; k<creature.size(); k++){
+	for (int k=0; k<creature.size(); k++){
 		if(creature[k].dead)continue;
-		x=(int)(creature[k].x/grid_size);
-		y=(int)(creature[k].y/grid_size);
-		if(grid[x].grid[y].total_creatures>=20)continue;
-		grid[x].grid[y].creatures[grid[x].grid[y].total_creatures]=k;
-		grid[x].grid[y].total_creatures++;
-
-			//break;
+		auto& point = at_real(creature[k].x, creature[k].y);
+		if(point.total_creatures>=20)continue;
+		point.creatures[point.total_creatures]=k;
+		point.total_creatures++;
 	}
 
 }
@@ -188,7 +206,6 @@ void map::generate_map(float amount_multiplier, const vector<int>& terrain_types
                        const vector<bool>& terrain_is_hazardous, const vector<int>& prop_amounts,
                        const vector<int>& prop_objects, const vector<int>& alien_types,
                        const vector<int>& alien_amounts, const vector<int>& alien_sides){
-	int i,j,k,a,b;
 
 	//special locations
 	float player_start_x=randDouble(sizex*minimum_distance_from_edge*grid_size,sizex*grid_size-sizex*grid_size*minimum_distance_from_edge);
@@ -227,12 +244,12 @@ void map::generate_map(float amount_multiplier, const vector<int>& terrain_types
 
 	//ground generation algorithm
 	//all starts with the first texture
-	for (i=0; i<sizex; i++){
+	for (int i=0; i<sizex; i++){
 		for (int j=0; j<sizey; j++){
 			if(terrain_types.size()>0)
-				grid[i].grid[j].terrain_type=terrain_types[0];
+				at(i, j).terrain_type=terrain_types[0];
 			else
-				grid[i].grid[j].terrain_type=2;
+				at(i,j).terrain_type=2;
 			/*
 			grid[i].grid[j].light_rgb[0]=0;
 			grid[i].grid[j].light_rgb[0]=1;
@@ -243,7 +260,7 @@ void map::generate_map(float amount_multiplier, const vector<int>& terrain_types
 
 	//throw in some other surface
 	if(terrain_types.size()>0)
-	for (k=0; k<sizex*3; k++){//map size tells how many spots there are
+	for (int k=0; k<sizex*3; k++){//map size tells how many spots there are
 		int ground_type=terrain_types[randInt(0,terrain_types.size())];
 		int target_x=randInt(0,sizex);
 		int target_y=randInt(0,sizey);
@@ -257,16 +274,15 @@ void map::generate_map(float amount_multiplier, const vector<int>& terrain_types
 		if(end_x>sizex-1)end_x=sizex-1;
 		if(end_y>sizey-1)end_y=sizey-1;
 
-
-		for (i=start_x; i<end_x; i++){
-			for (j=start_y; j<end_y; j++){
+		for (int i=start_x; i<end_x; i++){
+			for (int j=start_y; j<end_y; j++){
 				if(sqrt((float)(sqr(i-target_x)+sqr(j-target_y)))<size){
 					//do not place this type on edges
 					if(do_not_place_on_map_edges[ground_type]){
 						if((i<2)||(j<2)||(i>sizex-4)||(j>sizey-4))
 							continue;
 					}
-					grid[i].grid[j].terrain_type=ground_type;
+					at(i,j).terrain_type=ground_type;
 				}
 			}
 		}
@@ -275,19 +291,20 @@ void map::generate_map(float amount_multiplier, const vector<int>& terrain_types
 
 	//throw in props
 	//int prop_counter=0;
-	for (j=0; j<prop_amounts.size(); j++){
-		for (i=0; i<(int)(prop_amounts[j]*amount_multiplier); i++){
+	for (int j=0; j<prop_amounts.size(); j++){
+		for (int i=0; i<(int)(prop_amounts[j]*amount_multiplier); i++){
 			map_object temp_object;
 			int place_bad=100;
 			while(place_bad>0){
 
 				temp_object.x=randDouble(0,(sizex-2)*(grid_size));
 				temp_object.y=randDouble(0,(sizey-2)*(grid_size));
-
+        auto grid_x = static_cast<int>(temp_object.x / grid_size);
+        auto grid_y = static_cast<int>(temp_object.y / grid_size);
 				//see if it's on some hazardous terrain type
-				if(terrain_is_hazardous[(int)(temp_object.x/grid_size)*sizey +(int)(temp_object.y/grid_size)]!=0)
+				if(terrain_is_hazardous[grid_x*sizey + grid_y] != 0)
 					place_bad--;
-				else if(no_random_terrain_types[grid[(int)(temp_object.x/grid_size)].grid[(int)(temp_object.y/grid_size)].terrain_type])
+				else if(no_random_terrain_types[at(grid_x, grid_y).terrain_type])
 					place_bad--;
 				else
 					place_bad=0;
@@ -313,8 +330,8 @@ void map::generate_map(float amount_multiplier, const vector<int>& terrain_types
 
 	int creature_counter=1;//0=player
 
-	for (a=0; a<alien_amounts.size(); a++){
-		for (b=0; b<(int)(alien_amounts[a]); b++){
+	for (int a=0; a<alien_amounts.size(); a++){
+		for (int b=0; b<(int)(alien_amounts[a]); b++){
 			bool place_not_ok=true;
 			while(place_not_ok){
 
@@ -328,7 +345,7 @@ void map::generate_map(float amount_multiplier, const vector<int>& terrain_types
 
 				if(terrain_is_hazardous[(int)(x)*sizey+(int)(y)])
 					continue;
-				if(no_random_terrain_types[grid[x].grid[y].terrain_type])
+				if(no_random_terrain_types[at(x, y).terrain_type])
 					continue;
 
 				//randomly the creature can be placed here or not
@@ -336,7 +353,7 @@ void map::generate_map(float amount_multiplier, const vector<int>& terrain_types
 				//if(distance<4000)continue;
 				if(randInt(0,(int)(diameter/distance))!=0)continue;*/
 
-				i=creature_counter;
+				int i=creature_counter;
 				creature_counter++;
 
 				creature_base temp_creature;
@@ -383,34 +400,33 @@ void map::generate_map(float amount_multiplier, const vector<int>& terrain_types
 
 
 	//player
-	i=0;
-	memset(&creature[i], 0, sizeof(creature[i]));
-	creature[i].dead=false;
-	creature[i].rotation=randDouble(0,2*pi);
-	creature[i].rotation_head=creature[i].rotation;
-	creature[i].rotation_legs=creature[i].rotation;
-	creature[i].size=1;
-	creature[i].type=0;
-	//creature[i].health=1;
-	creature[i].killed=false;
-	creature[i].side=0;
-	//creature[i].sneak=false;
-	//creature[i].may_change_area=true;
-	creature[i].animation[0]=0;
-	creature[i].animation[1]=2;
-	creature[i].animation[2]=5;
-	creature[i].x=player_start_x;
-	creature[i].y=player_start_y;
-	creature[i].x2=creature[i].x;
-	creature[i].y2=creature[i].y;
-	creature[i].carry_light=-1;
-	creature[i].dialog=-1;
-	creature[i].fire_timer=0;
-	creature[i].last_bullet_hit_from_creature_number=-1;
-	creature[i].carried_creature=-1;
-	creature[i].vanish_timer=0;
-	creature[i].touched_enemy=-1;
-
+	auto& player = creature[0];
+	memset(&player, 0, sizeof(player));
+	player.dead=false;
+	player.rotation=randDouble(0,2*pi);
+	player.rotation_head=player.rotation;
+	player.rotation_legs=player.rotation;
+	player.size=1;
+	player.type=0;
+	//player.health=1;
+	player.killed=false;
+	player.side=0;
+	//player.sneak=false;
+	//player.may_change_area=true;
+	player.animation[0]=0;
+	player.animation[1]=2;
+	player.animation[2]=5;
+	player.x=player_start_x;
+	player.y=player_start_y;
+	player.x2=player.x;
+	player.y2=player.y;
+	player.carry_light=-1;
+	player.dialog=-1;
+	player.fire_timer=0;
+	player.last_bullet_hit_from_creature_number=-1;
+	player.carried_creature=-1;
+	player.vanish_timer=0;
+	player.touched_enemy=-1;
 
 }
 
@@ -418,7 +434,7 @@ void map::generate_map(float amount_multiplier, const vector<int>& terrain_types
 void map::initialize_items(void){
 	for (int i=0; i<sizex; i++){
 		for (int j=0; j<sizey; j++){
-			grid[i].grid[j].items.clear();
+			at(i,j).items.clear();
 			//for (k=0; k<maximum_objects_on_grid; k++){
 			//	grid[i].grid[j].objects[k]=
 			//}
@@ -427,10 +443,8 @@ void map::initialize_items(void){
 	int x,y;
 	for (unsigned int k=0; k<items.size(); k++){
 		if(items[k].dead)continue;
-		x=static_cast<int>(items[k].x/grid_size);
-		y=static_cast<int>(items[k].y/grid_size);
 		//if(grid[x].grid[y].total_objects<maximum_objects_on_grid-1){
-			grid[x].grid[y].items.push_back(k);
+  	at_real(items[k].x, items[k].y).items.push_back(k);
 		//	grid[x].grid[y].total_objects++;
 		//}
 	}
@@ -504,19 +518,16 @@ void map::initialize_objects(void){
 
 	for (int i=0; i<sizex; i++){
 		for (int j=0; j<sizey; j++){
-			grid[i].grid[j].objects.clear();
+			at(i,j).objects.clear();
 			//for (k=0; k<maximum_objects_on_grid; k++){
 			//	grid[i].grid[j].objects[k]=
 			//}
 		}
 	}
-	int x,y;
 	for (unsigned int k=0; k<object.size(); k++){
 		if(object[k].dead)continue;
-		x=static_cast<int>(object[k].x/grid_size);
-		y=static_cast<int>(object[k].y/grid_size);
 		//if(grid[x].grid[y].total_objects<maximum_objects_on_grid-1){
-			grid[x].grid[y].objects.push_back(k);
+		at_real(object[k].x, object[k].y).objects.push_back(k);
 			//grid[x].grid[y].total_objects++;
 		//}
 	}
