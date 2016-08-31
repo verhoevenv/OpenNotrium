@@ -2,7 +2,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 #include "func.h"
-#include "physfs.h"
+#include <physfs.h>
 
 Engine::Engine()
 :   window(nullptr)
@@ -426,9 +426,10 @@ bool Engine::Texture_Load(const std::string& id, char *filename){
 
     createNewTexture(id,surface->w, surface->h);
 
-	glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, surface->w, surface->h, 0,
+	  glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, surface->w, surface->h, 0,
                       texture_format, GL_UNSIGNED_BYTE, surface->pixels );
-
+    // assuming the texture was copied to OpenGL, the surface is no longer needed
+    SDL_FreeSurface(surface);
     return true;
 }
 

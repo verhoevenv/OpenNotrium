@@ -93,19 +93,16 @@ int resource_handler::load_sample(const string& name, int samples, const string&
 		strcat(temprivi,mod_name.c_str());
 		strcat(temprivi,"/");
 		strcat(temprivi,name.c_str());
-		res=g_pSoundManager->Create( &sample[samples_loaded], temprivi );
-
-
+		res=g_pSoundManager->Create(sample[samples_loaded], temprivi );
 
 		//try default directory
 		if(!res){
 			SAFE_DELETE(sample[samples_loaded]);
 			strcpy(temprivi,"sound/");
 			strcat(temprivi,name.c_str());
-			res=g_pSoundManager->Create( &sample[samples_loaded], temprivi );
+			res = g_pSoundManager->Create(sample[samples_loaded], temprivi );
 		}
-
-		if(res){
+		if (res) {
 			//store name
 			sample_name[samples_loaded]=name;
 			sample_name_mod[samples_loaded]=mod_name;

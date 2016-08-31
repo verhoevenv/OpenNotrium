@@ -8,7 +8,14 @@ class SoundSample
     Mix_Chunk* chunk;
     int samplefreq, bytespersample; //TODO: this does not quite belong here, I think
 public:
+    /** ctor */
     SoundSample(const char *filename, int samplefreq, int bytespersample);
+    
+    /** copy ctor is deleted */
+    SoundSample(const SoundSample& other) = delete;
+
+    /** dtor */
+    ~SoundSample(void);
 
     bool initOkay(void);
     /**
@@ -30,7 +37,7 @@ class SoundManager
     static const int numchannels = 64;
     Mix_Music *currentmusic;
 public:
-    bool Create( SoundSample** dest, const char *filename );
+    bool Create( SoundSample*& dest, const char *filename );
 
     /**
     * For now, let us assume signed 16 bit data.

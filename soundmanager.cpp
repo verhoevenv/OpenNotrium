@@ -2,13 +2,10 @@
 
 #include <SDL.h>
 
-bool SoundManager::Create(SoundSample** dest, const char *filename)
+bool SoundManager::Create(SoundSample*& dest, const char *filename)
 {
-    *dest = new SoundSample(filename, samplefreq, bytespersample);
-    if(!(*dest)->initOkay()){
-        return false;
-    }
-    return true;
+    dest = new SoundSample(filename, samplefreq, bytespersample);
+    return dest->initOkay();
 }
 
 bool SoundManager::Initialize(int freq, int channels)
@@ -42,11 +39,19 @@ void SoundManager::setMusicVolume(float volume){
     Mix_VolumeMusic(volume*MIX_MAX_VOLUME);
 }
 
+// ctor
 SoundSample::SoundSample(const char *filename,int freq,int bytes){
     //TODO: the delay seems solvable by using VC++ compiler/libs and DirectSound
     chunk = Mix_LoadWAV(filename);
     samplefreq = freq;
     bytespersample = bytes;
+}
+
+// dtor
+SoundSample::~SoundSample(void) {
+    if (chunk) {
+      Mix_FreeChunk(chunk);
+    }
 }
 
 bool SoundSample::initOkay(void){
