@@ -8,13 +8,13 @@ class SoundSample
     Mix_Chunk* chunk;
     int samplefreq, bytespersample; //TODO: this does not quite belong here, I think
 public:
-    /** ctor */
     SoundSample(const char *filename, int samplefreq, int bytespersample);
     
-    /** copy ctor is deleted */
+    /** copy ctor is deleted because it's unsafe
+     * (the mix chunk pointer requires proper memory management)
+     */
     SoundSample(const SoundSample& other) = delete;
 
-    /** dtor */
     ~SoundSample(void);
 
     bool initOkay(void);

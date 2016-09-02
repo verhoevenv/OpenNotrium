@@ -39,7 +39,6 @@ void SoundManager::setMusicVolume(float volume){
     Mix_VolumeMusic(volume*MIX_MAX_VOLUME);
 }
 
-// ctor
 SoundSample::SoundSample(const char *filename,int freq,int bytes){
     //TODO: the delay seems solvable by using VC++ compiler/libs and DirectSound
     chunk = Mix_LoadWAV(filename);
@@ -47,7 +46,6 @@ SoundSample::SoundSample(const char *filename,int freq,int bytes){
     bytespersample = bytes;
 }
 
-// dtor
 SoundSample::~SoundSample(void) {
     if (chunk) {
       Mix_FreeChunk(chunk);
