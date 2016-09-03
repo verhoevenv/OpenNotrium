@@ -2,13 +2,10 @@
 
 #include <SDL.h>
 
-bool SoundManager::Create(SoundSample** dest, const char *filename)
+bool SoundManager::Create(SoundSample*& dest, const char *filename)
 {
-    *dest = new SoundSample(filename, samplefreq, bytespersample);
-    if(!(*dest)->initOkay()){
-        return false;
-    }
-    return true;
+    dest = new SoundSample(filename, samplefreq, bytespersample);
+    return dest->initOkay();
 }
 
 bool SoundManager::Initialize(int freq, int channels)
@@ -47,6 +44,12 @@ SoundSample::SoundSample(const char *filename,int freq,int bytes){
     chunk = Mix_LoadWAV(filename);
     samplefreq = freq;
     bytespersample = bytes;
+}
+
+SoundSample::~SoundSample(void) {
+    if (chunk) {
+      Mix_FreeChunk(chunk);
+    }
 }
 
 bool SoundSample::initOkay(void){
