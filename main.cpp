@@ -705,6 +705,7 @@ void game_engine::initialize_game(void){//initialize game variables
 	music_initialized=false;
 	if(play_music){
 		music_initialized=GraphInit();
+		set_volume(volume_slider[1]);
 	}
 
     // FIXME this has a fixed aspect ratio
