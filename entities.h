@@ -2,9 +2,9 @@
 #ifndef ENTITIES_HEADER
 #define ENTITIES_HEADER
 
-//#include <windows.h>
 #include <vector>
 #include <list>
+#include <memory>
 
 class map;
 class map_object;
@@ -23,7 +23,6 @@ const float grid_size = 128.0f; //how many pixels is each grid square
 #define MAXIMUM_WEAPON_EFFECTS 30
 
 const float minimum_distance_from_edge = 0.4f;//how far must items be from map edges
-
 
 //bullets
 class bullet
@@ -68,19 +67,26 @@ protected:
 
 	};
 
-	struct row{
-		grid_point *grid;
-	};
+//	struct row{
+//		grid_point *grid;
+//	};
 
-
-
+protected:
+    map(int sizex, int sizey, int climate); // base constructor (initializes some fields and map grid)
 public:
-	map(int sizex,int sizey, float amount_multiplier, int climate, std::vector <int> terrain_types, std::vector <bool> no_random_terrain_types, std::vector <bool> do_not_place_on_map_edges, std::vector <bool> terrain_is_hazardous, std::vector <int> prop_amounts, std::vector <int> prop_objects, std::vector <int> alien_types, std::vector <int> alien_amounts, std::vector <int> alien_sides,int items_amount);//constructor
-    map(int sizex,int sizey, int creatures_amount, int objects_amount, int items_amount, int climate);//constructor for loading
-    ~map();//destructor
+	map(int sizex,int sizey, float amount_multiplier, int climate, std::vector <int> terrain_types,
+			std::vector <bool> no_random_terrain_types, std::vector <bool> do_not_place_on_map_edges,
+			std::vector <bool> terrain_is_hazardous, std::vector <int> prop_amounts,
+			std::vector <int> prop_objects, std::vector <int> alien_types, std::vector <int> alien_amounts,
+			std::vector <int> alien_sides,int items_amount); // main constructor
+	/** constructor for loading a saved game (reserves internal vectors with the given amounts) */
+    map(int sizex,int sizey, size_t creature_amount, size_t object_amount, size_t item_amount, int climate);
+    ~map() = default;
 
 	int sizex,sizey;//map size
-	row *grid;//map tiles
+protected:
+	std::unique_ptr<grid_point[]> grid;//map tiles
+public:
 	std::vector <map_object> object;//map objects
 	std::vector <creature_base> creature;//creatures
 	std::vector <light> lights;//lighting effects
@@ -108,15 +114,17 @@ public:
 	void initialize_items(void);//initializes the map
 	void initialize_objects(void);//initializes the map
 
-  /// obtain reference to grid point at the given grid coordinates
-  grid_point& at(int x, int y);
-  /// obtain reference to grid point at the given grid coordinates (const version)
-  const grid_point& at(int x, int y) const;
+	/// obtain reference to grid point at the given grid coordinates
+	map::grid_point& at(int x, int y);
 
-  /// obtain reference to grid point at the given continuous coordinates
-  grid_point& at_real(float x, float y);
-  /// obtain reference to grid point at the given continuous coordinates (const version)
-  const grid_point& at_real(float x, float y) const;
+	/// obtain reference to grid point at the given grid coordinates (const version)
+	const map::grid_point& at(int x, int y) const;
+
+	/// obtain reference to grid point at the given real coordinates
+	map::grid_point& at_real(float x, float y);
+
+	/// obtain reference to grid point at the given real coordinates (const version)
+	const map::grid_point& at_real(float x, float y) const;
 };
 
 //objects that are on the map, trees, buildings

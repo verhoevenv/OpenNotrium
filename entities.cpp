@@ -5,30 +5,34 @@
 #include <cstring>
 #include <cmath>
 
-//#include "dxutil.h"
-
-using namespace std;
+using std::vector;
 
 /// obtain reference to grid point at the given grid coordinates
-inline map::grid_point& map::at(int x, int y) {
-  return this->grid[x].grid[y];
+map::grid_point& map::at(int x, int y) {
+	return this->grid[y * this->sizex + x];
 }
-
 /// obtain reference to grid point at the given grid coordinates (const version)
-inline const map::grid_point& map::at(int x, int y) const {
-  return this->grid[x].grid[y];
+const map::grid_point& map::at(int x, int y) const {
+	return this->grid[y * this->sizex + x];
 }
 
 /// obtain reference to grid point at the given real coordinates
-inline map::grid_point& map::at_real(float x, float y) {
-  return this->grid[static_cast<int>(x/grid_size)]
-      .grid[static_cast<int>(y/grid_size)];
+map::grid_point& map::at_real(float x, float y) {
+	return this->at(static_cast<int>(x/grid_size), static_cast<int>(y/grid_size));
 }
 
 /// obtain reference to grid point at the given real coordinates (const version)
-inline const map::grid_point& map::at_real(float x, float y) const {
-  return this->grid[static_cast<int>(x/grid_size)]
-      .grid[static_cast<int>(y/grid_size)];
+const map::grid_point& map::at_real(float x, float y) const {
+	return this->at(static_cast<int>(x/grid_size), static_cast<int>(y/grid_size));
+}
+
+// base constructor
+map::map(int sizex, int sizey, int climate)
+:	sizex(sizex), sizey(sizey), climate_number(climate), area_type(-1), been_here_already(false),
+	object(), creature(), lights(), items()
+{
+	//initialize grid
+	this->grid = std::unique_ptr<grid_point[]>(new grid_point[sizex * sizey]);
 }
 
 //normal constructor
@@ -37,147 +41,22 @@ map::map(int sizex, int sizey, float amount_multiplier, int climate,
         vector<bool> do_not_place_on_map_edges, vector<bool> terrain_is_hazardous,
         vector<int> prop_amounts, vector<int> prop_objects, vector<int> alien_types,
         vector<int> alien_amounts, vector<int> alien_sides, int items_amount)
+:	map(sizex, sizey, climate)
 {
-	int i,j;
-
-	//DXUtil_Timer(TIMER_START);
-
-	//store grid size
-	map::sizex=sizex;
-	map::sizey=sizey;
-	map::climate_number=climate;
-	area_type=-1;
-	been_here_already=false;
-
-	//count needed props
-	/*total_objects=0;
-	for (i=0; i<prop_amounts.size(); i++){
-		total_objects+=(int)(prop_amounts[i]*amount_multiplier);
-	}*/
-
-	//initialize grid
-	grid=new row[sizex];
-	for (i=0; i<sizex; i++){
-		grid[i].grid=new grid_point[sizey];
-		for (j=0; j<sizey; j++){
-			grid[i].grid[j].items.clear();
-			grid[i].grid[j].objects.clear();
-		}
-	}
-
-	//time0=DXUtil_Timer(TIMER_GETELAPSEDTIME);
-
-	//init objects
-	//object=new map_object[total_objects];
-	object.clear();
-	//creature=new creature_base[total_creatures];
-	creature.clear();
-
-	//init lights
-	//lights=new light[maximum_lights];
-	lights.clear();
-
-	//init bullets
-	//bullets=new bullet[maximum_bullets];
-
-	//init particles
-	//particles=new particle[maximum_particles];
-
-	//init items
-	//items=new item[items_amount];
-	items.clear();
-
-	//time1=DXUtil_Timer(TIMER_GETELAPSEDTIME);
-
-	generate_map(amount_multiplier,terrain_types,no_random_terrain_types,do_not_place_on_map_edges,terrain_is_hazardous,prop_amounts,prop_objects, alien_types, alien_amounts, alien_sides);
-
-	//time2=DXUtil_Timer(TIMER_GETELAPSEDTIME);
-
+	generate_map(amount_multiplier, terrain_types, no_random_terrain_types, do_not_place_on_map_edges,
+			terrain_is_hazardous,prop_amounts,prop_objects, alien_types, alien_amounts, alien_sides);
 }
 
-//loading constructor
-map::map(int sizex,int sizey, int creatures_amount, int objects_amount, int items_amount, int climate)
+// loading constructor
+map::map(int sizex, int sizey, size_t creature_amount, size_t object_amount, size_t item_amount, int climate)
+:	map(sizex, sizey, climate)
 {
-
-	//store grid size
-	map::sizex=sizex;
-	map::sizey=sizey;
-	map::climate_number=climate;
-	//total_objects=objects_amount;
-	area_type=-1;
-	been_here_already=false;
-
+	this->creature.reserve(creature_amount);
+	this->object.reserve(object_amount);
+	this->items.reserve(item_amount);
 
 	//initialize grid
-	grid=new row[sizex];
-	for (int i=0; i<sizex; i++){
-		grid[i].grid=new grid_point[sizey];
-		for (int j=0; j<sizey; j++){
-			grid[i].grid[j].items.clear();
-			grid[i].grid[j].objects.clear();
-		}
-	}
-
-	//init objects
-	object.clear();
-	//object=new map_object[total_objects];
-	//creature=new creature_base[total_creatures];
-	creature.clear();
-
-	//init lights
-	lights.clear();
-	//lights=new light[maximum_lights];
-
-	//init bullets
-	//bullets=new bullet[maximum_bullets];
-
-	//init particles
-	/*particles=new particle[maximum_particles];
-	//zero the particles
-	for (i=0; i<maximum_particles; i++){
-		particles[i].dead=true;
-	}*/
-
-	//init items
-	//items=new item[items_amount];
-	items.clear();
-
-}
-
-map::~map()
-{
-	//delete grid
-	for (int i=0; i<sizex; i++){
-		for (int j=0; j<sizey; j++){
-			//SAFE_DELETE_ARRAY(grid[i].grid[j].objects);
-			//SAFE_DELETE_ARRAY(grid[i].grid[j].items);
-			at(i, j).items.clear();
-			at(i, j).objects.clear();
-			//grid[i].grid[j].creatures.clear();
-		}
-		SAFE_DELETE_ARRAY(grid[i].grid);
-	}
-	SAFE_DELETE_ARRAY(grid);
-
-	//delete objects
-	//SAFE_DELETE_ARRAY(object);
-	object.clear();
-	//SAFE_DELETE_ARRAY(creature);
-	creature.clear();
-
-	//delete lights
-	//SAFE_DELETE_ARRAY(lights);
-
-	//delete bullets
-	//SAFE_DELETE_ARRAY(bullets);
-
-	//delete particles
-	//SAFE_DELETE_ARRAY(particles);
-
-	//delete items
-	items.clear();
-	//SAFE_DELETE_ARRAY(items);
-
+	this->grid = std::unique_ptr<grid_point[]>(new grid_point[sizex * sizey]);
 }
 
 //find out on which map square is each creature

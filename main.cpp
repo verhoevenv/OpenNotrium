@@ -1,5 +1,4 @@
 //1433
-//#include "..\grim_api\grim.h"
 #include "main.h"
 #include "credits.h"
 
@@ -37,8 +36,8 @@ const string game_version= GAME_VERSION; //"1.3.4.1";
 int climate_override=-1;
 int active_distance=15;
 
-game_engine::game_engine() {
-	sound_initialized=false;
+game_engine::game_engine()
+: sound_initialized(false) {
 }
 
 game_engine::~game_engine() {
@@ -1380,35 +1379,35 @@ void game_engine::draw_map_grid(void){//renders map grid
 			for(int j=screen_start_y;j<screen_end_y;j++){
 
 				//advance terrain frames
-				if(mod.terrain_types[map_main->grid[i].grid[j].terrain_type].terrain_frames.size()>1){
-					map_main->grid[i].grid[j].frame_time-=elapsed*game_speed;
-					if(map_main->grid[i].grid[j].frame_time<0){
-						map_main->grid[i].grid[j].frame_time=mod.terrain_types[map_main->grid[i].grid[j].terrain_type].terrain_frames[map_main->grid[i].grid[j].current_frame].time;
-						map_main->grid[i].grid[j].current_frame++;
-						if(map_main->grid[i].grid[j].current_frame>=mod.terrain_types[map_main->grid[i].grid[j].terrain_type].terrain_frames.size())
-							map_main->grid[i].grid[j].current_frame=0;
+				if(mod.terrain_types[map_main->at(i,j).terrain_type].terrain_frames.size()>1){
+					map_main->at(i,j).frame_time-=elapsed*game_speed;
+					if(map_main->at(i,j).frame_time<0){
+						map_main->at(i,j).frame_time=mod.terrain_types[map_main->at(i,j).terrain_type].terrain_frames[map_main->at(i,j).current_frame].time;
+						map_main->at(i,j).current_frame++;
+						if(map_main->at(i,j).current_frame>=mod.terrain_types[map_main->at(i,j).terrain_type].terrain_frames.size())
+							map_main->at(i,j).current_frame=0;
 					}
-					/*if(time_from_beginning-map_main->grid[i].grid[j].frame_time>mod.terrain_types[map_main->grid[i].grid[j].terrain_type].terrain_frames[map_main->grid[i].grid[j].current_frame].time*0.001f){
-						map_main->grid[i].grid[j].frame_time=time_from_beginning;
-						map_main->grid[i].grid[j].current_frame++;
-						if(map_main->grid[i].grid[j].current_frame>=mod.terrain_types[map_main->grid[i].grid[j].terrain_type].terrain_frames.size())
-							map_main->grid[i].grid[j].current_frame=0;
+					/*if(time_from_beginning-map_main->at(i,j).frame_time>mod.terrain_types[map_main->at(i,j).terrain_type].terrain_frames[map_main->at(i,j).current_frame].time*0.001f){
+						map_main->at(i,j).frame_time=time_from_beginning;
+						map_main->at(i,j).current_frame++;
+						if(map_main->at(i,j).current_frame>=mod.terrain_types[map_main->at(i,j).terrain_type].terrain_frames.size())
+							map_main->at(i,j).current_frame=0;
 					}*/
 				}
 
-				texture=mod.terrain_types[map_main->grid[i].grid[j].terrain_type].terrain_frames[map_main->grid[i].grid[j].current_frame].texture;
+				texture=mod.terrain_types[map_main->at(i,j).terrain_type].terrain_frames[map_main->at(i,j).current_frame].texture;
 				resources.Texture_Set(texture);
 				grim->Quads_Begin();
 
-				//if(map_main->grid[i].grid[j].terrain_type==k){
+				//if(map_main->at(i,j).terrain_type==k){
 
 
 
 				//draw
-				grim->Quads_SetColorVertex(0, map_main->grid[i].grid[j].light_rgb[0], map_main->grid[i].grid[j].light_rgb[1], map_main->grid[i].grid[j].light_rgb[2], 1);
-				grim->Quads_SetColorVertex(1, map_main->grid[(i+1)].grid[j].light_rgb[0], map_main->grid[(i+1)].grid[j].light_rgb[1], map_main->grid[(i+1)].grid[j].light_rgb[2], 1);
-				grim->Quads_SetColorVertex(2, map_main->grid[(i+1)].grid[(j+1)].light_rgb[0], map_main->grid[(i+1)].grid[(j+1)].light_rgb[1], map_main->grid[(i+1)].grid[(j+1)].light_rgb[2], 1);
-				grim->Quads_SetColorVertex(3, map_main->grid[i].grid[(j+1)].light_rgb[0], map_main->grid[i].grid[(j+1)].light_rgb[1], map_main->grid[i].grid[(j+1)].light_rgb[2], 1);
+				grim->Quads_SetColorVertex(0, map_main->at(i,j).light_rgb[0], map_main->at(i,j).light_rgb[1], map_main->at(i,j).light_rgb[2], 1);
+				grim->Quads_SetColorVertex(1, map_main->at(i+1,j).light_rgb[0], map_main->at(i+1,j).light_rgb[1], map_main->at(i+1,j).light_rgb[2], 1);
+				grim->Quads_SetColorVertex(2, map_main->at(i+1,j+1).light_rgb[0], map_main->at(i+1,j+1).light_rgb[1], map_main->at(i+1,j+1).light_rgb[2], 1);
+				grim->Quads_SetColorVertex(3, map_main->at(i,j+1).light_rgb[0], map_main->at(i,j+1).light_rgb[1], map_main->at(i,j+1).light_rgb[2], 1);
 
 				grim->Quads_Draw(-camera_x+i*128, -camera_y+j*128, 128, 128);
 
@@ -1439,60 +1438,60 @@ void game_engine::draw_map_grid(void){//renders map grid
 		grim->Quads_Begin();*/
 		for(int i=alku_x;i<loppu_x;i++){
 			for(int j=alku_y;j<loppu_y;j++){
-				k=map_main->grid[i].grid[j].terrain_type;
-				texture=mod.terrain_types[map_main->grid[i].grid[j].terrain_type].terrain_frames[map_main->grid[i].grid[j].current_frame].texture;
+				k=map_main->at(i,j).terrain_type;
+				texture=mod.terrain_types[map_main->at(i,j).terrain_type].terrain_frames[map_main->at(i,j).current_frame].texture;
 				resources.Texture_Set(texture);
 				grim->Quads_Begin();
-				//if(map_main->grid[i].grid[j].terrain_type==k){
+				//if(map_main->at(i,j).terrain_type==k){
 
 					//lower square is not same
-					if(map_main->grid[i].grid[(j+1)].terrain_type!=k){
-						if((map_main->grid[i].grid[(j+1)].light_rgb[0]>0)||(map_main->grid[i].grid[(j+1)].light_rgb[1]>0)||(map_main->grid[i].grid[(j+1)].light_rgb[2]>0)
-						 ||(map_main->grid[(i+1)].grid[(j+1)].light_rgb[0]>0)||(map_main->grid[(i+1)].grid[(j+1)].light_rgb[1]>0)||(map_main->grid[(i+1)].grid[(j+1)].light_rgb[2]>0)
+					if(map_main->at(i,j+1).terrain_type!=k){
+						if((map_main->at(i,j+1).light_rgb[0]>0)||(map_main->at(i,j+1).light_rgb[1]>0)||(map_main->at(i,j+1).light_rgb[2]>0)
+						 ||(map_main->at(i+1,j+1).light_rgb[0]>0)||(map_main->at(i+1,j+1).light_rgb[1]>0)||(map_main->at(i+1,j+1).light_rgb[2]>0)
 							){
-							grim->Quads_SetColorVertex(0, map_main->grid[i].grid[(j+1)].light_rgb[0], map_main->grid[i].grid[(j+1)].light_rgb[1], map_main->grid[i].grid[(j+1)].light_rgb[2], 0.5f);
-							grim->Quads_SetColorVertex(1, map_main->grid[(i+1)].grid[(j+1)].light_rgb[0], map_main->grid[(i+1)].grid[(j+1)].light_rgb[1], map_main->grid[(i+1)].grid[(j+1)].light_rgb[2], 0.5f);
-							grim->Quads_SetColorVertex(2, map_main->grid[(i+1)].grid[(j+2)].light_rgb[0], map_main->grid[(i+1)].grid[(j+2)].light_rgb[1], map_main->grid[(i+1)].grid[(j+2)].light_rgb[2], 0);
-							grim->Quads_SetColorVertex(3, map_main->grid[i].grid[(j+2)].light_rgb[0], map_main->grid[i].grid[(j+2)].light_rgb[1], map_main->grid[i].grid[(j+2)].light_rgb[2], 0);
+							grim->Quads_SetColorVertex(0, map_main->at(i,j+1).light_rgb[0], map_main->at(i,j+1).light_rgb[1], map_main->at(i,j+1).light_rgb[2], 0.5f);
+							grim->Quads_SetColorVertex(1, map_main->at(i+1,j+1).light_rgb[0], map_main->at(i+1,j+1).light_rgb[1], map_main->at(i+1,j+1).light_rgb[2], 0.5f);
+							grim->Quads_SetColorVertex(2, map_main->at(i+1,j+2).light_rgb[0], map_main->at(i+1,j+2).light_rgb[1], map_main->at(i+1,j+2).light_rgb[2], 0);
+							grim->Quads_SetColorVertex(3, map_main->at(i,j+2).light_rgb[0], map_main->at(i,j+2).light_rgb[1], map_main->at(i,j+2).light_rgb[2], 0);
 							grim->Quads_SetSubset(0,0,1,0.5f);
 							grim->Quads_Draw(-camera_x+i*128, -camera_y+(j+1)*128, 128, 64);
 						}
 					}
 					//upper square is not same
-					if(map_main->grid[i].grid[(j-1)].terrain_type!=k){
-						if((map_main->grid[i].grid[j].light_rgb[0]>0)||(map_main->grid[i].grid[j].light_rgb[1]>0)||(map_main->grid[i].grid[j].light_rgb[2]>0)
-						 ||(map_main->grid[(i+1)].grid[j].light_rgb[0]>0)||(map_main->grid[(i+1)].grid[j].light_rgb[1]>0)||(map_main->grid[(i+1)].grid[j].light_rgb[2]>0)
+					if(map_main->at(i,j-1).terrain_type!=k){
+						if((map_main->at(i,j).light_rgb[0]>0)||(map_main->at(i,j).light_rgb[1]>0)||(map_main->at(i,j).light_rgb[2]>0)
+						 ||(map_main->at(i+1,j).light_rgb[0]>0)||(map_main->at(i+1,j).light_rgb[1]>0)||(map_main->at(i+1,j).light_rgb[2]>0)
 							){
-							grim->Quads_SetColorVertex(0, map_main->grid[i].grid[(j-1)].light_rgb[0], map_main->grid[i].grid[(j-1)].light_rgb[1], map_main->grid[i].grid[(j-1)].light_rgb[2], 0);
-							grim->Quads_SetColorVertex(1, map_main->grid[(i+1)].grid[(j-1)].light_rgb[0], map_main->grid[(i+1)].grid[(j-1)].light_rgb[1], map_main->grid[(i+1)].grid[(j-1)].light_rgb[2], 0);
-							grim->Quads_SetColorVertex(2, map_main->grid[(i+1)].grid[j].light_rgb[0], map_main->grid[(i+1)].grid[j].light_rgb[1], map_main->grid[(i+1)].grid[j].light_rgb[2], 0.5f);
-							grim->Quads_SetColorVertex(3, map_main->grid[i].grid[j].light_rgb[0], map_main->grid[i].grid[j].light_rgb[1], map_main->grid[i].grid[j].light_rgb[2], 0.5f);
+							grim->Quads_SetColorVertex(0, map_main->at(i,j-1).light_rgb[0], map_main->at(i,j-1).light_rgb[1], map_main->at(i,j-1).light_rgb[2], 0);
+							grim->Quads_SetColorVertex(1, map_main->at(i+1,j-1).light_rgb[0], map_main->at(i+1,j-1).light_rgb[1], map_main->at(i+1,j-1).light_rgb[2], 0);
+							grim->Quads_SetColorVertex(2, map_main->at(i+1,j).light_rgb[0], map_main->at(i+1,j).light_rgb[1], map_main->at(i+1,j).light_rgb[2], 0.5f);
+							grim->Quads_SetColorVertex(3, map_main->at(i,j).light_rgb[0], map_main->at(i,j).light_rgb[1], map_main->at(i,j).light_rgb[2], 0.5f);
 							grim->Quads_SetSubset(0,0.5f,1,1);
 							grim->Quads_Draw(-camera_x+i*128, -camera_y+(j-1)*128+64, 128, 64);
 						}
 					}
 					//left square is not same
-					if(map_main->grid[(i-1)].grid[j].terrain_type!=k){
-						if((map_main->grid[i].grid[j].light_rgb[0]>0)||(map_main->grid[i].grid[j].light_rgb[1]>0)||(map_main->grid[i].grid[j].light_rgb[2]>0)
-						 ||(map_main->grid[i].grid[(j+1)].light_rgb[0]>0)||(map_main->grid[i].grid[(j+1)].light_rgb[1]>0)||(map_main->grid[i].grid[(j+1)].light_rgb[2]>0)
+					if(map_main->at(i-1,j).terrain_type!=k){
+						if((map_main->at(i,j).light_rgb[0]>0)||(map_main->at(i,j).light_rgb[1]>0)||(map_main->at(i,j).light_rgb[2]>0)
+						 ||(map_main->at(i,j+1).light_rgb[0]>0)||(map_main->at(i,j+1).light_rgb[1]>0)||(map_main->at(i,j+1).light_rgb[2]>0)
 							){
-							grim->Quads_SetColorVertex(0, map_main->grid[(i-1)].grid[j].light_rgb[0], map_main->grid[(i-1)].grid[j].light_rgb[1], map_main->grid[(i-1)].grid[j].light_rgb[2], 0);
-							grim->Quads_SetColorVertex(1, map_main->grid[i].grid[j].light_rgb[0], map_main->grid[i].grid[j].light_rgb[1], map_main->grid[i].grid[j].light_rgb[2], 0.5f);
-							grim->Quads_SetColorVertex(2, map_main->grid[i].grid[(j+1)].light_rgb[0], map_main->grid[i].grid[(j+1)].light_rgb[1], map_main->grid[i].grid[(j+1)].light_rgb[2], 0.5f);
-							grim->Quads_SetColorVertex(3, map_main->grid[(i-1)].grid[(j+1)].light_rgb[0], map_main->grid[(i-1)].grid[(j+1)].light_rgb[1], map_main->grid[(i-1)].grid[(j+1)].light_rgb[2], 0);
+							grim->Quads_SetColorVertex(0, map_main->at(i-1,j).light_rgb[0], map_main->at(i-1,j).light_rgb[1], map_main->at(i-1,j).light_rgb[2], 0);
+							grim->Quads_SetColorVertex(1, map_main->at(i,j).light_rgb[0], map_main->at(i,j).light_rgb[1], map_main->at(i,j).light_rgb[2], 0.5f);
+							grim->Quads_SetColorVertex(2, map_main->at(i,j+1).light_rgb[0], map_main->at(i,j+1).light_rgb[1], map_main->at(i,j+1).light_rgb[2], 0.5f);
+							grim->Quads_SetColorVertex(3, map_main->at(i-1,j+1).light_rgb[0], map_main->at(i-1,j+1).light_rgb[1], map_main->at(i-1,j+1).light_rgb[2], 0);
 							grim->Quads_SetSubset(0.5f,0,1,1);
 							grim->Quads_Draw(-camera_x+(i-1)*128+64, -camera_y+j*128, 64, 128);
 						}
 					}
 					//right square is not same
-					if(map_main->grid[(i+1)].grid[j].terrain_type!=k){
-						if((map_main->grid[(i+1)].grid[j].light_rgb[0]>0)||(map_main->grid[(i+1)].grid[j].light_rgb[1]>0)||(map_main->grid[(i+1)].grid[j].light_rgb[2]>0)
-						 ||(map_main->grid[(i+1)].grid[(j+1)].light_rgb[0]>0)||(map_main->grid[(i+1)].grid[(j+1)].light_rgb[1]>0)||(map_main->grid[(i+1)].grid[(j+1)].light_rgb[2]>0)
+					if(map_main->at(i+1,j).terrain_type!=k){
+						if((map_main->at(i+1,j).light_rgb[0]>0)||(map_main->at(i+1,j).light_rgb[1]>0)||(map_main->at(i+1,j).light_rgb[2]>0)
+						 ||(map_main->at(i+1,j+1).light_rgb[0]>0)||(map_main->at(i+1,j+1).light_rgb[1]>0)||(map_main->at(i+1,j+1).light_rgb[2]>0)
 							){
-							grim->Quads_SetColorVertex(0, map_main->grid[(i+1)].grid[j].light_rgb[0], map_main->grid[(i+1)].grid[j].light_rgb[1], map_main->grid[(i+1)].grid[j].light_rgb[2], 0.5f);
-							grim->Quads_SetColorVertex(1, map_main->grid[(i+2)].grid[j].light_rgb[0], map_main->grid[(i+2)].grid[j].light_rgb[1], map_main->grid[(i+2)].grid[j].light_rgb[2], 0);
-							grim->Quads_SetColorVertex(2, map_main->grid[(i+2)].grid[(j+1)].light_rgb[0], map_main->grid[(i+2)].grid[(j+1)].light_rgb[1], map_main->grid[(i+2)].grid[(j+1)].light_rgb[2], 0);
-							grim->Quads_SetColorVertex(3, map_main->grid[(i+1)].grid[(j+1)].light_rgb[0], map_main->grid[(i+1)].grid[(j+1)].light_rgb[1], map_main->grid[(i+1)].grid[(j+1)].light_rgb[2], 0.5f);
+							grim->Quads_SetColorVertex(0, map_main->at(i+1,j).light_rgb[0], map_main->at(i+1,j).light_rgb[1], map_main->at(i+1,j).light_rgb[2], 0.5f);
+							grim->Quads_SetColorVertex(1, map_main->at(i+2,j).light_rgb[0], map_main->at(i+2,j).light_rgb[1], map_main->at(i+2,j).light_rgb[2], 0);
+							grim->Quads_SetColorVertex(2, map_main->at(i+2,j+1).light_rgb[0], map_main->at(i+2,j+1).light_rgb[1], map_main->at(i+2,j+1).light_rgb[2], 0);
+							grim->Quads_SetColorVertex(3, map_main->at(i+1,j+1).light_rgb[0], map_main->at(i+1,j+1).light_rgb[1], map_main->at(i+1,j+1).light_rgb[2], 0.5f);
 							grim->Quads_SetSubset(0,0,0.5f,1);
 							grim->Quads_Draw(-camera_x+(i+1)*128, -camera_y+j*128, 64, 128);
 						}
@@ -1540,17 +1539,17 @@ void game_engine::draw_map_objects(int layer){//renders map grid
 
 
 			//props
-			for(k=0;k<map_main->grid[i].grid[j].objects.size();k++){
-				draw_object(&map_main->object[map_main->grid[i].grid[j].objects[k]],layer,map_main->object[map_main->grid[i].grid[j].objects[k]].x,map_main->object[map_main->grid[i].grid[j].objects[k]].y);
+			for(k=0;k<map_main->at(i,j).objects.size();k++){
+				draw_object(&map_main->object[map_main->at(i,j).objects[k]],layer,map_main->object[map_main->at(i,j).objects[k]].x,map_main->object[map_main->at(i,j).objects[k]].y);
 			}
 			//items
-			for(k=0;k<map_main->grid[i].grid[j].items.size();k++){
+			for(k=0;k<map_main->at(i,j).items.size();k++){
 				//it's a plot_object
-				if(map_main->items[map_main->grid[i].grid[j].items[k]].base_type==0)
-					draw_object(&map_main->items[map_main->grid[i].grid[j].items[k]],layer,map_main->items[map_main->grid[i].grid[j].items[k]].x,map_main->items[map_main->grid[i].grid[j].items[k]].y);
+				if(map_main->items[map_main->at(i,j).items[k]].base_type==0)
+					draw_object(&map_main->items[map_main->at(i,j).items[k]],layer,map_main->items[map_main->at(i,j).items[k]].x,map_main->items[map_main->at(i,j).items[k]].y);
 				//it's a pickable item
 				else
-					draw_item(&map_main->items[map_main->grid[i].grid[j].items[k]],layer,map_main->items[map_main->grid[i].grid[j].items[k]].x,map_main->items[map_main->grid[i].grid[j].items[k]].y);
+					draw_item(&map_main->items[map_main->at(i,j).items[k]],layer,map_main->items[map_main->at(i,j).items[k]].x,map_main->items[map_main->at(i,j).items[k]].y);
 			}
 
 		}
@@ -1823,10 +1822,10 @@ void game_engine::draw_map_creatures(int layer){//draws the creatures
 		for(i=alku_x;i<loppu_x;i++){
 			for(j=alku_y;j<loppu_y;j++){
 
-				//if(map_main->grid[i].grid[j].total_creatures>0)
-				for(k=0;k<map_main->grid[i].grid[j].total_creatures;k++){
+				//if(map_main->at(i,j).total_creatures>0)
+				for(k=0;k<map_main->at(i,j).total_creatures;k++){
 
-					creature=map_main->grid[i].grid[j].creatures[k];
+					creature=map_main->at(i,j).creatures[k];
 					if(map_main->creature[creature].dead)continue;
 
 					//check layer
@@ -2232,7 +2231,7 @@ void game_engine::AI_find_target(int index,int *enemy_index,float *enemy_distanc
 	}
 
 	for(i=AI_thinkers.size()-1;i>=0;i--){
-		//int creature_2=map_main->grid[i].grid[j].creatures[k];
+		//int creature_2=map_main->at(i,j).creatures[k];
 		int creature_2=AI_thinkers[i];
 		if(creature_2==index)continue;//self
 
@@ -2575,19 +2574,21 @@ bool game_engine::AI_eat_behavior(int creature){
 
 		for (a=start_x; a<end_x; a++){
 			for (b=start_y; b<end_y; b++){
-				for (c=0; c<map_main->grid[a].grid[b].items.size(); c++){
-					if(map_main->items[map_main->grid[a].grid[b].items[c]].dead)continue;
-					if(map_main->items[map_main->grid[a].grid[b].items[c]].base_type!=1)continue;
-					if(map_main->items[map_main->grid[a].grid[b].items[c]].type==mod.general_creatures[map_main->creature[creature].type].eat_item){
+				for (auto& item : map_main->at(a,b).items) {
+					auto& this_creature = map_main->items[item]; 
+					if(this_creature.dead) continue;
+					if(this_creature.base_type!=1) continue;
+					if(this_creature.type==mod.general_creatures[map_main->creature[creature].type].eat_item){
 
-						float distance=sqr(creature_x-(map_main->items[map_main->grid[a].grid[b].items[c]].x+map_main->items[map_main->grid[a].grid[b].items[c]].size*general_object_size*0.5f))+sqr(creature_y-(map_main->items[map_main->grid[a].grid[b].items[c]].y+map_main->items[map_main->grid[a].grid[b].items[c]].size*general_object_size*0.5f));
+						float distance = sqr(creature_x-(this_creature.x+this_creature.size*general_object_size*0.5f))
+							+ sqr(creature_y-(this_creature.y+this_creature.size*general_object_size*0.5f));
 
 						if(nearest_item==-1){
-							nearest_item=map_main->grid[a].grid[b].items[c];
+							nearest_item=item;
 							nearest_distance=distance;
 						}
 						else if(distance<nearest_distance){
-							nearest_item=map_main->grid[a].grid[b].items[c];
+							nearest_item=item;
 							nearest_distance=distance;
 						}
 					}
@@ -2869,7 +2870,7 @@ float game_engine::AI_pathfinding(int creature){
 		//check if this line will collide with obstacles
 		vector <point2d> collisions=line_will_collide(creature_x,creature_y,end_x,end_y,false,true,false,false,1,!prop_prevented,!plot_object_prevented);
 		//if not already on AI_avoid terrain, avoid such terrain
-		if(!mod.terrain_types[map_main->grid[(int)(creature_x/general_object_size)].grid[(int)(creature_y/general_object_size)].terrain_type].AI_avoid){
+		if(!mod.terrain_types[map_main->at(static_cast<int>(creature_x/general_object_size), static_cast<int>(creature_y/general_object_size)).terrain_type].AI_avoid){
 			vector <point2d> collisions2=line_hazardous_terrain(creature_x,creature_y,end_x,end_y);
 			for(b=0;b<collisions2.size();b++)collisions.push_back(collisions2[b]);
 		}
@@ -3267,9 +3268,9 @@ void game_engine::creature_actions_loop(void){
 	//main loop
 	/*for(i=alku_x;i<loppu_x;i++){
 		for(j=alku_y;j<loppu_y;j++){
-			if(map_main->grid[i].grid[j].total_creatures>0)
-				for(k=0;k<map_main->grid[i].grid[j].total_creatures;k++){
-					creature=map_main->grid[i].grid[j].creatures[k];	*/
+			if(map_main->at(i,j).total_creatures>0)
+				for(k=0;k<map_main->at(i,j).total_creatures;k++){
+					creature=map_main->at(i,j).creatures[k];	*/
 
 	for(i=0;i<AI_thinkers.size();i++){
 		creature=AI_thinkers[i];
@@ -3668,7 +3669,7 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
             assert(!isnan(thiscreature.y));
 
 			//calculate terrain effects
-			int terrain_type=map_main->grid[(int)((thiscreature.x+size*0.5f)/grid_size)].grid[(int)((thiscreature.y+size*0.5f)/grid_size)].terrain_type;
+			int terrain_type = map_main->at_real(thiscreature.x + size*0.5f, thiscreature.y + size*0.5f).terrain_type;
 			//go throught all effect blocks
 			for(a=0;a<mod.terrain_types[terrain_type].effects.size();a++){
 
@@ -3851,14 +3852,14 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 
 				for (a=start_x; a<end_x; a++){
 					for (b=start_y; b<end_y; b++){
-						if(map_main->grid[a].grid[b].total_creatures>0)
-						for (c=0; c<map_main->grid[a].grid[b].total_creatures; c++){
-							if(map_main->grid[a].grid[b].creatures[c]==creature)continue;
-							if(map_main->creature[map_main->grid[a].grid[b].creatures[c]].dead)continue;
-							if(map_main->creature[map_main->grid[a].grid[b].creatures[c]].killed)continue;//killed
-							if((map_main->creature[map_main->grid[a].grid[b].creatures[c]].side==map_main->creature[0].side)&&(creature==0))continue;//friends don't push player
+						if(map_main->at(a,b).total_creatures>0)
+						for (c=0; c<map_main->at(a,b).total_creatures; c++){
+							if(map_main->at(a,b).creatures[c]==creature)continue;
+							if(map_main->creature[map_main->at(a,b).creatures[c]].dead)continue;
+							if(map_main->creature[map_main->at(a,b).creatures[c]].killed)continue;//killed
+							if((map_main->creature[map_main->at(a,b).creatures[c]].side==map_main->creature[0].side)&&(creature==0))continue;//friends don't push player
 
-							int creature2=map_main->grid[a].grid[b].creatures[c];
+							int creature2=map_main->at(a,b).creatures[c];
 
 							//collisions prevented in creature specialties of either creature
 							int specialty;
@@ -3922,7 +3923,7 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 									thiscreature.touched_enemy=creature2;
 								}
 
-								//float kerroin=sqrtf(sqr((bound_circle2)*(mod.general_creatures[map_main->creature[creature].type].size+mod.general_creatures[map_main->creature[map_main->grid[a].grid[b].creatures[c]].type].size))/(sqr(map_main->creature[creature].x-map_main->creature[map_main->grid[a].grid[b].creatures[c]].x)+sqr(map_main->creature[creature].y-map_main->creature[map_main->grid[a].grid[b].creatures[c]].y)));
+								//float kerroin=sqrtf(sqr((bound_circle2)*(mod.general_creatures[map_main->creature[creature].type].size+mod.general_creatures[map_main->creature[map_main->at(a,b).creatures[c]].type].size))/(sqr(map_main->creature[creature].x-map_main->creature[map_main->at(a,b).creatures[c]].x)+sqr(map_main->creature[creature].y-map_main->creature[map_main->at(a,b).creatures[c]].y)));
 								float kerroin=((creature_size*0.5f+creature_size2*0.5f)/sqrtf(sqr(creature_x-creature_x2)+sqr(creature_y-creature_y2)));
 								if(kerroin>2)kerroin=2;
 
@@ -4009,19 +4010,19 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 						for(b=alku_y;b<loppu_y;b++){
 							//props
 							if(!prop_prevented)
-							for(c=0;c<map_main->grid[a].grid[b].objects.size();c++){
-								if(map_main->object[map_main->grid[a].grid[b].objects[c]].dead)continue;
+							for(c=0;c<map_main->at(a,b).objects.size();c++){
+								if(map_main->object[map_main->at(a,b).objects[c]].dead)continue;
 
-								if(creature_collision_detection(&thiscreature,&map_main->object[map_main->grid[a].grid[b].objects[c]],true))
+								if(creature_collision_detection(&thiscreature,&map_main->object[map_main->at(a,b).objects[c]],true))
 									hits++;
 							}
 							//plot_objects
 							if(!plot_object_prevented)
-							for(c=0;c<map_main->grid[a].grid[b].items.size();c++){
-								if(map_main->items[map_main->grid[a].grid[b].items[c]].dead)continue;
-								if(map_main->items[map_main->grid[a].grid[b].items[c]].base_type!=0)continue;
+							for(c=0;c<map_main->at(a,b).items.size();c++){
+								if(map_main->items[map_main->at(a,b).items[c]].dead)continue;
+								if(map_main->items[map_main->at(a,b).items[c]].base_type!=0)continue;
 
-								if(creature_collision_detection(&thiscreature,&map_main->items[map_main->grid[a].grid[b].items[c]],true))
+								if(creature_collision_detection(&thiscreature,&map_main->items[map_main->at(a,b).items[c]],true))
 									hits++;
 							}
 						}
@@ -4040,11 +4041,9 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 
 		//AI pathfinding is not on, we need to block the creature from entering AI_avoid terrain
 		if(!visible){
-            int index_x = static_cast<int>((thiscreature.x+size*0.5f)/grid_size);
-            assert (index_x >= 0); assert (index_x < map_main->sizex);
-            int index_y = static_cast<int>((thiscreature.y+size*0.5f)/grid_size);
-            assert (index_y >= 0); assert (index_y < map_main->sizey);
-            terrain_type=map_main->grid[index_x].grid[index_y].terrain_type;
+			float x = thiscreature.x+size*0.5f;
+			float y = thiscreature.y+size*0.5f;
+            terrain_type=map_main->at_real(x,y).terrain_type;
 
             if(mod.terrain_types[terrain_type].AI_avoid){
                 thiscreature.x=thiscreature.x2;
@@ -4124,11 +4123,9 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 					}
 				}
 
-
 				//steps
 				if(mod.general_creatures[thiscreature.type].footsteps>0)
 				if(step!=0){
-
 
 					float leg_xx=5*step;
 					float leg_yy=5;
@@ -4136,7 +4133,7 @@ bool game_engine::creature_actions(const int creature, const bool visible){//cal
 					float leg_x=thiscreature.x+size*0.5f+leg_xx*(size/general_creature_size)*sincos.table_cos(thiscreature.rotation_legs)+leg_yy*(size/general_creature_size)*sincos.table_cos(thiscreature.rotation_legs-pi/2);
 					float leg_y=thiscreature.y+size*0.5f+leg_xx*(size/general_creature_size)*sincos.table_sin(thiscreature.rotation_legs)+leg_yy*(size/general_creature_size)*sincos.table_sin(thiscreature.rotation_legs-pi/2);
 
-					int terrain_type=map_main->grid[(int)((leg_x)/grid_size)].grid[(int)((leg_y)/grid_size)].terrain_type;
+					int terrain_type=map_main->at_real(leg_x, leg_y).terrain_type;
 
 					int particle_number=mod.general_creatures[thiscreature.type].footsteps;
 
@@ -5493,37 +5490,37 @@ void game_engine::calculate_lights(void){//calculates all the map lighting
 	for(a=draw_start_x;a<draw_end_x;a++){
 		for(b=draw_start_y;b<draw_end_y;b++){
 			//zero object light
-			//if(map_main->grid[a].grid[b].total_objects>0)
-			for(c=0;c<map_main->grid[a].grid[b].objects.size();c++){
-				map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[0]=daylight[0]+light_addition[0][2]+mod.terrain_types[map_main->grid[a].grid[b].terrain_type].base_r;
-				map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[1]=daylight[1]+light_addition[1][2]+mod.terrain_types[map_main->grid[a].grid[b].terrain_type].base_g;
-				map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[2]=daylight[2]+light_addition[2][2]+mod.terrain_types[map_main->grid[a].grid[b].terrain_type].base_b;
+			//if(map_main->at(a,b).total_objects>0)
+			for(c=0;c<map_main->at(a,b).objects.size();c++){
+				map_main->object[map_main->at(a,b).objects[c]].light_level[0]=daylight[0]+light_addition[0][2]+mod.terrain_types[map_main->at(a,b).terrain_type].base_r;
+				map_main->object[map_main->at(a,b).objects[c]].light_level[1]=daylight[1]+light_addition[1][2]+mod.terrain_types[map_main->at(a,b).terrain_type].base_g;
+				map_main->object[map_main->at(a,b).objects[c]].light_level[2]=daylight[2]+light_addition[2][2]+mod.terrain_types[map_main->at(a,b).terrain_type].base_b;
 			}
 			//zero item light
-			for(c=0;c<map_main->grid[a].grid[b].items.size();c++){
-				map_main->items[map_main->grid[a].grid[b].items[c]].light_level[0]=daylight[0]+light_addition[0][1]+mod.terrain_types[map_main->grid[a].grid[b].terrain_type].base_r;
-				map_main->items[map_main->grid[a].grid[b].items[c]].light_level[1]=daylight[1]+light_addition[1][1]+mod.terrain_types[map_main->grid[a].grid[b].terrain_type].base_g;
-				map_main->items[map_main->grid[a].grid[b].items[c]].light_level[2]=daylight[2]+light_addition[2][1]+mod.terrain_types[map_main->grid[a].grid[b].terrain_type].base_b;
+			for(c=0;c<map_main->at(a,b).items.size();c++){
+				map_main->items[map_main->at(a,b).items[c]].light_level[0]=daylight[0]+light_addition[0][1]+mod.terrain_types[map_main->at(a,b).terrain_type].base_r;
+				map_main->items[map_main->at(a,b).items[c]].light_level[1]=daylight[1]+light_addition[1][1]+mod.terrain_types[map_main->at(a,b).terrain_type].base_g;
+				map_main->items[map_main->at(a,b).items[c]].light_level[2]=daylight[2]+light_addition[2][1]+mod.terrain_types[map_main->at(a,b).terrain_type].base_b;
 
 			}
 			//zero map light (or 1 for lava)
-			/*if(has_terrain_effect(map_main,map_main->grid[a].grid[b].terrain_type,3,&parameter0,&parameter1)){
-				map_main->grid[a].grid[b].light_rgb[0]=1+light_addition[0][0];
-				map_main->grid[a].grid[b].light_rgb[1]=1+light_addition[1][0];
-				map_main->grid[a].grid[b].light_rgb[2]=1+light_addition[2][0];
+			/*if(has_terrain_effect(map_main,map_main->at(a,b).terrain_type,3,&parameter0,&parameter1)){
+				map_main->at(a,b).light_rgb[0]=1+light_addition[0][0];
+				map_main->at(a,b).light_rgb[1]=1+light_addition[1][0];
+				map_main->at(a,b).light_rgb[2]=1+light_addition[2][0];
 			}
 			else*/{
-				map_main->grid[a].grid[b].light_rgb[0]=daylight[0]+light_addition[0][0]+mod.terrain_types[map_main->grid[a].grid[b].terrain_type].base_r;
-				map_main->grid[a].grid[b].light_rgb[1]=daylight[1]+light_addition[1][0]+mod.terrain_types[map_main->grid[a].grid[b].terrain_type].base_g;
-				map_main->grid[a].grid[b].light_rgb[2]=daylight[2]+light_addition[2][0]+mod.terrain_types[map_main->grid[a].grid[b].terrain_type].base_b;
+				map_main->at(a,b).light_rgb[0]=daylight[0]+light_addition[0][0]+mod.terrain_types[map_main->at(a,b).terrain_type].base_r;
+				map_main->at(a,b).light_rgb[1]=daylight[1]+light_addition[1][0]+mod.terrain_types[map_main->at(a,b).terrain_type].base_g;
+				map_main->at(a,b).light_rgb[2]=daylight[2]+light_addition[2][0]+mod.terrain_types[map_main->at(a,b).terrain_type].base_b;
 			}
 
 			//zero creature lights
-			if(map_main->grid[a].grid[b].total_creatures>0)
-			for (c=0; c<map_main->grid[a].grid[b].total_creatures; c++){
-				map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[0]=daylight[0]+light_addition[0][3]+mod.terrain_types[map_main->grid[a].grid[b].terrain_type].base_r;
-				map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[1]=daylight[1]+light_addition[1][3]+mod.terrain_types[map_main->grid[a].grid[b].terrain_type].base_g;
-				map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[2]=daylight[2]+light_addition[2][3]+mod.terrain_types[map_main->grid[a].grid[b].terrain_type].base_b;
+			if(map_main->at(a,b).total_creatures>0)
+			for (c=0; c<map_main->at(a,b).total_creatures; c++){
+				map_main->creature[map_main->at(a,b).creatures[c]].light[0]=daylight[0]+light_addition[0][3]+mod.terrain_types[map_main->at(a,b).terrain_type].base_r;
+				map_main->creature[map_main->at(a,b).creatures[c]].light[1]=daylight[1]+light_addition[1][3]+mod.terrain_types[map_main->at(a,b).terrain_type].base_g;
+				map_main->creature[map_main->at(a,b).creatures[c]].light[2]=daylight[2]+light_addition[2][3]+mod.terrain_types[map_main->at(a,b).terrain_type].base_b;
 			}
 
 
@@ -5541,30 +5538,30 @@ void game_engine::calculate_lights(void){//calculates all the map lighting
 
 
 				//zero object light
-				if(map_main->grid[a].grid[b].total_objects>0)
-				for(c=0;c<map_main->grid[a].grid[b].total_objects;c++){
-					map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[0]=0.2f;
-					map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[1]=light_wave;
-					map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[2]=0.2f;
+				if(map_main->at(a,b).total_objects>0)
+				for(c=0;c<map_main->at(a,b).total_objects;c++){
+					map_main->object[map_main->at(a,b).objects[c]].light_level[0]=0.2f;
+					map_main->object[map_main->at(a,b).objects[c]].light_level[1]=light_wave;
+					map_main->object[map_main->at(a,b).objects[c]].light_level[2]=0.2f;
 				}
 				//zero item light
-				for(c=0;c<map_main->grid[a].grid[b].items.size();c++){
-					map_main->items[map_main->grid[a].grid[b].items[c]].light_level[0]=0.5f;
-					map_main->items[map_main->grid[a].grid[b].items[c]].light_level[1]=light_wave;
-					map_main->items[map_main->grid[a].grid[b].items[c]].light_level[2]=0.5f;
+				for(c=0;c<map_main->at(a,b).items.size();c++){
+					map_main->items[map_main->at(a,b).items[c]].light_level[0]=0.5f;
+					map_main->items[map_main->at(a,b).items[c]].light_level[1]=light_wave;
+					map_main->items[map_main->at(a,b).items[c]].light_level[2]=0.5f;
 
 				}
 				//zero map light
-				map_main->grid[a].grid[b].light_rgb[0]=0.4f;
-				map_main->grid[a].grid[b].light_rgb[1]=0.7f;
-				map_main->grid[a].grid[b].light_rgb[2]=0.4f;
+				map_main->at(a,b).light_rgb[0]=0.4f;
+				map_main->at(a,b).light_rgb[1]=0.7f;
+				map_main->at(a,b).light_rgb[2]=0.4f;
 
 				//zero creature lights
-				if(map_main->grid[a].grid[b].total_creatures>0)
-				for (c=0; c<map_main->grid[a].grid[b].total_creatures; c++){
-					map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[0]=0.6f;
-					map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[1]=1;
-					map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[2]=0.6f;
+				if(map_main->at(a,b).total_creatures>0)
+				for (c=0; c<map_main->at(a,b).total_creatures; c++){
+					map_main->creature[map_main->at(a,b).creatures[c]].light[0]=0.6f;
+					map_main->creature[map_main->at(a,b).creatures[c]].light[1]=1;
+					map_main->creature[map_main->at(a,b).creatures[c]].light[2]=0.6f;
 				}
 			}
 		}
@@ -5622,47 +5619,47 @@ void game_engine::calculate_lights(void){//calculates all the map lighting
 			for(a=alku_x;a<loppu_x;a++){
 				for(b=alku_y;b<loppu_y;b++){
 					//objects
-					//if(map_main->grid[a].grid[b].total_objects>0)
-					for(c=0;c<map_main->grid[a].grid[b].objects.size();c++){
-						size=map_main->object[map_main->grid[a].grid[b].objects[c]].size*general_object_size;
-						c_x=map_main->object[map_main->grid[a].grid[b].objects[c]].x+size*0.5f;
-						c_y=map_main->object[map_main->grid[a].grid[b].objects[c]].y+size*0.5f;
+					//if(map_main->at(a,b).total_objects>0)
+					for(c=0;c<map_main->at(a,b).objects.size();c++){
+						size=map_main->object[map_main->at(a,b).objects[c]].size*general_object_size;
+						c_x=map_main->object[map_main->at(a,b).objects[c]].x+size*0.5f;
+						c_y=map_main->object[map_main->at(a,b).objects[c]].y+size*0.5f;
 						//if(border_visible)fix_coordinates(&c_x,&c_y);
 						light_value=mod.general_lights[map_main->lights[i].type].intensity*calculate_flashlight(map_main->lights[i].x2,map_main->lights[i].y2,map_main->lights[i].rotation,c_x,c_y,&distance,&angle);
-						map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[0]+=light_value*map_main->lights[i].r*light_level;
-						map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[1]+=light_value*map_main->lights[i].g*light_level;
-						map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[2]+=light_value*map_main->lights[i].b*light_level;
+						map_main->object[map_main->at(a,b).objects[c]].light_level[0]+=light_value*map_main->lights[i].r*light_level;
+						map_main->object[map_main->at(a,b).objects[c]].light_level[1]+=light_value*map_main->lights[i].g*light_level;
+						map_main->object[map_main->at(a,b).objects[c]].light_level[2]+=light_value*map_main->lights[i].b*light_level;
 					}
 					//items
-					for(c=0;c<map_main->grid[a].grid[b].items.size();c++){
-						size=map_main->items[map_main->grid[a].grid[b].items[c]].size*general_object_size;
-						c_x=map_main->items[map_main->grid[a].grid[b].items[c]].x+size*0.5f;
-						c_y=map_main->items[map_main->grid[a].grid[b].items[c]].y+size*0.5f;
+					for(c=0;c<map_main->at(a,b).items.size();c++){
+						size=map_main->items[map_main->at(a,b).items[c]].size*general_object_size;
+						c_x=map_main->items[map_main->at(a,b).items[c]].x+size*0.5f;
+						c_y=map_main->items[map_main->at(a,b).items[c]].y+size*0.5f;
 						//if(border_visible)fix_coordinates(&c_x,&c_y);
 						light_value=mod.general_lights[map_main->lights[i].type].intensity*calculate_flashlight(map_main->lights[i].x2,map_main->lights[i].y2,map_main->lights[i].rotation,c_x,c_y,&distance,&angle);
-						map_main->items[map_main->grid[a].grid[b].items[c]].light_level[0]+=light_value*map_main->lights[i].r*light_level;
-						map_main->items[map_main->grid[a].grid[b].items[c]].light_level[1]+=light_value*map_main->lights[i].g*light_level;
-						map_main->items[map_main->grid[a].grid[b].items[c]].light_level[2]+=light_value*map_main->lights[i].b*light_level;
+						map_main->items[map_main->at(a,b).items[c]].light_level[0]+=light_value*map_main->lights[i].r*light_level;
+						map_main->items[map_main->at(a,b).items[c]].light_level[1]+=light_value*map_main->lights[i].g*light_level;
+						map_main->items[map_main->at(a,b).items[c]].light_level[2]+=light_value*map_main->lights[i].b*light_level;
 					}
 					//grid
 					c_x=a*128.0f;
 					c_y=b*128.0f;
 					if(border_visible)fix_coordinates(&c_x,&c_y);
 					light_value=mod.general_lights[map_main->lights[i].type].intensity*calculate_flashlight(map_main->lights[i].x2,map_main->lights[i].y2,map_main->lights[i].rotation,c_x,c_y,&distance,&angle);
-					map_main->grid[a].grid[b].light_rgb[0]+=light_value*map_main->lights[i].r*light_level;
-					map_main->grid[a].grid[b].light_rgb[1]+=light_value*map_main->lights[i].g*light_level;
-					map_main->grid[a].grid[b].light_rgb[2]+=light_value*map_main->lights[i].b*light_level;
+					map_main->at(a,b).light_rgb[0]+=light_value*map_main->lights[i].r*light_level;
+					map_main->at(a,b).light_rgb[1]+=light_value*map_main->lights[i].g*light_level;
+					map_main->at(a,b).light_rgb[2]+=light_value*map_main->lights[i].b*light_level;
 					//creatures
-					if(map_main->grid[a].grid[b].total_creatures>0)
-					for (c=0; c<map_main->grid[a].grid[b].total_creatures; c++){
-						if(map_main->grid[a].grid[b].creatures[c]==0)continue;//doesn't affect player
-						c_x=map_main->creature[map_main->grid[a].grid[b].creatures[c]].x;
-						c_y=map_main->creature[map_main->grid[a].grid[b].creatures[c]].y;
+					if(map_main->at(a,b).total_creatures>0)
+					for (c=0; c<map_main->at(a,b).total_creatures; c++){
+						if(map_main->at(a,b).creatures[c]==0)continue;//doesn't affect player
+						c_x=map_main->creature[map_main->at(a,b).creatures[c]].x;
+						c_y=map_main->creature[map_main->at(a,b).creatures[c]].y;
 						//if(border_visible)fix_coordinates(&c_x,&c_y);
 						light_value=mod.general_lights[map_main->lights[i].type].intensity*calculate_flashlight(map_main->lights[i].x2,map_main->lights[i].y2,map_main->lights[i].rotation,c_x,c_y,&distance,&angle);
-						map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[0]+=light_value*map_main->lights[i].r*creature_light_value;
-						map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[1]+=light_value*map_main->lights[i].g*creature_light_value;
-						map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[2]+=light_value*map_main->lights[i].b*creature_light_value;
+						map_main->creature[map_main->at(a,b).creatures[c]].light[0]+=light_value*map_main->lights[i].r*creature_light_value;
+						map_main->creature[map_main->at(a,b).creatures[c]].light[1]+=light_value*map_main->lights[i].g*creature_light_value;
+						map_main->creature[map_main->at(a,b).creatures[c]].light[2]+=light_value*map_main->lights[i].b*creature_light_value;
 					}
 				}
 			}
@@ -5704,31 +5701,31 @@ void game_engine::calculate_lights(void){//calculates all the map lighting
 
 
 					//objects
-					//if(map_main->grid[a].grid[b].total_objects>0)
-					for(c=0;c<map_main->grid[a].grid[b].objects.size();c++){
-						size=map_main->object[map_main->grid[a].grid[b].objects[c]].size*general_object_size;
-						c_x=map_main->object[map_main->grid[a].grid[b].objects[c]].x+size*0.5f;
-						c_y=map_main->object[map_main->grid[a].grid[b].objects[c]].y+size*0.5f;
+					//if(map_main->at(a,b).total_objects>0)
+					for(c=0;c<map_main->at(a,b).objects.size();c++){
+						size=map_main->object[map_main->at(a,b).objects[c]].size*general_object_size;
+						c_x=map_main->object[map_main->at(a,b).objects[c]].x+size*0.5f;
+						c_y=map_main->object[map_main->at(a,b).objects[c]].y+size*0.5f;
 						//fix_coordinates(&c_x,&c_y);
 						//light_value=map_main->lights[i].size*map_main->lights[i].pulse*(1-0.00000000004f*(sqr(sqr(map_main->lights[i].x2-c_x))+sqr(sqr(map_main->lights[i].y2-c_y))));
 						light_value=intensity*map_main->lights[i].pulse*(mod.general_lights[map_main->lights[i].type].intensity-0.00000000004f*(sqr(sqr(map_main->lights[i].x2-c_x))+sqr(sqr(map_main->lights[i].y2-c_y))));
 						if(light_value>0){
-							map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[0]+=light_value*map_main->lights[i].r;
-							map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[1]+=light_value*map_main->lights[i].g;
-							map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[2]+=light_value*map_main->lights[i].b;
+							map_main->object[map_main->at(a,b).objects[c]].light_level[0]+=light_value*map_main->lights[i].r;
+							map_main->object[map_main->at(a,b).objects[c]].light_level[1]+=light_value*map_main->lights[i].g;
+							map_main->object[map_main->at(a,b).objects[c]].light_level[2]+=light_value*map_main->lights[i].b;
 						}
 					}
 					//items
-					for(c=0;c<map_main->grid[a].grid[b].items.size();c++){
-						size=map_main->items[map_main->grid[a].grid[b].items[c]].size*general_object_size;
-						c_x=map_main->items[map_main->grid[a].grid[b].items[c]].x+size*0.5f;
-						c_y=map_main->items[map_main->grid[a].grid[b].items[c]].y+size*0.5f;
+					for(c=0;c<map_main->at(a,b).items.size();c++){
+						size=map_main->items[map_main->at(a,b).items[c]].size*general_object_size;
+						c_x=map_main->items[map_main->at(a,b).items[c]].x+size*0.5f;
+						c_y=map_main->items[map_main->at(a,b).items[c]].y+size*0.5f;
 						//fix_coordinates(&c_x,&c_y);
 						light_value=intensity*map_main->lights[i].pulse*(mod.general_lights[map_main->lights[i].type].intensity-0.00000000004f*(sqr(sqr(map_main->lights[i].x2-c_x))+sqr(sqr(map_main->lights[i].y2-c_y))));
 						if(light_value>0){
-							map_main->items[map_main->grid[a].grid[b].items[c]].light_level[0]+=light_value*map_main->lights[i].r;
-							map_main->items[map_main->grid[a].grid[b].items[c]].light_level[1]+=light_value*map_main->lights[i].g;
-							map_main->items[map_main->grid[a].grid[b].items[c]].light_level[2]+=light_value*map_main->lights[i].b;
+							map_main->items[map_main->at(a,b).items[c]].light_level[0]+=light_value*map_main->lights[i].r;
+							map_main->items[map_main->at(a,b).items[c]].light_level[1]+=light_value*map_main->lights[i].g;
+							map_main->items[map_main->at(a,b).items[c]].light_level[2]+=light_value*map_main->lights[i].b;
 						}
 					}
 					//grid
@@ -5736,21 +5733,21 @@ void game_engine::calculate_lights(void){//calculates all the map lighting
 					c_y=(b)*grid_size+grid_size*0.5f;
 					light_value=intensity*map_main->lights[i].pulse*(mod.general_lights[map_main->lights[i].type].intensity-0.00000000004f*(sqr(sqr(map_main->lights[i].x2-c_x))+sqr(sqr(map_main->lights[i].y2-c_y))));
 					if(light_value>0){
-						map_main->grid[a].grid[b].light_rgb[0]+=light_value*map_main->lights[i].r*light_level;
-						map_main->grid[a].grid[b].light_rgb[1]+=light_value*map_main->lights[i].g*light_level;
-						map_main->grid[a].grid[b].light_rgb[2]+=light_value*map_main->lights[i].b*light_level;
+						map_main->at(a,b).light_rgb[0]+=light_value*map_main->lights[i].r*light_level;
+						map_main->at(a,b).light_rgb[1]+=light_value*map_main->lights[i].g*light_level;
+						map_main->at(a,b).light_rgb[2]+=light_value*map_main->lights[i].b*light_level;
 					}
 					//creatures
-					for (c=0; c<map_main->grid[a].grid[b].total_creatures; c++){
-						size=mod.general_creatures[map_main->creature[map_main->grid[a].grid[b].creatures[c]].type].size*map_main->creature[map_main->grid[a].grid[b].creatures[c]].size*general_creature_size;
-						c_x=map_main->creature[map_main->grid[a].grid[b].creatures[c]].x+size*0.5f;
-						c_y=map_main->creature[map_main->grid[a].grid[b].creatures[c]].y+size*0.5f;
+					for (c=0; c<map_main->at(a,b).total_creatures; c++){
+						size=mod.general_creatures[map_main->creature[map_main->at(a,b).creatures[c]].type].size*map_main->creature[map_main->at(a,b).creatures[c]].size*general_creature_size;
+						c_x=map_main->creature[map_main->at(a,b).creatures[c]].x+size*0.5f;
+						c_y=map_main->creature[map_main->at(a,b).creatures[c]].y+size*0.5f;
 						//fix_coordinates(&c_x,&c_y);
 						light_value=intensity*map_main->lights[i].pulse*(mod.general_lights[map_main->lights[i].type].intensity-0.00000000001f*4*(sqr(sqr(map_main->lights[i].x2-c_x))+sqr(sqr(map_main->lights[i].y2-c_y))));
 						if(light_value>0){
-							map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[0]+=light_value*map_main->lights[i].r*light_level;
-							map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[1]+=light_value*map_main->lights[i].g*light_level;
-							map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[2]+=light_value*map_main->lights[i].b*light_level;
+							map_main->creature[map_main->at(a,b).creatures[c]].light[0]+=light_value*map_main->lights[i].r*light_level;
+							map_main->creature[map_main->at(a,b).creatures[c]].light[1]+=light_value*map_main->lights[i].g*light_level;
+							map_main->creature[map_main->at(a,b).creatures[c]].light[2]+=light_value*map_main->lights[i].b*light_level;
 						}
 					}
 				}
@@ -5777,49 +5774,49 @@ void game_engine::calculate_lights(void){//calculates all the map lighting
 	for(a=draw_start_x;a<draw_end_x;a++){
 		for(b=draw_start_y;b<draw_end_y;b++){
 			//object lights not too brigh
-			//if(map_main->grid[a].grid[b].total_objects>0)
-			for(c=0;c<map_main->grid[a].grid[b].objects.size();c++){
-				if(map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[0]>1)map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[0]=1;
-				if(map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[1]>1)map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[1]=1;
-				if(map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[2]>1)map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[2]=1;
+			//if(map_main->at(a,b).total_objects>0)
+			for(c=0;c<map_main->at(a,b).objects.size();c++){
+				if(map_main->object[map_main->at(a,b).objects[c]].light_level[0]>1)map_main->object[map_main->at(a,b).objects[c]].light_level[0]=1;
+				if(map_main->object[map_main->at(a,b).objects[c]].light_level[1]>1)map_main->object[map_main->at(a,b).objects[c]].light_level[1]=1;
+				if(map_main->object[map_main->at(a,b).objects[c]].light_level[2]>1)map_main->object[map_main->at(a,b).objects[c]].light_level[2]=1;
 
-				if(map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[0]<0)map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[0]=0;
-				if(map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[1]<0)map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[1]=0;
-				if(map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[2]<0)map_main->object[map_main->grid[a].grid[b].objects[c]].light_level[2]=0;
+				if(map_main->object[map_main->at(a,b).objects[c]].light_level[0]<0)map_main->object[map_main->at(a,b).objects[c]].light_level[0]=0;
+				if(map_main->object[map_main->at(a,b).objects[c]].light_level[1]<0)map_main->object[map_main->at(a,b).objects[c]].light_level[1]=0;
+				if(map_main->object[map_main->at(a,b).objects[c]].light_level[2]<0)map_main->object[map_main->at(a,b).objects[c]].light_level[2]=0;
 
 			}
 			//item lights not too brigh
-			for(c=0;c<map_main->grid[a].grid[b].items.size();c++){
-				if(map_main->items[map_main->grid[a].grid[b].items[c]].light_level[0]>1)map_main->items[map_main->grid[a].grid[b].items[c]].light_level[0]=1;
-				if(map_main->items[map_main->grid[a].grid[b].items[c]].light_level[1]>1)map_main->items[map_main->grid[a].grid[b].items[c]].light_level[1]=1;
-				if(map_main->items[map_main->grid[a].grid[b].items[c]].light_level[2]>1)map_main->items[map_main->grid[a].grid[b].items[c]].light_level[2]=1;
+			for(c=0;c<map_main->at(a,b).items.size();c++){
+				if(map_main->items[map_main->at(a,b).items[c]].light_level[0]>1)map_main->items[map_main->at(a,b).items[c]].light_level[0]=1;
+				if(map_main->items[map_main->at(a,b).items[c]].light_level[1]>1)map_main->items[map_main->at(a,b).items[c]].light_level[1]=1;
+				if(map_main->items[map_main->at(a,b).items[c]].light_level[2]>1)map_main->items[map_main->at(a,b).items[c]].light_level[2]=1;
 
-				if(map_main->items[map_main->grid[a].grid[b].items[c]].light_level[0]<0)map_main->items[map_main->grid[a].grid[b].items[c]].light_level[0]=0;
-				if(map_main->items[map_main->grid[a].grid[b].items[c]].light_level[1]<0)map_main->items[map_main->grid[a].grid[b].items[c]].light_level[1]=0;
-				if(map_main->items[map_main->grid[a].grid[b].items[c]].light_level[2]<0)map_main->items[map_main->grid[a].grid[b].items[c]].light_level[2]=0;
+				if(map_main->items[map_main->at(a,b).items[c]].light_level[0]<0)map_main->items[map_main->at(a,b).items[c]].light_level[0]=0;
+				if(map_main->items[map_main->at(a,b).items[c]].light_level[1]<0)map_main->items[map_main->at(a,b).items[c]].light_level[1]=0;
+				if(map_main->items[map_main->at(a,b).items[c]].light_level[2]<0)map_main->items[map_main->at(a,b).items[c]].light_level[2]=0;
 
 			}
 			//creature lights not too brigh
-			//if(map_main->grid[a].grid[b].total_creatures>0)
-			for (c=0; c<map_main->grid[a].grid[b].total_creatures; c++){
-				if(map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[0]>1)map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[0]=1;
-				if(map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[1]>1)map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[1]=1;
-				if(map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[2]>1)map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[2]=1;
+			//if(map_main->at(a,b).total_creatures>0)
+			for (c=0; c<map_main->at(a,b).total_creatures; c++){
+				if(map_main->creature[map_main->at(a,b).creatures[c]].light[0]>1)map_main->creature[map_main->at(a,b).creatures[c]].light[0]=1;
+				if(map_main->creature[map_main->at(a,b).creatures[c]].light[1]>1)map_main->creature[map_main->at(a,b).creatures[c]].light[1]=1;
+				if(map_main->creature[map_main->at(a,b).creatures[c]].light[2]>1)map_main->creature[map_main->at(a,b).creatures[c]].light[2]=1;
 
-				if(map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[0]<0)map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[0]=0;
-				if(map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[1]<0)map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[1]=0;
-				if(map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[2]<0)map_main->creature[map_main->grid[a].grid[b].creatures[c]].light[2]=0;
+				if(map_main->creature[map_main->at(a,b).creatures[c]].light[0]<0)map_main->creature[map_main->at(a,b).creatures[c]].light[0]=0;
+				if(map_main->creature[map_main->at(a,b).creatures[c]].light[1]<0)map_main->creature[map_main->at(a,b).creatures[c]].light[1]=0;
+				if(map_main->creature[map_main->at(a,b).creatures[c]].light[2]<0)map_main->creature[map_main->at(a,b).creatures[c]].light[2]=0;
 
 			}
 
 			//grid not too bright
-			if(map_main->grid[a].grid[b].light_rgb[0]>1)map_main->grid[a].grid[b].light_rgb[0]=1;
-			if(map_main->grid[a].grid[b].light_rgb[1]>1)map_main->grid[a].grid[b].light_rgb[1]=1;
-			if(map_main->grid[a].grid[b].light_rgb[2]>1)map_main->grid[a].grid[b].light_rgb[2]=1;
+			if(map_main->at(a,b).light_rgb[0]>1)map_main->at(a,b).light_rgb[0]=1;
+			if(map_main->at(a,b).light_rgb[1]>1)map_main->at(a,b).light_rgb[1]=1;
+			if(map_main->at(a,b).light_rgb[2]>1)map_main->at(a,b).light_rgb[2]=1;
 
-			if(map_main->grid[a].grid[b].light_rgb[0]<0)map_main->grid[a].grid[b].light_rgb[0]=0;
-			if(map_main->grid[a].grid[b].light_rgb[1]<0)map_main->grid[a].grid[b].light_rgb[1]=0;
-			if(map_main->grid[a].grid[b].light_rgb[2]<0)map_main->grid[a].grid[b].light_rgb[2]=0;
+			if(map_main->at(a,b).light_rgb[0]<0)map_main->at(a,b).light_rgb[0]=0;
+			if(map_main->at(a,b).light_rgb[1]<0)map_main->at(a,b).light_rgb[1]=0;
+			if(map_main->at(a,b).light_rgb[2]<0)map_main->at(a,b).light_rgb[2]=0;
 
 		}
 	}
@@ -6104,9 +6101,6 @@ void game_engine::create_plot_object(map* map_to_edit, int general_item_class, f
 				temp_item.y=randDouble(grid_size*2,map_to_edit->sizey*grid_size-grid_size*3);
 
 				//see if it's on some other terrain type than normal ground
-				//if(map_to_edit->grid[(int)(temp_item.x/grid_size)].grid[(int)(temp_item.y/grid_size)].type!=0)
-				//float parameter0,parameter1;
-				//if(terrain_maps[]map_to_edit->grid[(int)(temp_item.x/grid_size)].grid[(int)(temp_item.y/grid_size)].,4,&parameter0,&parameter1))
 				if(mod.terrain_maps[mod.general_areas[map_to_edit->area_type].terrain_map_number].terrain_grid[(int)(temp_item.y/grid_size)].terrain_blocks[(int)(temp_item.x/grid_size)].no_random_items==1)
 					place_bad--;
 				else if(mod.terrain_types[mod.terrain_maps[mod.general_areas[map_to_edit->area_type].terrain_map_number].terrain_grid[(int)(temp_item.y/grid_size)].terrain_blocks[(int)(temp_item.x/grid_size)].terrain_type].do_not_place_random_objects)
@@ -6223,29 +6217,22 @@ void game_engine::create_plot_object(map* map_to_edit, int general_item_class, f
 		temp_item.animation_frame_time=0;
 	}
 
-
-
-
 	//place to grid
-	int temp_x=(int)(temp_item.x/grid_size);
-	int temp_y=(int)(temp_item.y/grid_size);
+	auto& gridpoint = map_to_edit->at_real(temp_item.x, temp_item.y);
 
-	temp_item.light_level[0]=map_to_edit->grid[temp_x].grid[temp_y].light_rgb[0];
-	temp_item.light_level[1]=map_to_edit->grid[temp_x].grid[temp_y].light_rgb[1];
-	temp_item.light_level[2]=map_to_edit->grid[temp_x].grid[temp_y].light_rgb[2];
+	temp_item.light_level[0]=gridpoint.light_rgb[0];
+	temp_item.light_level[1]=gridpoint.light_rgb[1];
+	temp_item.light_level[2]=gridpoint.light_rgb[2];
 
 	map_to_edit->items.push_back(temp_item);
-	map_to_edit->grid[temp_x].grid[temp_y].items.push_back(map_to_edit->items.size()-1);
-
+	gridpoint.items.push_back(map_to_edit->items.size()-1);
 
 }
-
 
 
 void game_engine::create_item(map* map_to_edit, int item_type, int amount, float x, float y, float rotation){//throws in the items to the map
 
 	int i;
-
 
 	//make sure location is within map
 	if(x<grid_size*1.5f)
@@ -6256,10 +6243,6 @@ void game_engine::create_item(map* map_to_edit, int item_type, int amount, float
 		y=grid_size*1.5f;
 	if(y>map_to_edit->sizey*grid_size-grid_size*2.5f)
 		y=map_to_edit->sizey*grid_size-grid_size*2.5f;
-
-
-
-
 
 	//no such item found, create new
 	item temp_item;
@@ -6292,8 +6275,8 @@ void game_engine::create_item(map* map_to_edit, int item_type, int amount, float
 	int temp_y=(int)(temp_item.y/grid_size);
 	int nearest=-1;
 	float nearest_distance=0;
-	for(i=0;i<map_to_edit->grid[temp_x].grid[temp_y].items.size();i++){
-		int item=map_to_edit->grid[temp_x].grid[temp_y].items[i];
+	for(i=0;i<map_to_edit->at(temp_x,temp_y).items.size();i++){
+		int item=map_to_edit->at(temp_x,temp_y).items[i];
 		if(map_to_edit->items[item].base_type==1)
 		if(map_to_edit->items[item].type==item_type){
 			float distance=sqr(map_to_edit->items[item].x-temp_item.x)+sqr(map_to_edit->items[item].y-temp_item.y);
@@ -6334,7 +6317,7 @@ void game_engine::create_item(map* map_to_edit, int item_type, int amount, float
 	//place to grid
 	temp_x=(int)(temp_item.x/grid_size);
 	temp_y=(int)(temp_item.y/grid_size);
-	map_to_edit->grid[temp_x].grid[temp_y].items.push_back(map_to_edit->items.size()-1);
+	map_to_edit->at(temp_x,temp_y).items.push_back(map_to_edit->items.size()-1);
 
 
 }
@@ -6637,10 +6620,10 @@ void game_engine::draw_pop_up(void){
 				//all the creatures here
 				for(i=alku_x;i<loppu_x;i++){
 					for(j=alku_y;j<loppu_y;j++){
-						if(map_main->grid[i].grid[j].total_creatures>0)
-						for(k=0;k<map_main->grid[i].grid[j].total_creatures;k++){
+						if(map_main->at(i,j).total_creatures>0)
+						for(k=0;k<map_main->at(i,j).total_creatures;k++){
 
-							int creature=map_main->grid[i].grid[j].creatures[k];
+							int creature=map_main->at(i,j).creatures[k];
 							if(creature==0)continue;
 							if(map_main->creature[creature].killed)continue;
 							//if(map_main->creature[creature].side==map_main->creature[0].side)continue;
@@ -6846,17 +6829,17 @@ void game_engine::calculate_items(void){
 	int loppu_y=map_main->sizey-1;
 	for(i=alku_x;i<loppu_x;i++){
 		for(j=alku_y;j<loppu_y;j++){
-			for(k=0;k<map_main->grid[i].grid[j].items.size();k++){
-				if(map_main->items[map_main->grid[i].grid[j].items[k]].dead)continue;
+			for(k=0;k<map_main->at(i,j).items.size();k++){
+				if(map_main->items[map_main->at(i,j).items[k]].dead)continue;
 				bool must_delete=false;
-				if(map_main->items[map_main->grid[i].grid[j].items[k]].base_type==0){
+				if(map_main->items[map_main->at(i,j).items[k]].base_type==0){
 
 
-					int item=map_main->grid[i].grid[j].items[k];
+					int item=map_main->at(i,j).items[k];
 
 
 					//activate by time
-					if(mod.general_plot_objects[map_main->items[map_main->grid[i].grid[j].items[k]].item_type].trigger_event_by==4)
+					if(mod.general_plot_objects[map_main->items[map_main->at(i,j).items[k]].item_type].trigger_event_by==4)
 					while(time_from_beginning*1000-map_main->items[item].interval_timer>=mod.general_plot_objects[map_main->items[item].item_type].trigger_event_parameter1){
 
 						map_main->items[item].interval_timer+=mod.general_plot_objects[map_main->items[item].item_type].trigger_event_parameter1;
@@ -6921,10 +6904,10 @@ void game_engine::calculate_items(void){
 	for(int pass=0;pass<2;pass++){
 		for(i=alku_x;i<loppu_x;i++){
 			for(j=alku_y;j<loppu_y;j++){
-				for(k=0;k<map_main->grid[i].grid[j].items.size();k++){
-					if(map_main->items[map_main->grid[i].grid[j].items[k]].dead)continue;
+				for(k=0;k<map_main->at(i,j).items.size();k++){
+					if(map_main->items[map_main->at(i,j).items[k]].dead)continue;
 
-					int item=map_main->grid[i].grid[j].items[k];
+					int item=map_main->at(i,j).items[k];
 
 
 
@@ -7171,9 +7154,9 @@ bool game_engine::give_item(int item_number, int amount, float time, bool arrang
 void game_engine::delete_plot_object(map *edit_map, int number, int i, int j, int k){
 
 	if(k<0)return;
-	if(k>=edit_map->grid[i].grid[j].items.size())return;
+	if(k>=edit_map->at(i,j).items.size())return;
 
-	edit_map->grid[i].grid[j].items.erase(edit_map->grid[i].grid[j].items.begin()+k);
+	edit_map->at(i,j).items.erase(edit_map->at(i,j).items.begin()+k);
 
 	//edit_map->items.erase(edit_map->items.begin() + number);
 	edit_map->items[number].dead=true;
@@ -7455,15 +7438,15 @@ bool game_engine::run_effect(Mod::effect effect, creature_base *creature, int cr
 						int objects_here=0;
 						for(int a=alku_x;a<loppu_x;a++){
 							for(int b=alku_y;b<loppu_y;b++){
-								for(int c=0;c<map_main->grid[a].grid[b].items.size();c++){
-									if(map_main->items[map_main->grid[a].grid[b].items[c]].base_type!=1)continue;
-									if(map_main->items[map_main->grid[a].grid[b].items[c]].dead)continue;
-									float size=map_main->items[map_main->grid[a].grid[b].items[c]].size*general_object_size;
-									if(map_main->items[map_main->grid[a].grid[b].items[c]].x+size*0.5f<x-effect.parameter3)continue;
-									if(map_main->items[map_main->grid[a].grid[b].items[c]].x+size*0.5f>x+effect.parameter3)continue;
-									if(map_main->items[map_main->grid[a].grid[b].items[c]].y+size*0.5f<y-effect.parameter3)continue;
-									if(map_main->items[map_main->grid[a].grid[b].items[c]].y+size*0.5f>y+effect.parameter3)continue;
-									if(map_main->items[map_main->grid[a].grid[b].items[c]].item_type==effect.parameter1)
+								for(int c=0;c<map_main->at(a,b).items.size();c++){
+									if(map_main->items[map_main->at(a,b).items[c]].base_type!=1)continue;
+									if(map_main->items[map_main->at(a,b).items[c]].dead)continue;
+									float size=map_main->items[map_main->at(a,b).items[c]].size*general_object_size;
+									if(map_main->items[map_main->at(a,b).items[c]].x+size*0.5f<x-effect.parameter3)continue;
+									if(map_main->items[map_main->at(a,b).items[c]].x+size*0.5f>x+effect.parameter3)continue;
+									if(map_main->items[map_main->at(a,b).items[c]].y+size*0.5f<y-effect.parameter3)continue;
+									if(map_main->items[map_main->at(a,b).items[c]].y+size*0.5f>y+effect.parameter3)continue;
+									if(map_main->items[map_main->at(a,b).items[c]].item_type==effect.parameter1)
 										objects_here++;
 								}
 							}
@@ -7828,15 +7811,15 @@ bool game_engine::run_effect(Mod::effect effect, creature_base *creature, int cr
 						int objects_here=0;
 						for(int a=alku_x;a<loppu_x;a++){
 							for(int b=alku_y;b<loppu_y;b++){
-								for(int c=0;c<map_main->grid[a].grid[b].items.size();c++){
-									if(map_main->items[map_main->grid[a].grid[b].items[c]].base_type!=0)continue;
-									if(map_main->items[map_main->grid[a].grid[b].items[c]].dead)continue;
-									float size=map_main->items[map_main->grid[a].grid[b].items[c]].size*general_object_size;
-									if(map_main->items[map_main->grid[a].grid[b].items[c]].x+size*0.5f<x-effect.parameter3)continue;
-									if(map_main->items[map_main->grid[a].grid[b].items[c]].x+size*0.5f>x+effect.parameter3)continue;
-									if(map_main->items[map_main->grid[a].grid[b].items[c]].y+size*0.5f<y-effect.parameter3)continue;
-									if(map_main->items[map_main->grid[a].grid[b].items[c]].y+size*0.5f>y+effect.parameter3)continue;
-									if(map_main->items[map_main->grid[a].grid[b].items[c]].item_type==effect.parameter1)
+								for(int c=0;c<map_main->at(a,b).items.size();c++){
+									if(map_main->items[map_main->at(a,b).items[c]].base_type!=0)continue;
+									if(map_main->items[map_main->at(a,b).items[c]].dead)continue;
+									float size=map_main->items[map_main->at(a,b).items[c]].size*general_object_size;
+									if(map_main->items[map_main->at(a,b).items[c]].x+size*0.5f<x-effect.parameter3)continue;
+									if(map_main->items[map_main->at(a,b).items[c]].x+size*0.5f>x+effect.parameter3)continue;
+									if(map_main->items[map_main->at(a,b).items[c]].y+size*0.5f<y-effect.parameter3)continue;
+									if(map_main->items[map_main->at(a,b).items[c]].y+size*0.5f>y+effect.parameter3)continue;
+									if(map_main->items[map_main->at(a,b).items[c]].item_type==effect.parameter1)
 										objects_here++;
 								}
 							}
@@ -8238,10 +8221,10 @@ bool game_engine::run_effect(Mod::effect effect, creature_base *creature, int cr
 				//count amount of dispensed objects nearby
 				for(int a=alku_x;a<loppu_x;a++){
 					for(int b=alku_y;b<loppu_y;b++){
-						for(int c=0;c<map_main->grid[a].grid[b].items.size();c++){
-							if(map_main->items[map_main->grid[a].grid[b].items[c]].base_type!=0)continue;
-							if(map_main->items[map_main->grid[a].grid[b].items[c]].item_type==effect.parameter1){
-								delete_plot_object(map_main,map_main->grid[a].grid[b].items[c], a, b, c);
+						for(int c=0;c<map_main->at(a,b).items.size();c++){
+							if(map_main->items[map_main->at(a,b).items[c]].base_type!=0)continue;
+							if(map_main->items[map_main->at(a,b).items[c]].item_type==effect.parameter1){
+								delete_plot_object(map_main,map_main->at(a,b).items[c], a, b, c);
 								c--;
 							}
 						}
@@ -8268,20 +8251,20 @@ bool game_engine::run_effect(Mod::effect effect, creature_base *creature, int cr
 				int deleted_amount=0;
 				for(int a=alku_x;a<loppu_x;a++){
 					for(int b=alku_y;b<loppu_y;b++){
-						for(int c=0;c<map_main->grid[a].grid[b].items.size();c++){
-							if(map_main->items[map_main->grid[a].grid[b].items[c]].base_type!=1)continue;
-							if(map_main->items[map_main->grid[a].grid[b].items[c]].item_type==effect.parameter1){
+						for(int c=0;c<map_main->at(a,b).items.size();c++){
+							if(map_main->items[map_main->at(a,b).items[c]].base_type!=1)continue;
+							if(map_main->items[map_main->at(a,b).items[c]].item_type==effect.parameter1){
 
-								int amount_was=map_main->items[map_main->grid[a].grid[b].items[c]].amount;
+								int amount_was=map_main->items[map_main->at(a,b).items[c]].amount;
 								for(int d=0;d<amount_was;d++){
-									map_main->items[map_main->grid[a].grid[b].items[c]].amount--;
+									map_main->items[map_main->at(a,b).items[c]].amount--;
 									deleted_amount++;
 
 									if(effect.parameter3>0)if(deleted_amount>=effect.parameter3)break;
 								}
 
-								if(map_main->items[map_main->grid[a].grid[b].items[c]].amount<=0){
-									delete_plot_object(map_main,map_main->grid[a].grid[b].items[c], a, b, c);
+								if(map_main->items[map_main->at(a,b).items[c]].amount<=0){
+									delete_plot_object(map_main,map_main->at(a,b).items[c], a, b, c);
 									c--;
 								}
 							}
@@ -10474,7 +10457,7 @@ void game_engine::save_game(int slot){
 			//grid
 			for(a=0;a<map_storage[area]->sizex;a++){
 				for(b=0;b<map_storage[area]->sizey;b++){
-					fprintf(fil, "%d\n", map_storage[area]->grid[a].grid[b].terrain_type);
+					fprintf(fil, "%d\n", map_storage[area]->at(a,b).terrain_type);
 				}
 			}
 
@@ -10738,10 +10721,7 @@ void game_engine::load_game(int slot){
 			int climate=atoi(temprivi);
 
 			//new map object
-			//SAFE_DELETE(map_storage[area]);
-			map *temp_map=NULL;
-			temp_map=new map(map_width,map_height, total_creatures, total_objects, total_items, climate);
-			//temp_map = new map(map_width,map_height, total_creatures, total_objects, total_items, climate);
+			map *temp_map = new map(map_width,map_height, total_creatures, total_objects, total_items, climate);
 
 			//map specialties
 			fgets(temprivi,sizeof(temprivi),fil);
@@ -10769,7 +10749,7 @@ void game_engine::load_game(int slot){
 			for(a=0;a<temp_map->sizex;a++){
 				for(b=0;b<temp_map->sizey;b++){
 					fgets(temprivi,sizeof(temprivi),fil);
-					temp_map->grid[a].grid[b].terrain_type=atoi(temprivi);
+					temp_map->at(a,b).terrain_type=atoi(temprivi);
 				}
 			}
 
@@ -12352,16 +12332,16 @@ void game_engine::calculate_body_temperature(void)
 	/*{
 		//walking in hot/cold terrain
 		float parameter0,parameter1;
-		if(has_terrain_effect(map_main,map_main->grid[(int)(player_middle_x/grid_size)].grid[(int)(player_middle_y/grid_size)].terrain_type,0,&parameter0,&parameter1)){
+		if(has_terrain_effect(map_main,map_main->at_real(player_middle_x, player_middle_y).terrain_type,0,&parameter0,&parameter1)){
 			body_temperature+=elapsed*game_speed*0.0005f*parameter0*heat_multiplier;
 		}
 		//walking in damaging terrain
-		if(has_terrain_effect(map_main,map_main->grid[(int)(player_middle_x/grid_size)].grid[(int)(player_middle_y/grid_size)].terrain_type,1,&parameter0,&parameter1)){
+		if(has_terrain_effect(map_main,map_main->at_real(player_middle_x, player_middle_y).terrain_type,1,&parameter0,&parameter1)){
 			map_main->creature[0].bars[(int)parameter1].value+=elapsed*game_speed*0.002f*parameter0;
 		}
 		//message
-		if(mod.general_climates[map_main->climate_number].terrain_types[map_main->grid[(int)(player_middle_x/grid_size)].grid[(int)(player_middle_y/grid_size)].terrain_type].walk_on_text!="none"){
-			text_manager.message(1000,1000,mod.general_climates[map_main->climate_number].terrain_types[map_main->grid[(int)(player_middle_x/grid_size)].grid[(int)(player_middle_y/grid_size)].terrain_type].walk_on_text);
+		if(mod.general_climates[map_main->climate_number].terrain_types[map_main->at_real(player_middle_x, player_middle_y).terrain_type].walk_on_text!="none"){
+			text_manager.message(1000,1000,mod.general_climates[map_main->climate_number].terrain_types[map_main->at_real(player_middle_x, player_middle_y).terrain_type].walk_on_text);
 		}
 	}*/
 
@@ -12847,17 +12827,17 @@ bool game_engine::creature_will_collide(map *new_map, creature_base *creature){
 		for(b=alku_y;b<loppu_y;b++){
 			//props
 			if(!prop_prevented)
-			for(c=0;c<new_map->grid[a].grid[b].objects.size();c++){
-				if(new_map->object[new_map->grid[a].grid[b].objects[c]].dead)continue;
-				if(creature_collision_detection(creature,&new_map->object[new_map->grid[a].grid[b].objects[c]],false))
+			for(c=0;c<new_map->at(a,b).objects.size();c++){
+				if(new_map->object[new_map->at(a,b).objects[c]].dead)continue;
+				if(creature_collision_detection(creature,&new_map->object[new_map->at(a,b).objects[c]],false))
 					return true;
 			}
 			//plot objects
 			if(!plot_object_prevented)
-			for(c=0;c<new_map->grid[a].grid[b].items.size();c++){
-				if(new_map->items[new_map->grid[a].grid[b].items[c]].dead)continue;
-				if(new_map->items[new_map->grid[a].grid[b].items[c]].base_type!=0)continue;
-				if(creature_collision_detection(creature,&new_map->items[new_map->grid[a].grid[b].items[c]],false))
+			for(c=0;c<new_map->at(a,b).items.size();c++){
+				if(new_map->items[new_map->at(a,b).items[c]].dead)continue;
+				if(new_map->items[new_map->at(a,b).items[c]].base_type!=0)continue;
+				if(creature_collision_detection(creature,&new_map->items[new_map->at(a,b).items[c]],false))
 					return true;
 			}
 		}
@@ -12894,22 +12874,22 @@ bool game_engine::point_will_collide(map *new_map, float x, float y, bool only_o
 	for(a=alku_x;a<loppu_x;a++){
 		for(b=alku_y;b<loppu_y;b++){
 			//props
-			for(c=0;c<new_map->grid[a].grid[b].objects.size();c++){
-				if(new_map->object[new_map->grid[a].grid[b].objects[c]].dead)continue;
+			for(c=0;c<new_map->at(a,b).objects.size();c++){
+				if(new_map->object[new_map->at(a,b).objects[c]].dead)continue;
 				if(only_ones_that_stop_bullets)
-					if(!mod.general_objects[new_map->object[new_map->grid[a].grid[b].objects[c]].type].stops_bullets)continue;
-				if(point_in_object(x,y,&new_map->object[new_map->grid[a].grid[b].objects[c]]))
-				//if(creature_collision_detection(creature,&new_map->object[new_map->grid[a].grid[b].objects[c]],false))
+					if(!mod.general_objects[new_map->object[new_map->at(a,b).objects[c]].type].stops_bullets)continue;
+				if(point_in_object(x,y,&new_map->object[new_map->at(a,b).objects[c]]))
+				//if(creature_collision_detection(creature,&new_map->object[new_map->at(a,b).objects[c]],false))
 					return true;
 			}
 			//plot objects
-			for(c=0;c<new_map->grid[a].grid[b].items.size();c++){
-				if(new_map->items[new_map->grid[a].grid[b].items[c]].dead)continue;
-				if(new_map->items[new_map->grid[a].grid[b].items[c]].base_type!=0)continue;
+			for(c=0;c<new_map->at(a,b).items.size();c++){
+				if(new_map->items[new_map->at(a,b).items[c]].dead)continue;
+				if(new_map->items[new_map->at(a,b).items[c]].base_type!=0)continue;
 				if(only_ones_that_stop_bullets)
-					if(!mod.general_objects[new_map->items[new_map->grid[a].grid[b].items[c]].type].stops_bullets)continue;
-				//if(creature_collision_detection(creature,&new_map->items[new_map->grid[a].grid[b].items[c]],false))
-				if(point_in_object(x,y,&new_map->items[new_map->grid[a].grid[b].items[c]]))
+					if(!mod.general_objects[new_map->items[new_map->at(a,b).items[c]].type].stops_bullets)continue;
+				//if(creature_collision_detection(creature,&new_map->items[new_map->at(a,b).items[c]],false))
+				if(point_in_object(x,y,&new_map->items[new_map->at(a,b).items[c]]))
 					return true;
 			}
 		}
@@ -13482,7 +13462,7 @@ void game_engine::create_maps(void){
 		for(a=0;a<sizex;a++){
 			for(b=0;b<sizey;b++){
 				if(mod.terrain_maps[mod.general_areas[map_type].terrain_map_number].terrain_grid[b].terrain_blocks[a].terrain_type>1){
-					temp_map->grid[a].grid[b].terrain_type=mod.terrain_maps[mod.general_areas[map_type].terrain_map_number].terrain_grid[b].terrain_blocks[a].terrain_type;
+					temp_map->at(a,b).terrain_type=mod.terrain_maps[mod.general_areas[map_type].terrain_map_number].terrain_grid[b].terrain_blocks[a].terrain_type;
 				}
 			}
 		}
@@ -13798,11 +13778,11 @@ void game_engine::calculate_mouse_on_creatures(void){
 	//all the creatures here
 	for(i=alku_x;i<loppu_x;i++){
 		for(j=alku_y;j<loppu_y;j++){
-			if(map_main->grid[i].grid[j].total_creatures>0)
-			for(k=0;k<map_main->grid[i].grid[j].total_creatures;k++){
-				if(map_main->creature[map_main->grid[i].grid[j].creatures[k]].dead)continue;
+			if(map_main->at(i,j).total_creatures>0)
+			for(k=0;k<map_main->at(i,j).total_creatures;k++){
+				if(map_main->creature[map_main->at(i,j).creatures[k]].dead)continue;
 
-				int creature=map_main->grid[i].grid[j].creatures[k];
+				int creature=map_main->at(i,j).creatures[k];
 				creature_base& thiscreature = map_main->creature[creature];
 
 				if(creature==0)continue;//not player
@@ -13828,7 +13808,7 @@ void game_engine::calculate_mouse_on_creatures(void){
 						tempstring=mod.general_items[mod.general_creatures[thiscreature.type].corpse_item].name;
 
 						//if the player is close enough we can show the use text
-						//if(mod.general_plot_objects[map_main->items[map_main->grid[i].grid[j].items[k]].item_type].event!=8)//item is not a resting place
+						//if(mod.general_plot_objects[map_main->items[map_main->at(i,j).items[k]].item_type].event!=8)//item is not a resting place
 						if(distance<sqr(touch_size)){
 							tempstring+=" (Right click to pick up)";
 							if(!mouse_right&&mouse_right2){
@@ -13848,7 +13828,7 @@ void game_engine::calculate_mouse_on_creatures(void){
 					}
 
 					//show energy bar
-					if(!map_main->creature[map_main->grid[i].grid[j].creatures[k]].killed){
+					if(!map_main->creature[map_main->at(i,j).creatures[k]].killed){
 						thiscreature.show_energy=true;
 						creature_nearest_to_the_mouse=creature;
 					}
@@ -14685,19 +14665,19 @@ vector <game_engine::collision_base> game_engine::list_collisions(float x1,float
 		//go through all the y blocks
 		for (b=yy1; b<=yy2; b++){
 			//go through all the creatures on this map square
-			for (c=0; c<map_main->grid[a].grid[b].total_creatures; c++){
+			for (c=0; c<map_main->at(a,b).total_creatures; c++){
 
 				//rule out the shooter's side
-				//if(map_main->creature[map_main->grid[a].grid[b].creatures[c]].side==map_main->bullets[i].side)continue;
+				//if(map_main->creature[map_main->at(a,b).creatures[c]].side==map_main->bullets[i].side)continue;
 				//killed
-				if(map_main->creature[map_main->grid[a].grid[b].creatures[c]].killed)continue;
+				if(map_main->creature[map_main->at(a,b).creatures[c]].killed)continue;
 
 
 				//find out if the bullet hits the creature
-				float size=mod.general_creatures[map_main->creature[map_main->grid[a].grid[b].creatures[c]].type].size*map_main->creature[map_main->grid[a].grid[b].creatures[c]].size*general_creature_size;
+				float size=mod.general_creatures[map_main->creature[map_main->at(a,b).creatures[c]].type].size*map_main->creature[map_main->at(a,b).creatures[c]].size*general_creature_size;
 				float radius=size*0.5f*0.5f;
-				float creature_x=map_main->creature[map_main->grid[a].grid[b].creatures[c]].x+size*0.5f;
-				float creature_y=map_main->creature[map_main->grid[a].grid[b].creatures[c]].y+size*0.5f;
+				float creature_x=map_main->creature[map_main->at(a,b).creatures[c]].x+size*0.5f;
+				float creature_y=map_main->creature[map_main->at(a,b).creatures[c]].y+size*0.5f;
 
 				vector <point2d> p;
 
@@ -14720,7 +14700,7 @@ vector <game_engine::collision_base> game_engine::list_collisions(float x1,float
 				bool listed=false;
 				for(int d=0;d<collisions.size();d++){
 					if(collisions[d].type==0)
-					if(collisions[d].subtype==map_main->grid[a].grid[b].creatures[c])
+					if(collisions[d].subtype==map_main->at(a,b).creatures[c])
 						listed=true;
 				}
 
@@ -14728,7 +14708,7 @@ vector <game_engine::collision_base> game_engine::list_collisions(float x1,float
 				if(!listed){
 					collision_base temp_collision;
 					temp_collision.type=0;
-					temp_collision.subtype=map_main->grid[a].grid[b].creatures[c];
+					temp_collision.subtype=map_main->at(a,b).creatures[c];
 					temp_collision.x=temp_point.x;
 					temp_collision.y=temp_point.y;
 					collisions.push_back(temp_collision);
@@ -14979,13 +14959,13 @@ bool game_engine::check_condition(const Mod::condition& condition, const creatur
 
 			for (a=start_x; a<end_x; a++){
 				for (b=start_y; b<end_y; b++){
-					for (c=0; c<map_main->grid[a].grid[b].items.size(); c++){
-						if(map_main->items[map_main->grid[a].grid[b].items[c]].dead)continue;
-						if(map_main->items[map_main->grid[a].grid[b].items[c]].base_type!=0)continue;
-						if(map_main->items[map_main->grid[a].grid[b].items[c]].item_type==condition.condition_parameter0){
+					for (c=0; c<map_main->at(a,b).items.size(); c++){
+						if(map_main->items[map_main->at(a,b).items[c]].dead)continue;
+						if(map_main->items[map_main->at(a,b).items[c]].base_type!=0)continue;
+						if(map_main->items[map_main->at(a,b).items[c]].item_type==condition.condition_parameter0){
 
-							float size=map_main->items[map_main->grid[a].grid[b].items[c]].size*general_object_size;
-							float distance=sqr(x-(map_main->items[map_main->grid[a].grid[b].items[c]].x+size*0.5f))+sqr(y-(map_main->items[map_main->grid[a].grid[b].items[c]].y+size*0.5f));
+							float size=map_main->items[map_main->at(a,b).items[c]].size*general_object_size;
+							float distance=sqr(x-(map_main->items[map_main->at(a,b).items[c]].x+size*0.5f))+sqr(y-(map_main->items[map_main->at(a,b).items[c]].y+size*0.5f));
 
 							if(distance<sqr(size*0.5f+condition.condition_parameter1))
 								found=true;
@@ -15026,13 +15006,13 @@ bool game_engine::check_condition(const Mod::condition& condition, const creatur
 
 			for (a=start_x; a<end_x; a++){
 				for (b=start_y; b<end_y; b++){
-					for (c=0; c<map_main->grid[a].grid[b].items.size(); c++){
-						if(map_main->items[map_main->grid[a].grid[b].items[c]].dead)continue;
-						if(map_main->items[map_main->grid[a].grid[b].items[c]].base_type!=0)continue;
-						if(mod.general_plot_objects[map_main->items[map_main->grid[a].grid[b].items[c]].item_type].plot_object_class==condition.condition_parameter0){
+					for (c=0; c<map_main->at(a,b).items.size(); c++){
+						if(map_main->items[map_main->at(a,b).items[c]].dead)continue;
+						if(map_main->items[map_main->at(a,b).items[c]].base_type!=0)continue;
+						if(mod.general_plot_objects[map_main->items[map_main->at(a,b).items[c]].item_type].plot_object_class==condition.condition_parameter0){
 
-							float size=map_main->items[map_main->grid[a].grid[b].items[c]].size*general_object_size;
-							float distance=sqr(x-(map_main->items[map_main->grid[a].grid[b].items[c]].x+size*0.5f))+sqr(y-(map_main->items[map_main->grid[a].grid[b].items[c]].y+size*0.5f));
+							float size=map_main->items[map_main->at(a,b).items[c]].size*general_object_size;
+							float distance=sqr(x-(map_main->items[map_main->at(a,b).items[c]].x+size*0.5f))+sqr(y-(map_main->items[map_main->at(a,b).items[c]].y+size*0.5f));
 
 							if(distance<sqr(size*0.5f+condition.condition_parameter1))
 								found=true;
@@ -15249,20 +15229,20 @@ bool game_engine::check_condition(const Mod::condition& condition, const creatur
 
 			for (a=start_x; a<end_x; a++){
 				for (b=start_y; b<end_y; b++){
-					for (c=0; c<map_main->grid[a].grid[b].total_creatures; c++){
-						if(map_main->creature[map_main->grid[a].grid[b].creatures[c]].dead)continue;
+					for (c=0; c<map_main->at(a,b).total_creatures; c++){
+						if(map_main->creature[map_main->at(a,b).creatures[c]].dead)continue;
 						if(condition.condition_parameter0>=0){
-							if(map_main->creature[map_main->grid[a].grid[b].creatures[c]].type!=condition.condition_parameter0)continue;
+							if(map_main->creature[map_main->at(a,b).creatures[c]].type!=condition.condition_parameter0)continue;
 						}
 						else{
-							if(mod.general_creatures[map_main->creature[map_main->grid[a].grid[b].creatures[c]].type].creature_class!=-condition.condition_parameter0)continue;
+							if(mod.general_creatures[map_main->creature[map_main->at(a,b).creatures[c]].type].creature_class!=-condition.condition_parameter0)continue;
 						}
 
-						//if(mod.general_plot_objects[map_main->creature[map_main->grid[a].grid[b].creatures[c]].item_type].plot_object_class==condition.condition_parameter0){
+						//if(mod.general_plot_objects[map_main->creature[map_main->at(a,b).creatures[c]].item_type].plot_object_class==condition.condition_parameter0){
 
-						float size=mod.general_creatures[map_main->creature[map_main->grid[a].grid[b].creatures[c]].type].size*map_main->creature[map_main->grid[a].grid[b].creatures[c]].size*general_creature_size;
-						//float size=map_main->creature[map_main->grid[a].grid[b].creatures[c]].size*general_object_size;
-						float distance=sqr(x-(map_main->creature[map_main->grid[a].grid[b].creatures[c]].x+size*0.5f))+sqr(y-(map_main->creature[map_main->grid[a].grid[b].creatures[c]].y+size*0.5f));
+						float size=mod.general_creatures[map_main->creature[map_main->at(a,b).creatures[c]].type].size*map_main->creature[map_main->at(a,b).creatures[c]].size*general_creature_size;
+						//float size=map_main->creature[map_main->at(a,b).creatures[c]].size*general_object_size;
+						float distance=sqr(x-(map_main->creature[map_main->at(a,b).creatures[c]].x+size*0.5f))+sqr(y-(map_main->creature[map_main->at(a,b).creatures[c]].y+size*0.5f));
 
 						if(distance<sqr(size*0.5f+condition.condition_parameter1))
 							found=true;
@@ -15314,10 +15294,8 @@ bool game_engine::check_condition(const Mod::condition& condition, const creatur
 	//17=(parameter1, 0=is, 1=is not) on terrain parameter0
 	case 17:
 		{
-			int grix_x=x/grid_size;
-			int grix_y=y/grid_size;
 			if(condition.condition_parameter1==0)
-				if(map_main->grid[grix_x].grid[grix_y].terrain_type!=(int)condition.condition_parameter0){
+				if(map_main->at_real(x,y).terrain_type!=(int)condition.condition_parameter0){
 					if(show_message){
 						tempstring="Must be on ";
 						tempstring+=mod.terrain_types[(int)condition.condition_parameter0].name;
@@ -15327,7 +15305,7 @@ bool game_engine::check_condition(const Mod::condition& condition, const creatur
 					return false;
 				}
 			if(condition.condition_parameter1==1)
-				if(map_main->grid[grix_x].grid[grix_y].terrain_type==(int)condition.condition_parameter0){
+				if(map_main->at_real(x,y).terrain_type==(int)condition.condition_parameter0){
 					if(show_message){
 						tempstring="Must not be on ";
 						tempstring+=mod.terrain_types[(int)condition.condition_parameter0].name;
@@ -15631,14 +15609,14 @@ bool game_engine::check_condition(const Mod::condition& condition, const creatur
 
 			for (a=start_x; a<end_x; a++){
 				for (b=start_y; b<end_y; b++){
-					for (c=0; c<map_main->grid[a].grid[b].items.size(); c++){
-						if(map_main->items[map_main->grid[a].grid[b].items[c]].dead)continue;
-						if(map_main->items[map_main->grid[a].grid[b].items[c]].base_type!=1)continue;
-						if(map_main->items[map_main->grid[a].grid[b].items[c]].item_type==condition.condition_parameter0){
+					for (c=0; c<map_main->at(a,b).items.size(); c++){
+						if(map_main->items[map_main->at(a,b).items[c]].dead)continue;
+						if(map_main->items[map_main->at(a,b).items[c]].base_type!=1)continue;
+						if(map_main->items[map_main->at(a,b).items[c]].item_type==condition.condition_parameter0){
 
 							float size=mod.general_items[condition.condition_parameter0].size*general_object_size;
-							float distance=sqr(x-(map_main->items[map_main->grid[a].grid[b].items[c]].x+size*0.5f))+sqr(y-(map_main->items[map_main->grid[a].grid[b].items[c]].y+size*0.5f));
-							//make_particle(1,1,1000,(map_main->items[map_main->grid[a].grid[b].items[c]].x+size*0.5f),(map_main->items[map_main->grid[a].grid[b].items[c]].y+size*0.5f),0,0);
+							float distance=sqr(x-(map_main->items[map_main->at(a,b).items[c]].x+size*0.5f))+sqr(y-(map_main->items[map_main->at(a,b).items[c]].y+size*0.5f));
+							//make_particle(1,1,1000,(map_main->items[map_main->at(a,b).items[c]].x+size*0.5f),(map_main->items[map_main->at(a,b).items[c]].y+size*0.5f),0,0);
 							//make_particle(1,1,1000,x,y,0,0);
 							if(distance<sqr(condition.condition_parameter1))
 								found=true;
@@ -16833,13 +16811,13 @@ vector <point2d> game_engine::line_will_collide(float x1, float y1, float x2, fl
 			vector <point2d> temp_hits;
 			//props
 			if(check_props)
-			for(c=0;c<map_main->grid[a].grid[b].objects.size();c++){
-				if(map_main->object[map_main->grid[a].grid[b].objects[c]].dead)continue;
+			for(c=0;c<map_main->at(a,b).objects.size();c++){
+				if(map_main->object[map_main->at(a,b).objects[c]].dead)continue;
 				if(only_ones_that_hinder_visibility)
-					if(!mod.general_objects[map_main->object[map_main->grid[a].grid[b].objects[c]].type].blocks_vision)continue;
+					if(!mod.general_objects[map_main->object[map_main->at(a,b).objects[c]].type].blocks_vision)continue;
 				if(only_ones_that_stop_bullets)
-					if(!mod.general_objects[map_main->object[map_main->grid[a].grid[b].objects[c]].type].stops_bullets)continue;
-				temp_hits=line_collision_detection(x1,y1,x2,y2,&map_main->object[map_main->grid[a].grid[b].objects[c]],return_on_first);
+					if(!mod.general_objects[map_main->object[map_main->at(a,b).objects[c]].type].stops_bullets)continue;
+				temp_hits=line_collision_detection(x1,y1,x2,y2,&map_main->object[map_main->at(a,b).objects[c]],return_on_first);
 				for(int d=0;d<temp_hits.size();d++){
 					hits.push_back(temp_hits[d]);
 					if(return_on_first)
@@ -16849,15 +16827,15 @@ vector <point2d> game_engine::line_will_collide(float x1, float y1, float x2, fl
 			}
 			//plot objects
 			if(check_plot_objects)
-			for(c=0;c<map_main->grid[a].grid[b].items.size();c++){
-				if(map_main->items[map_main->grid[a].grid[b].items[c]].dead)continue;
-				if(map_main->items[map_main->grid[a].grid[b].items[c]].type >= mod.general_objects.size())continue;
+			for(c=0;c<map_main->at(a,b).items.size();c++){
+				if(map_main->items[map_main->at(a,b).items[c]].dead)continue;
+				if(map_main->items[map_main->at(a,b).items[c]].type >= mod.general_objects.size())continue;
 				if(only_ones_that_hinder_visibility)
-					if(!mod.general_objects[map_main->items[map_main->grid[a].grid[b].items[c]].type].blocks_vision)continue;
+					if(!mod.general_objects[map_main->items[map_main->at(a,b).items[c]].type].blocks_vision)continue;
 				if(only_ones_that_stop_bullets)
-					if(!mod.general_objects[map_main->items[map_main->grid[a].grid[b].items[c]].type].stops_bullets)continue;
-				if(map_main->items[map_main->grid[a].grid[b].items[c]].base_type!=0)continue;
-				temp_hits=line_collision_detection(x1,y1,x2,y2,&map_main->items[map_main->grid[a].grid[b].items[c]],return_on_first);
+					if(!mod.general_objects[map_main->items[map_main->at(a,b).items[c]].type].stops_bullets)continue;
+				if(map_main->items[map_main->at(a,b).items[c]].base_type!=0)continue;
+				temp_hits=line_collision_detection(x1,y1,x2,y2,&map_main->items[map_main->at(a,b).items[c]],return_on_first);
 				for(int d=0;d<temp_hits.size();d++){
 					hits.push_back(temp_hits[d]);
 					if(return_on_first)
@@ -16907,7 +16885,7 @@ vector <point2d> game_engine::line_hazardous_terrain(float x1, float y1, float x
 	for(a=alku_x;a<loppu_x;a++){
 		for(b=alku_y;b<loppu_y;b++){
 			vector <point2d> temp_hits;
-			if(mod.terrain_types[map_main->grid[a].grid[b].terrain_type].AI_avoid){
+			if(mod.terrain_types[map_main->at(a,b).terrain_type].AI_avoid){
 				point2d hit;
 				float xx1=a*general_object_size;
 				float yy1=b*general_object_size;
@@ -17070,10 +17048,10 @@ void game_engine::initialize_animation_frames(map *map_to_edit){
 		for(int j=0;j<map_to_edit->sizey;j++){
 
 			//start with random frame
-			map_to_edit->grid[i].grid[j].current_frame=randInt(0,mod.terrain_types[map_to_edit->grid[i].grid[j].terrain_type].terrain_frames.size());
+			map_to_edit->at(i,j).current_frame=randInt(0,mod.terrain_types[map_to_edit->at(i,j).terrain_type].terrain_frames.size());
 
 			//set time to current plus random to next frame
-			map_to_edit->grid[i].grid[j].frame_time=randDouble(0,mod.terrain_types[map_to_edit->grid[i].grid[j].terrain_type].terrain_frames[map_to_edit->grid[i].grid[j].current_frame].time);
+			map_to_edit->at(i,j).frame_time=randDouble(0,mod.terrain_types[map_to_edit->at(i,j).terrain_type].terrain_frames[map_to_edit->at(i,j).current_frame].time);
 		}
 	}
 	debug.debug_output("Initialize terrain frames",Action::END,Logfile::STARTUP);
@@ -17134,7 +17112,7 @@ void game_engine::draw_map_grid_small(map *map_to_edit, int texture, int texture
 
 			for(i=0;i<map_to_edit->sizex;i++){
 				for(j=0;j<map_to_edit->sizey;j++){
-					resources.Texture_Set(mod.terrain_types[map_to_edit->grid[i].grid[j].terrain_type].terrain_frames[0].texture);
+					resources.Texture_Set(mod.terrain_types[map_to_edit->at(i,j).terrain_type].terrain_frames[0].texture);
 					grim->Quads_Begin();
 					grim->Quads_Draw(i*size_x, j*size_y, size_x, size_y);
 					grim->Quads_End();

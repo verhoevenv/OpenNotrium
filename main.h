@@ -7,7 +7,6 @@
 #pragma warning(disable: 4244)
 #pragma warning(disable: 4018)
 
-//#include <windows.h>
 //#include <malloc.h>
 //#include <mmsystem.h>
 #include <cstdlib>
@@ -50,8 +49,6 @@
 //#pragma comment(lib,"winmm")
 //#pragma comment(lib,"dxerr8.lib")
 //#pragma comment(lib,"dinput8.lib")
-
-class game_engine;
 
 class game_engine
 {
