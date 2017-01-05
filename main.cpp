@@ -57,7 +57,8 @@ void game_engine::GetScreenshotFileName(string& FileName)
 {
     // search for first unused filename
     string buffer;
-    for (int i = 0; i < 1000; i++)
+    int i = 0;
+    for (;;)
     {
 		std::ostringstream os;
 		os << "shot" << i << ".bmp";
@@ -65,6 +66,8 @@ void game_engine::GetScreenshotFileName(string& FileName)
 
 		if (!grim->File_Exists(buffer))
         {   break; }
+	
+		i++;
     }
 
     // set FileName to the first unused filename
