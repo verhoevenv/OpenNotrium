@@ -98,8 +98,8 @@ void Engine::System_Start(){
                 if(ignoreMouseMotion > 0){
                     ignoreMouseMotion--;
                 } else {
-                    mousestate.lX = event.motion.xrel;
-                    mousestate.lY = event.motion.yrel;
+						mousestate.lX += event.motion.xrel;
+						mousestate.lY += event.motion.yrel;
                 }
                 break;
             case SDL_WINDOWEVENT:

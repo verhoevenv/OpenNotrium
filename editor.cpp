@@ -41,11 +41,11 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 			string name=mod_to_edit->terrain_maps[edited_area].name;
 			name+=" (";
 			//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size(),temprivi,10);
-			sprintf(temprivi,"%u",mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size());
+			sprintf(temprivi, "%zu", mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size());
 			name+=temprivi;
 			name+="x";
 			//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid.size(),temprivi,10);
-			sprintf(temprivi,"%u",mod_to_edit->terrain_maps[edited_area].terrain_grid.size());
+			sprintf(temprivi, "%zu", mod_to_edit->terrain_maps[edited_area].terrain_grid.size());
 			name+=temprivi;
 			name+=")";
 			text_manager->message(3000,3000,name);
@@ -62,11 +62,11 @@ bool Editor::render_map(float elapsed, mouse_control_base mouse_controls){
 				string name=mod_to_edit->terrain_maps[edited_area].name;
 				name+=" (";
 				//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size(),temprivi,10);
-				sprintf(temprivi,"%u",mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size());
+				sprintf(temprivi, "%zu", mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size());
 				name+=temprivi;
 				name+="x";
 				//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid.size(),temprivi,10);
-				sprintf(temprivi,"%u",mod_to_edit->terrain_maps[edited_area].terrain_grid.size());
+				sprintf(temprivi, "%zu", mod_to_edit->terrain_maps[edited_area].terrain_grid.size());
 				name+=temprivi;
 				name+=")";
 				text_manager->message(3000,3000,name);
@@ -536,11 +536,11 @@ void Editor::draw_map_grid(float elapsed, mouse_control_base mouse_controls){//r
 	if(show_new_size){
 		string new_size="New size: ";
 		//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size(),temprivi,10);
-		sprintf(temprivi,"%u",mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size());
+		sprintf(temprivi, "%zu", mod_to_edit->terrain_maps[edited_area].terrain_grid[0].terrain_blocks.size());
 		new_size+=temprivi;
 		new_size+="x";
 		//itoa(mod_to_edit->terrain_maps[edited_area].terrain_grid.size(),temprivi,10);
-		sprintf(temprivi,"%u",mod_to_edit->terrain_maps[edited_area].terrain_grid.size());
+		sprintf(temprivi, "%zu", mod_to_edit->terrain_maps[edited_area].terrain_grid.size());
 		new_size+=temprivi;
 		text_manager->message(500,500,new_size);
 	}

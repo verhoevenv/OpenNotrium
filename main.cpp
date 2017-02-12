@@ -10428,7 +10428,7 @@ void game_engine::save_game(int slot){
 
 		for(area=0;area<areas_x*areas_y;area++){*/
 
-		fprintf(fil, "%d\n", map_storage.size());
+		fprintf(fil, "%zu\n", map_storage.size());
 		for(area=0;area<map_storage.size();area++){
 
 
@@ -10437,9 +10437,9 @@ void game_engine::save_game(int slot){
 			//construction parameters
 			fprintf(fil, "%d\n", map_storage[area]->sizex);
 			fprintf(fil, "%d\n", map_storage[area]->sizey);
-			fprintf(fil, "%d\n", map_storage[area]->object.size());
-			fprintf(fil, "%d\n", map_storage[area]->creature.size());
-			fprintf(fil, "%d\n", map_storage[area]->items.size());
+			fprintf(fil, "%zu\n", map_storage[area]->object.size());
+			fprintf(fil, "%zu\n", map_storage[area]->creature.size());
+			fprintf(fil, "%zu\n", map_storage[area]->items.size());
 			fprintf(fil, "%d\n", map_storage[area]->climate_number);
 			fprintf(fil, "%d\n", map_storage[area]->area_type);
 			fprintf(fil, "%d\n", (int)map_storage[area]->been_here_already);
@@ -10470,16 +10470,16 @@ void game_engine::save_game(int slot){
 			}
 			//creatures
 			for(a=0;a<map_storage[area]->creature.size();a++){
-				fprintf(fil, "%d\n", sizeof(map_storage[area]->creature[a]));
+				fprintf(fil, "%zu\n", sizeof(map_storage[area]->creature[a]));
 				fwrite (&map_storage[area]->creature[a], 1, sizeof(map_storage[area]->creature[a]), fil);
 			}
 			//lights
-			fprintf(fil, "%d\n", map_storage[area]->lights.size());
+			fprintf(fil, "%zu\n", map_storage[area]->lights.size());
 			for(a=0;a<map_storage[area]->lights.size();a++){
 				fwrite (&map_storage[area]->lights[a], 1, sizeof(map_storage[area]->lights[a]), fil);
 			}
 			//bullets
-			fprintf(fil, "%d\n", map_storage[area]->bullets.size());
+			fprintf(fil, "%zu\n", map_storage[area]->bullets.size());
 			list<bullet>::iterator it;
 			for(it=map_storage[area]->bullets.begin(); it!=map_storage[area]->bullets.end(); it++){
 				fwrite (&(*it), 1, sizeof((*it)), fil);
@@ -10493,10 +10493,10 @@ void game_engine::save_game(int slot){
 
 
 		//player items
-		fprintf(fil, "%d\n", inventory.size());
+		fprintf(fil, "%zu\n", inventory.size());
 		for(b=0;b<inventory.size();b++){
 			//items
-			fprintf(fil, "%d\n", inventory[b].player_items.size());
+			fprintf(fil, "%zu\n", inventory[b].player_items.size());
 			for(a=0;a<inventory[b].player_items.size();a++){
 				fprintf(fil, "%d\n", inventory[b].player_items[a].item);
 				fprintf(fil, "%f\n", inventory[b].player_items[a].time_stamp);
@@ -10505,7 +10505,7 @@ void game_engine::save_game(int slot){
 			}
 
 			//used slots
-			fprintf(fil, "%d\n", inventory[b].slot_used_by.size());
+			fprintf(fil, "%zu\n", inventory[b].slot_used_by.size());
 			for(a=0;a<inventory[b].slot_used_by.size();a++){
 				fprintf(fil, "%d\n", inventory[b].slot_used_by[a]);
 			}
@@ -10575,27 +10575,27 @@ void game_engine::save_game(int slot){
 
 
 		//seen object texts
-		fprintf(fil, "%d\n", seen_item_text.size());
+		fprintf(fil, "%zu\n", seen_item_text.size());
 		for(a=0;a<seen_item_text.size();a++){
 			fprintf(fil, "%d\n", (int)seen_item_text[a]);
 		}
-		fprintf(fil, "%d\n", seen_plot_object_text.size());
+		fprintf(fil, "%zu\n", seen_plot_object_text.size());
 		for(a=0;a<seen_plot_object_text.size();a++){
 			fprintf(fil, "%d\n", (int)seen_plot_object_text[a]);
 		}
 
 		//terrain timers
-		fprintf(fil, "%d\n", mod.terrain_types.size());
+		fprintf(fil, "%zu\n", mod.terrain_types.size());
 		for(a=0;a<mod.terrain_types.size();a++){
-			fprintf(fil, "%d\n", mod.terrain_types[a].effects.size());
+			fprintf(fil, "%zu\n", mod.terrain_types[a].effects.size());
 			for(b=0;b<mod.terrain_types[a].effects.size();b++){
 				fprintf(fil, "%f\n", terrain_timers[a].subtype[b]);
 			}
 		}
 		//rain timers
-		fprintf(fil, "%d\n", rain_effect_timers.size());
+		fprintf(fil, "%zu\n", rain_effect_timers.size());
 		for(a=0;a<rain_effect_timers.size();a++){
-			fprintf(fil, "%d\n", rain_effect_timers[a].subtype.size());
+			fprintf(fil, "%zu\n", rain_effect_timers[a].subtype.size());
 			for(b=0;b<rain_effect_timers[a].subtype.size();b++){
 				fprintf(fil, "%f\n", rain_effect_timers[a].subtype[b]);
 			}
@@ -10604,7 +10604,7 @@ void game_engine::save_game(int slot){
 
 
 		//journal records
-		fprintf(fil, "%d\n", journal_records.size());
+		fprintf(fil, "%zu\n", journal_records.size());
 		for(a=0;a<journal_records.size();a++){
 			fprintf(fil, "%d\n", journal_records[a].record_type);
 			fprintf(fil, "%d\n", journal_records[a].record_parameter0);
@@ -10612,7 +10612,7 @@ void game_engine::save_game(int slot){
 		}
 
 		//save scripts
-		fprintf(fil, "%d\n", script_info.size());
+		fprintf(fil, "%zu\n", script_info.size());
 		for(a=0;a<script_info.size();a++){
 			fprintf(fil, "%d\n", (int)script_info[a].dead);
 			fprintf(fil, "%f\n", script_info[a].timer);
@@ -10620,7 +10620,7 @@ void game_engine::save_game(int slot){
 		}
 
 		//save bars
-		fprintf(fil, "%d\n", mod.general_bars.size());
+		fprintf(fil, "%zu\n", mod.general_bars.size());
 		for(a=0;a<mod.general_bars.size();a++){
 			fprintf(fil, "%d\n", (int)mod.general_bars[a].visible);
 		}
@@ -13871,7 +13871,12 @@ void game_engine::load_mod_names(const string& StartingPath)
 	selected_mod=0;
 
 	vector<string> v = grim->File_ListDirectory(StartingPath);
-
+	
+	if (!v.size()) {
+		fprintf(stderr, "game_engine::load_mod_names: Couldn't find any mods while trying to set up. Did you use sym-links? They don't work, sorry.\n");
+		exit(2);
+	}
+	
 	for (int i=0; i<v.size(); i++) {
 		if (grim->File_IsDirectory(StartingPath + '/' + v[i])) {
 			mod_names[mods]=v[i];
