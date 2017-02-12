@@ -13871,7 +13871,12 @@ void game_engine::load_mod_names(const string& StartingPath)
 	selected_mod=0;
 
 	vector<string> v = grim->File_ListDirectory(StartingPath);
-
+	
+	if (!v.size()) {
+		fprintf(stderr, "game_engine::load_mod_names: Couldn't find any mods while trying to set up. Did you use sym-links? They don't work, sorry.\n");
+		exit(2);
+	}
+	
 	for (int i=0; i<v.size(); i++) {
 		if (grim->File_IsDirectory(StartingPath + '/' + v[i])) {
 			mod_names[mods]=v[i];
