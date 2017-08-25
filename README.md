@@ -1,6 +1,8 @@
 OpenNotrium
 ===========
 
+[![Build Status](https://travis-ci.org/verhoevenv/OpenNotrium.svg?branch=master)](https://travis-ci.org/verhoevenv/OpenNotrium)
+
 Open source version of Notrium.
 
 Notrium is a top-down survival game originally developed by Ville Mönkkönen.
