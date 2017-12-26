@@ -61,7 +61,7 @@ class Engine
     int render_target;
     int activetexture;
 
-    static const int maxtextures = 200;
+    static const int maxtextures = 1000;
     EngineTexture textures[maxtextures];
     bool freeSlotInList;
     int currtexture;
