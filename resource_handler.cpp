@@ -192,7 +192,7 @@ int resource_handler::load_texture_in_grim(const char *name, const string& mod_n
 	if(texture_number==-1){
 		//we're still unable to load the texture, all slots must be full
 		//release some slots
-		unload_unneeded_textures(true);
+		unload_unneeded_textures(false);
 
 		//int bug=1;
 		//char* temp=grim->System_GetErrorMessage();
