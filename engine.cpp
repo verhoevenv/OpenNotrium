@@ -3,6 +3,7 @@
 #include <SDL_image.h>
 #include "func.h"
 #include <physfs.h>
+#include <memory>
 
 Engine::Engine()
 :   window(nullptr)
@@ -381,18 +382,15 @@ int Engine::Texture_Get(const std::string& id){
 bool Engine::Texture_Create(const std::string& id, int width, int height){
     createNewTexture(id,width,height);
 
-    unsigned int* data;						// Stored Data
+    // Stored Data
+    auto data = std::unique_ptr<GLubyte[]>(new GLubyte[width * height * 4]);
 
-	data = (unsigned int*)new GLuint[((width * height)* 4 * sizeof(unsigned int))];
-
-	memset(data,0,((128 * 128)* 4 * sizeof(unsigned int)));
+	memset(data.get(), 0, width * height * 4);
 
     glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
-		GL_RGBA, GL_UNSIGNED_BYTE, data);
+		GL_RGBA, GL_UNSIGNED_BYTE, data.get());
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
-	delete [] data;
 
     return true;
 }
