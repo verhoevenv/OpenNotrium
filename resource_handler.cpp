@@ -44,7 +44,6 @@ int resource_handler::load_texture(const string& name, const string& mod_name){/
 	}
 	if(!OK){
 		debug->debug_output("Loading Texture!",Action::FAIL_AND_END,Logfile::STARTUP);
-		return -1;
 	}
 
 
@@ -182,6 +181,12 @@ int resource_handler::load_texture_in_grim(const char *name, const string& mod_n
 		strcat(temprivi,name);
 
 		OK=grim->Texture_Load(temprivi,temprivi );
+	}
+	// try placeholder texture
+	if (!OK) {
+		debug->debug_output("Failed to load texture, using placeholder instead", Action::LOG, Logfile::STARTUP);
+		strcpy(temprivi, "textures/placeholder.png");
+		OK = grim->Texture_Load(temprivi, temprivi);
 	}
 
 	int texture_number=grim->Texture_Get(temprivi);
