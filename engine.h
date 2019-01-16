@@ -92,50 +92,50 @@ public:
     * Copies relevant stuff into the state. We need to make a copy anyway, so just return the object.
     */
     MouseState getMouseState();
-	void ShowCursor(bool state);
+    void ShowCursor(bool state);
 
     bool Key_Down(Key key);
     bool Key_Click(Key key);
 
     void System_SetState_Blending(bool state);
-	void System_SetState_BlendSrc(BlendState state);
-	void System_SetState_BlendDst(BlendState state);
+    void System_SetState_BlendSrc(BlendState state);
+    void System_SetState_BlendDst(BlendState state);
     void System_SetState_FrameFunc(bool (*func)());
     void System_SetState_FocusLostFunc(bool (*func)());
     void System_SetState_FocusGainFunc(bool (*func)());
     void System_SetState_Windowed(bool state);
     void System_SetState_ScreenWidth(int w);
-	void System_SetState_ScreenHeight(int h);
-	void System_SetState_ScreenBPP(int bpp);
-	void System_SetState_Title(const char* title);
+    void System_SetState_ScreenHeight(int h);
+    void System_SetState_ScreenBPP(int bpp);
+    void System_SetState_Title(const char* title);
 
-	void System_GrabInput();
-	void System_ReleaseInput();
-
-	/**
-	* Initialises the system with the given states, starts engine, etc. Does not enter the main loop yet.
-	* The argv[0] is required on some systems to know the path to the current directory.
-	*/
-	void System_Initiate(const char *argv0);
+    void System_GrabInput();
+    void System_ReleaseInput();
 
     /**
-	* Enters main loop. Return false from the frame function to exit this loop.
-	*/
-	void System_Start();
+    * Initialises the system with the given states, starts engine, etc. Does not enter the main loop yet.
+    * The argv[0] is required on some systems to know the path to the current directory.
+    */
+    void System_Initiate(const char *argv0);
 
-	/**
-	* Restores context to what it was before we initiated.
-	*/
-	void System_Shutdown();
+    /**
+    * Enters main loop. Return false from the frame function to exit this loop.
+    */
+    void System_Start();
 
-	/**
-	* Sets active render target. This can be screen (value -1) or a texture (texture handle integer).
-	*/
+    /**
+    * Restores context to what it was before we initiated.
+    */
+    void System_Shutdown();
+
+    /**
+    * Sets active render target. This can be screen (value -1) or a texture (texture handle integer).
+    */
     bool System_SetRenderTarget(int tex_id = -1);
 
     /**
-	* Clears current render target with given color. Render target can be the screen or a texture. Use System_SetRenderTarget method to set active render target.
-	*/
+    * Clears current render target with given color. Render target can be the screen or a texture. Use System_SetRenderTarget method to set active render target.
+    */
     void System_ClearScreen(float r, float g, float b, float a);
 
 
@@ -187,16 +187,16 @@ public:
     void Quads_Draw4V(float x0, float y0, float x1, float y1, float x2, float y2, float x3, float y3);
     //void Quads_RenderText(float x, float y, char *text);
 
-	//TODO: other file stuff (reading, writing, ...)
-	//bool File_Exists_ReadDir(std::string filename);
-	bool File_Exists(const std::string& filename);
-	bool File_IsDirectory(const std::string& filename);
-	std::vector<std::string> File_ListDirectory(const std::string& dir);
+    //TODO: other file stuff (reading, writing, ...)
+    //bool File_Exists_ReadDir(std::string filename);
+    bool File_Exists(const std::string& filename);
+    bool File_IsDirectory(const std::string& filename);
+    std::vector<std::string> File_ListDirectory(const std::string& dir);
 
-	/**
-	* Returns the amount of milliseconds the program has been running. Might wrap around after ~ 50 or 25 days.
-	*/
-	long Time_GetTicks();
+    /**
+    * Returns the amount of milliseconds the program has been running. Might wrap around after ~ 50 or 25 days.
+    */
+    long Time_GetTicks();
 };
 
 #endif

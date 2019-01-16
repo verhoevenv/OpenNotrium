@@ -147,8 +147,8 @@ void Engine::System_Initiate(const char *argv0){
 
     System_GrabInput();
 
-	PHYSFS_init(argv0);
-	PHYSFS_setSaneConfig("monkkonen","notrium",nullptr,0,0); //Perhaps we should allow packages here. Not now.
+    PHYSFS_init(argv0);
+    PHYSFS_setSaneConfig("monkkonen","notrium",nullptr,0,0); //Perhaps we should allow packages here. Not now.
 
     setup_opengl();
     startFrame();
@@ -235,10 +235,10 @@ MouseState Engine::getMouseState(){
 }
 
 void Engine::ShowCursor(bool state){
-	if(state)
-		SDL_ShowCursor(SDL_ENABLE);
-	else
-		SDL_ShowCursor(SDL_DISABLE);
+    if(state)
+        SDL_ShowCursor(SDL_ENABLE);
+    else
+        SDL_ShowCursor(SDL_DISABLE);
 }
 
 bool Engine::Key_Down(Key key){
@@ -329,7 +329,7 @@ bool Engine::System_SetRenderTarget(int tex_id){
 
     //set up the correct stuff for rendering to the new target
     tex = &textures[tex_id];
-	glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
     glViewport(0,0,tex->width,tex->height);
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
@@ -338,7 +338,7 @@ bool Engine::System_SetRenderTarget(int tex_id){
 
 
     //restore state?
-	System_SetState_Blending(false);
+    System_SetState_Blending(false);
     Texture_Set(tex_id);
     Quads_SetColor(1,1,1,1);
     Quads_Begin();
@@ -385,12 +385,12 @@ bool Engine::Texture_Create(const std::string& id, int width, int height){
     // Stored Data
     auto data = std::unique_ptr<GLubyte[]>(new GLubyte[width * height * 4]);
 
-	memset(data.get(), 0, width * height * 4);
+    memset(data.get(), 0, width * height * 4);
 
     glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
-		GL_RGBA, GL_UNSIGNED_BYTE, data.get());
+        GL_RGBA, GL_UNSIGNED_BYTE, data.get());
     glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
 
     return true;
 }
@@ -424,7 +424,7 @@ bool Engine::Texture_Load(const std::string& id, char *filename){
 
     createNewTexture(id,surface->w, surface->h);
 
-	  glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, surface->w, surface->h, 0,
+      glTexImage2D( GL_TEXTURE_2D, 0, nOfColors, surface->w, surface->h, 0,
                       texture_format, GL_UNSIGNED_BYTE, surface->pixels );
     // assuming the texture was copied to OpenGL, the surface is no longer needed
     SDL_FreeSurface(surface);
@@ -435,8 +435,8 @@ int Engine::createNewTexture(const std::string& name, int width, int height){
     GLuint id;
     glGenTextures( 1, &id );
 
-	// Bind the texture object
-	glBindTexture( GL_TEXTURE_2D, id );
+    // Bind the texture object
+    glBindTexture( GL_TEXTURE_2D, id );
 
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
     glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR );
@@ -561,30 +561,30 @@ void Engine::setglColor(int index){
 }
 
 bool Engine::File_Exists(const std::string& filename){
-	return (PHYSFS_exists(filename.c_str()) != 0);
+    return (PHYSFS_exists(filename.c_str()) != 0);
 }
 
 bool Engine::File_IsDirectory(const std::string& filename){
-	return (PHYSFS_isDirectory(filename.c_str()) != 0);
+    return (PHYSFS_isDirectory(filename.c_str()) != 0);
 }
 
 std::vector<std::string> Engine::File_ListDirectory(const std::string& dir){
-	char **rc = PHYSFS_enumerateFiles(dir.c_str());
-	char **i;
+    char **rc = PHYSFS_enumerateFiles(dir.c_str());
+    char **i;
 
-	std::vector<std::string> vec;
+    std::vector<std::string> vec;
 
-	for (i = rc; *i != NULL; i++){
-		vec.push_back(*i);
-	}
+    for (i = rc; *i != NULL; i++){
+        vec.push_back(*i);
+    }
 
-	PHYSFS_freeList(rc);
+    PHYSFS_freeList(rc);
 
-	return vec;
+    return vec;
 }
 
 long Engine::Time_GetTicks(){
-	//TODO: add performancetimer if possible
+    //TODO: add performancetimer if possible
 // 	if (perf_flag)
 // 	   QueryPerformanceCounter((LARGE_INTEGER *) &cur_time);
 // 	else
@@ -601,5 +601,5 @@ long Engine::Time_GetTicks(){
 // 					QueryPerformanceCounter((LARGE_INTEGER *) &last_time);
 // 				} else {
 
-	return SDL_GetTicks();
+    return SDL_GetTicks();
 }

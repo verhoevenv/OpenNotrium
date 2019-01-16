@@ -11,8 +11,8 @@ bool SoundManager::Create(SoundSample*& dest, const char *filename)
 bool SoundManager::Initialize(int freq, int channels)
 {
     if ( SDL_InitSubSystem(SDL_INIT_AUDIO) < 0 ) {
-		return false;
-	}
+        return false;
+    }
     //TODO: change parameters?
     //TODO: close audio
     //check http://www.koders.com/cpp/fidCCF9C0D295448E549DBADA9E72FF9A974D8ACBCD.aspx

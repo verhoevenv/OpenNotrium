@@ -99,8 +99,8 @@ float x2, float y2 ,
 float x3, float y3 , float r );
 
 namespace Debugger {
-	enum class Action { START, END, FAIL_AND_END, LOG };
-	enum class Logfile { STARTUP, FRAME };
+    enum class Action { START, END, FAIL_AND_END, LOG };
+    enum class Logfile { STARTUP, FRAME };
 }
 
 struct EnumClassHash {
@@ -114,12 +114,12 @@ struct EnumClassHash {
 class debugger
 {
     protected:
-		std::unordered_map<Debugger::Logfile, int, EnumClassHash> debug_level;
-		std::string type2file(Debugger::Logfile type);
+        std::unordered_map<Debugger::Logfile, int, EnumClassHash> debug_level;
+        std::string type2file(Debugger::Logfile type);
     public:
-		std::unordered_map<Debugger::Logfile, bool, EnumClassHash> debug_state;
-		void debug_output(const std::string& rivi, Debugger::Action level, Debugger::Logfile type);
-		void restart_log(Debugger::Logfile type);
+        std::unordered_map<Debugger::Logfile, bool, EnumClassHash> debug_state;
+        void debug_output(const std::string& rivi, Debugger::Action level, Debugger::Logfile type);
+        void restart_log(Debugger::Logfile type);
         debugger();
 };
 

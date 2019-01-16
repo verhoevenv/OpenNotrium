@@ -7,8 +7,8 @@
 #define GAME_ORIGINAL_VERSION "1.3.4.1"
 
 #define CONTRIBUTORS \
-	" Vincent Verhoeven \\" \
+    " Vincent Verhoeven \\" \
         " Eduardo Pinho "
 
 #define COPYRIGHT "Copyright (c) 2008 Vincent Verhoeven -" \
-	" Portions Copyright (c) 2003 Ville Mönkkönen "
+    " Portions Copyright (c) 2003 Ville Mönkkönen "

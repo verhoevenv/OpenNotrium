@@ -17,7 +17,7 @@ inline float square(float f) { return sqr(f); };
 int randInt( int low, int high )
 {
     int range = high - low;
-	if(range==0)return low;
+    if(range==0)return low;
     int num = rand() % range;
     return( num + low );
 }
@@ -30,7 +30,7 @@ int randInt( int low, int high )
 float randDouble( float low, float high )
 {
     float range = high - low;
-	if(range==0)return low;
+    if(range==0)return low;
     float num = range * (float)rand()/(float)RAND_MAX;
     return( num + low );
 }
@@ -60,47 +60,47 @@ float randDouble( float low, float high )
 // carriage return or line feed.
 char *stripped_fgets(char *s, int n, FILE *f)
 {
-	if (!std::fgets(s,n,f))
+    if (!std::fgets(s,n,f))
         return nullptr;
 
-	//start cut
-	int i=0;
-	int extra_start_characters=0;
-	while((s[i]==' ')||(s[i]==9)){
-		extra_start_characters++;
-		i++;
-	}
-	if(extra_start_characters>0){
-		int length=std::strlen(s);
-		for(int a=0 ; a < length-extra_start_characters ; a++){
-			s[a] = s[a+extra_start_characters];
-		}
-	}
+    //start cut
+    int i=0;
+    int extra_start_characters=0;
+    while((s[i]==' ')||(s[i]==9)){
+        extra_start_characters++;
+        i++;
+    }
+    if(extra_start_characters>0){
+        int length=std::strlen(s);
+        for(int a=0 ; a < length-extra_start_characters ; a++){
+            s[a] = s[a+extra_start_characters];
+        }
+    }
 
-	//end cut
-	i=0;
-	while (s[i]!=';' && s[i]!='\r' && s[i]!='\n' && s[i]!='\0')
-		i++;
-	s[i] = '\0';
+    //end cut
+    i=0;
+    while (s[i]!=';' && s[i]!='\r' && s[i]!='\n' && s[i]!='\0')
+        i++;
+    s[i] = '\0';
 
-	return(s);
+    return(s);
 }
 
 bool strtobool(const char *rivi){
-	int a=atoi(rivi);
-	if (a==0)return false;
-	else return true;
+    int a=atoi(rivi);
+    if (a==0)return false;
+    else return true;
 }
 
 
 void random_name(char *creature_name){//give a random name
 
-	char konsonantti[20] = {'b','c','d','f','g','h','j','k',
+    char konsonantti[20] = {'b','c','d','f','g','h','j','k',
             'l','m','n','p','q','r','s','t','v','w','x','z'};
-	const char vokaali[6] = {'a','e','i','o','u','y'}; //kirjaimet
-	char iso_konsonantti[20] = {'B','C','D','F','G','H','J','K',
+    const char vokaali[6] = {'a','e','i','o','u','y'}; //kirjaimet
+    char iso_konsonantti[20] = {'B','C','D','F','G','H','J','K',
             'L','M','N','P','Q','R','S','T','V','W','X','Z'};
-	const char iso_vokaali[6] = {'A', 'E', 'I', 'O', 'U', 'Y'};
+    const char iso_vokaali[6] = {'A', 'E', 'I', 'O', 'U', 'Y'};
 
     int randomi=randInt(0,6);
     switch (randomi) {
@@ -159,57 +159,57 @@ void random_name(char *creature_name){//give a random name
 }
 
 void find_texture_coordinates(int slot,float *x0,float *y0,float *x1,float *y1,int slots_per_texture){
-	/**x0=(slot % slots_per_texture)/(float)slots_per_texture;
-	*y0=(float)(slot/slots_per_texture);
-	*x1=*x0+1.0f/slots_per_texture;
-	*y1=*y0+1.0f/slots_per_texture;*/
+    /**x0=(slot % slots_per_texture)/(float)slots_per_texture;
+    *y0=(float)(slot/slots_per_texture);
+    *x1=*x0+1.0f/slots_per_texture;
+    *y1=*y0+1.0f/slots_per_texture;*/
 
-	*x0=((float)slot/(float)slots_per_texture)-(int)(slot/slots_per_texture);
-	*y0=((int)(slot/slots_per_texture))/4.0f;
-	*x1=*x0+1.0f/slots_per_texture;
-	*y1=*y0+1.0f/slots_per_texture;
+    *x0=((float)slot/(float)slots_per_texture)-(int)(slot/slots_per_texture);
+    *y0=((int)(slot/slots_per_texture))/4.0f;
+    *x1=*x0+1.0f/slots_per_texture;
+    *y1=*y0+1.0f/slots_per_texture;
 }
 
 /*char *copy_substring(char *string, int from, int to){
-	char *text;
+    char *text;
 
-	int b=0;
-	for(int a=from;a<to;a++){
-		text[b]=string[a];
-		b++;
-	}
+    int b=0;
+    for(int a=from;a<to;a++){
+        text[b]=string[a];
+        b++;
+    }
 
-	return text;
+    return text;
 }*/
 
 
 // Converts a floating point number to string
 string FloatToText(float n, int nNumberOfDecimalPlaces)
 {
-	char s[200];
+    char s[200];
 
-	sprintf(s, "%f", n);
+    sprintf(s, "%f", n);
 
     string str(s);
 
-	//find decimal
-	int start_clear=str.find('.');
-	if(nNumberOfDecimalPlaces>0)start_clear+=nNumberOfDecimalPlaces+1;
+    //find decimal
+    int start_clear=str.find('.');
+    if(nNumberOfDecimalPlaces>0)start_clear+=nNumberOfDecimalPlaces+1;
 
-	str.resize(start_clear, '0');
+    str.resize(start_clear, '0');
 
-	return str;
+    return str;
 }
 
 /*
 float minimum(float a, float b){
-	if(a<b)return a;
-	return b;
+    if(a<b)return a;
+    return b;
 }
 
 float maximum(float a, float b){
-	if(a>b)return a;
-	return b;
+    if(a>b)return a;
+    return b;
 }
 */
 std::vector <point2d> sphere_line_intersection (
@@ -217,32 +217,32 @@ std::vector <point2d> sphere_line_intersection (
     float x2, float y2 ,
     float x3, float y3 , float r )
 {
-	// x1,y1,z1  P1 coordinates (point of line)
-	// x2,y2,z2  P2 coordinates (point of line)
-	// x3,y3,z3, r  P3 coordinates and radius (sphere)
-	// x,y,z   intersection coordinates
-	//
-	// This function returns a pointer array which first index indicates
-	// the number of intersection point, followed by coordinate pairs.
+    // x1,y1,z1  P1 coordinates (point of line)
+    // x2,y2,z2  P2 coordinates (point of line)
+    // x3,y3,z3, r  P3 coordinates and radius (sphere)
+    // x,y,z   intersection coordinates
+    //
+    // This function returns a pointer array which first index indicates
+    // the number of intersection point, followed by coordinate pairs.
 
-	//float x , y , z;
-	float a, b, c, mu, i ;
-	vector <point2d> intersections;
+    //float x , y , z;
+    float a, b, c, mu, i ;
+    vector <point2d> intersections;
 
-	a =  square(x2 - x1) + square(y2 - y1);
-	b =  2* ( (x2 - x1)*(x1 - x3)
-	  + (y2 - y1)*(y1 - y3) ) ;
-	c =  square(x3) + square(y3) +
-	  square(x1) + square(y1) -
-	  2* ( x3*x1 + y3*y1 ) - square(r) ;
-	i =   b * b - 4 * a * c ;
+    a =  square(x2 - x1) + square(y2 - y1);
+    b =  2* ( (x2 - x1)*(x1 - x3)
+      + (y2 - y1)*(y1 - y3) ) ;
+    c =  square(x3) + square(y3) +
+      square(x1) + square(y1) -
+      2* ( x3*x1 + y3*y1 ) - square(r) ;
+    i =   b * b - 4 * a * c ;
 
-	if ( i < 0.0 ) {
+    if ( i < 0.0 ) {
         // no intersection
         return(intersections);
-	}
+    }
 
-	if ( i == 0.0 ) {
+    if ( i == 0.0 ) {
         // one intersection
         mu = -b/(2*a) ;
         point2d temp_point;
@@ -255,8 +255,8 @@ std::vector <point2d> sphere_line_intersection (
             (temp_point.y<=max(y1,y2)))
             intersections.push_back(temp_point);
         return(intersections);
-	}
-	if ( i > 0.0 ) {
+    }
+    if ( i > 0.0 ) {
         // two intersections
 
         // first intersection
@@ -287,40 +287,40 @@ std::vector <point2d> sphere_line_intersection (
             intersections.push_back(temp_point2);
 
         return(intersections);
-	}
+    }
 
-	// no intersection
-	return(intersections);
+    // no intersection
+    return(intersections);
 }
 
 bool isvowel(char character){
-	switch(character){
-	case 'a':
-	case 'e':
-	case 'i':
-	case 'o':
-	case 'u':
-	case 'y':
-	case '\xE5': //lowercase a with ring
-	case '\xE4': //lowercase o with ring
-	case '\xF6': //lowercase o diaeresis
-	case 'A':
-	case 'E':
-	case 'I':
-	case 'O':
-	case 'U':
-	case 'Y':
-	case '\xC4': //uppercase a diaeresis
-	case '\xD5': //uppercase o diaeresis
-	case '\xC5': //uppercase a with ring
-		return true;
-	}
-	return false;
+    switch(character){
+    case 'a':
+    case 'e':
+    case 'i':
+    case 'o':
+    case 'u':
+    case 'y':
+    case '\xE5': //lowercase a with ring
+    case '\xE4': //lowercase o with ring
+    case '\xF6': //lowercase o diaeresis
+    case 'A':
+    case 'E':
+    case 'I':
+    case 'O':
+    case 'U':
+    case 'Y':
+    case '\xC4': //uppercase a diaeresis
+    case '\xD5': //uppercase o diaeresis
+    case '\xC5': //uppercase a with ring
+        return true;
+    }
+    return false;
 }
 
 int lines_intersect(float x1,float y1,float x2,float y2,float x3,float y3,float x4,float y4,float *x,float *y,float rounding)
 {
-	double u,v,delta;
+    double u,v,delta;
     double t1,t2;
 
     double xba,yba,xdc,ydc,xca,yca;
@@ -337,71 +337,71 @@ int lines_intersect(float x1,float y1,float x2,float y2,float x3,float y3,float 
        u=t1/delta;   v=t2/delta;
 
       /*two segments intersect (including intersect at end points)*/
-	   if ( u<=1+rounding && u>=0-rounding && v<=1+rounding && v>=0-rounding ) {
-		   //find coordinates
-			*x = x1 + u*(x2 - x1);
-			*y = y1 + u*(y2 - y1);
+       if ( u<=1+rounding && u>=0-rounding && v<=1+rounding && v>=0-rounding ) {
+           //find coordinates
+            *x = x1 + u*(x2 - x1);
+            *y = y1 + u*(y2 - y1);
 
-		   return 1;
-	   }
-	   return 0;
+           return 1;
+       }
+       return 0;
     }
 
-	return 0;
+    return 0;
 }
 
 using namespace Debugger;
 
 void debugger::debug_output(const string& rivi, Action level, Logfile type){
 
-	if(debug_state[type]){
+    if(debug_state[type]){
 
-		if (level == Action::START) {
-			debug_level[type]++;
-		}
+        if (level == Action::START) {
+            debug_level[type]++;
+        }
 
-		FILE *fil = fopen(type2file(type).c_str(), "at");
+        FILE *fil = fopen(type2file(type).c_str(), "at");
 
-		if(fil){
-			for(int a=0;a<debug_level[type];a++)fprintf(fil, "  ");
-			if (level == Action::START)fprintf(fil, "Starting ");
-			if (level == Action::END)fprintf(fil, "Finished ");
-			if (level == Action::FAIL_AND_END)fprintf(fil, "ERROR ");
-			fprintf(fil, "%s\n", rivi.c_str());
-			fclose(fil);
-		}
-		if ((level == Action::END) || (level == Action::FAIL_AND_END)){
-			debug_level[type]--;
-		}
-	}
+        if(fil){
+            for(int a=0;a<debug_level[type];a++)fprintf(fil, "  ");
+            if (level == Action::START)fprintf(fil, "Starting ");
+            if (level == Action::END)fprintf(fil, "Finished ");
+            if (level == Action::FAIL_AND_END)fprintf(fil, "ERROR ");
+            fprintf(fil, "%s\n", rivi.c_str());
+            fclose(fil);
+        }
+        if ((level == Action::END) || (level == Action::FAIL_AND_END)){
+            debug_level[type]--;
+        }
+    }
 }
 
 
 void debugger::restart_log(Logfile type){
-	if (debug_state[type]){
-		string filename = type2file(type);
-		FILE *fil;
-		fil = fopen(filename.c_str(), "wt");
-		if (fil){
-			fclose(fil);
-		}
-	}
+    if (debug_state[type]){
+        string filename = type2file(type);
+        FILE *fil;
+        fil = fopen(filename.c_str(), "wt");
+        if (fil){
+            fclose(fil);
+        }
+    }
 }
 
 string debugger::type2file(Logfile type) {
-	switch (type)
-	{
-	case Logfile::STARTUP:
-		return "debug_start.txt";
-	case Logfile::FRAME:
-		return "debug_frame.txt";
-	}
-	throw "Searching for non-existant log file";
+    switch (type)
+    {
+    case Logfile::STARTUP:
+        return "debug_start.txt";
+    case Logfile::FRAME:
+        return "debug_frame.txt";
+    }
+    throw "Searching for non-existant log file";
 }
 
 debugger::debugger(){
-	debug_state[Logfile::STARTUP] = false;
-	debug_state[Logfile::FRAME] = false;
-	debug_level[Logfile::STARTUP] = 0;
-	debug_level[Logfile::FRAME] = 0;
+    debug_state[Logfile::STARTUP] = false;
+    debug_state[Logfile::FRAME] = false;
+    debug_level[Logfile::STARTUP] = 0;
+    debug_level[Logfile::FRAME] = 0;
 }
