@@ -565,7 +565,14 @@ bool Engine::File_Exists(const std::string& filename){
 }
 
 bool Engine::File_IsDirectory(const std::string& filename){
-    return (PHYSFS_isDirectory(filename.c_str()) != 0);
+    PHYSFS_Stat stat;
+    if (PHYSFS_stat(filename.c_str(), &stat) == 0)
+        return false;
+
+    if (stat.filetype == PHYSFS_FILETYPE_DIRECTORY)
+        return true;
+    else
+        return false;
 }
 
 std::vector<std::string> Engine::File_ListDirectory(const std::string& dir){
