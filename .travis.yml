@@ -1,74 +1,15 @@
 language: cpp
-sudo: false
-addons:
-  apt:
-    sources:
-      - george-edison55-precise-backports
-    packages:
-      - cmake-data
-      - cmake
-matrix:
-  include:
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-4.8
-            - libsdl2-dev
-            - libsdl2-mixer-dev
-            - libsdl2-image-dev
-            - libphysfs-dev
-      env:
-         - MATRIX_EVAL="CC=gcc-4.8 && CXX=g++-4.8"
+dist: bionic
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-5
-            - libsdl2-dev
-            - libsdl2-mixer-dev
-            - libsdl2-image-dev
-            - libphysfs-dev
-      env:
-         - MATRIX_EVAL="CC=gcc-5 && CXX=g++-5"
+compiler:
+  - clang
+  - gcc
 
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-6
-            - libsdl2-dev
-            - libsdl2-mixer-dev
-            - libsdl2-image-dev
-            - libphysfs-dev
-      env:
-        - MATRIX_EVAL="CC=gcc-6 && CXX=g++-6"
-
-    - os: linux
-      addons:
-        apt:
-          sources:
-            - ubuntu-toolchain-r-test
-          packages:
-            - g++-7
-            - libsdl2-dev
-            - libsdl2-mixer-dev
-            - libsdl2-image-dev
-            - libphysfs-dev
-      env:
-        - MATRIX_EVAL="CC=gcc-7 && CXX=g++-7"
-
-before_install:
-    - eval "${MATRIX_EVAL}"
+install:
+  - sudo apt update
+  - sudo apt install -y libsdl2-dev libsdl2-mixer-dev libsdl2-image-dev libphysfs-dev
 
 script:
-    - mkdir -p build && cd build
-    - cmake ..
-    - make
+  - mkdir -p build && cd build
+  - cmake ..
+  - make
