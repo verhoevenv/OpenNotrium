@@ -1,7 +1,7 @@
 OpenNotrium
 ===========
 
-[![Build Status](https://travis-ci.com/verhoevenv/OpenNotrium.svg?branch=master)](https://travis-ci.com/verhoevenv/OpenNotrium)
+[![Build Status](https://github.com/verhoevenv/OpenNotrium/actions/workflows/ci.yml/badge.svg)](https://github.com/verhoevenv/OpenNotrium/actions/workflows/ci.yml)
 
 Open source version of Notrium.
 
