@@ -156,3 +156,19 @@ These instructions have been tested on Visual Studio Community 2013 and 2015, wh
         - libvorbis-0.dll
         - libvorbisfile-3.dll
         - smpeg2.dll
+
+
+How to build - FreeBSD
+----------------------
+
+The instructions below have been tested on FreeBSD 13.1 release.
+
+1. Install CMake & GCC
+
+        pkg install gcc cmake
+
+2. Install dependencies
+
+        pkg install sdl2 sdl2_mixer sdl2_image physfs mesa-libs
+
+3. Follow Linux guidelines from step 3 onwards.
